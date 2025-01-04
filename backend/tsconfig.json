@@ -1,15 +1,14 @@
 // based on:
 //  - https://typescriptbook.jp/reference/tsconfig/tsconfig.json-settings
-//  - npm create vue@latest
+//  - npm create hono@latest
 {
-  "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
-    "target": "es2020",
+    "target": "esnext",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "noEmit": true,
     "rootDir": "./src",
     "strict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "baseUrl": "src",
     "esModuleInterop": true,
     "experimentalDecorators": true,
