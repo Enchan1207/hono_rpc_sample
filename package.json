@@ -1,0 +1,8 @@
+{
+  "name": "hono_rpc_sample",
+  "description": "Try RPC feature of Hono",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ]
+}
