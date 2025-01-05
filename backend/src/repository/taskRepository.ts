@@ -37,6 +37,7 @@ export const listTasks = (
     } else if (lhsKey < rhsKey) {
       return -sortDirection;
     } else {
+      // FIXME: 同一でなければIDで比較する
       return 0;
     }
   });
