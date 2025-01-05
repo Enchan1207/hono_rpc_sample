@@ -1,6 +1,8 @@
 {
   "name": "backend",
   "scripts": {
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "dev": "tsx watch src/server.ts",
     "test": "vitest"
   },
