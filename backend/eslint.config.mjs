@@ -1,11 +1,25 @@
 // @ts-check
-
-// Referenced: https://typescript-eslint.io/getting-started/
-
 import eslint from '@eslint/js';
-import typescriptEslint from 'typescript-eslint';
+import tseslint from 'typescript-eslint';
 
-export default typescriptEslint.config(
-    eslint.configs.recommended,
-    ...typescriptEslint.configs.strict,
+export default tseslint.config(
+    // .eslintignore
+    { ignores: ['dist'] },
+
+    // configurations for TypeScript with type checking
+    // based on: https://typescript-eslint.io/getting-started/typed-linting
+    {
+        files: ["**/*.ts"],
+        languageOptions: {
+            ecmaVersion: 'latest',
+            sourceType: 'module',
+            parserOptions: {
+                project: true,
+            },
+        },
+        extends: [
+            eslint.configs.recommended,
+            tseslint.configs.strictTypeChecked,
+        ]
+    },
 );

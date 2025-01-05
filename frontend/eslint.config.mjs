@@ -1,27 +1,29 @@
 // @ts-check
 import eslint from '@eslint/js';
-import eslintPluginVue from 'eslint-plugin-vue';
+import pluginVue from 'eslint-plugin-vue';
 import globals from "globals";
-import typescriptEslint from 'typescript-eslint';
+import tseslint from 'typescript-eslint';
 
-export default typescriptEslint.config(
-    { ignores: ['**/dist'] },
+export default tseslint.config(
+    // .eslintignore
+    { ignores: ['dist'] },
+
+    // configurations for Vue
+    // based on: https://eslint.vuejs.org/user-guide/#example-configuration-with-typescript-eslint-and-prettier
     {
-        extends: [
-            eslint.configs.recommended,
-            ...typescriptEslint.configs.strict,
-            ...eslintPluginVue.configs['flat/recommended'],
-        ],
-        files: ['**/*.{ts,vue}'],
+        files: ["**/*.ts", "**/*.vue"],
         languageOptions: {
             ecmaVersion: 'latest',
             sourceType: 'module',
             globals: globals.browser,
             parserOptions: {
-                parser: typescriptEslint.parser,
+                project: true,
             },
         },
-        rules: {
-        },
+        extends: [
+            eslint.configs.recommended,
+            tseslint.configs.strict,
+            pluginVue.configs['flat/recommended'],
+        ],
     },
 );
