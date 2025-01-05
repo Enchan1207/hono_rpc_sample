@@ -9,15 +9,18 @@
     "lib": ["es2020", "dom"],
     "rootDir": "./src",
     "strict": true,
-    "moduleResolution": "node",
-    "baseUrl": "src",
+    "moduleResolution": "bundler",
+    "baseUrl": "./",
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"],
