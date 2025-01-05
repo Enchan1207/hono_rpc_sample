@@ -1,7 +1,8 @@
 {
   "name": "backend",
   "scripts": {
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch src/server.ts",
+    "test": "vitest"
   },
   "dependencies": {
     "hono": "^4.6.15",
