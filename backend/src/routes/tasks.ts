@@ -7,6 +7,7 @@ import {
 import { TaskPriorities, type Task } from "@/resource/task";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
+import { ulid } from "ulid";
 import { z } from "zod";
 
 const app = new Hono()
@@ -37,14 +38,8 @@ const app = new Hono()
       })
     ),
     (c) => {
-      // TODO: ID生成にulidを使う
-      const randInt = (min: number, max: number): number =>
-        Math.floor(Math.random() * (max - min));
       const taskData = c.req.valid("json");
-      const insertResult = saveTask({
-        id: randInt(0, 100),
-        ...taskData,
-      });
+      const insertResult = saveTask({ id: ulid(), ...taskData });
       return c.json(insertResult, 201);
     }
   )
@@ -53,7 +48,7 @@ const app = new Hono()
     zValidator(
       "param",
       z.object({
-        id: z.coerce.number(),
+        id: z.string().ulid(),
       })
     ),
     (c) => {
@@ -77,8 +72,8 @@ const app = new Hono()
       })
     ),
     (c) => {
-      // FIXME: paramとjsonとを同時にvalidateできないのか?
-      const id = z.coerce.number().safeParse(c.req.param("id")).data;
+      // paramとjsonとを同時にvalidateできないか?
+      const id = z.string().ulid().safeParse(c.req.param("id")).data;
       if (id === undefined) {
         return c.notFound();
       }
@@ -99,7 +94,7 @@ const app = new Hono()
     zValidator(
       "param",
       z.object({
-        id: z.coerce.number(),
+        id: z.string().ulid(),
       })
     ),
     (c) => {

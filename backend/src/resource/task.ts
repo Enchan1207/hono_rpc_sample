@@ -1,5 +1,3 @@
-// TODO: is there any better solution...?
-
 export const TaskPriorities = ["high", "middle", "low"] as const;
 export type TaskPriority = (typeof TaskPriorities)[number];
 
@@ -12,7 +10,7 @@ export const TaskPriorityLevelMap = {
 
 /** タスク */
 export type Task = {
-  id: number;
+  id: string;
   title: string;
   limit: Date; // Review: use date-processing package
   priority: TaskPriority;

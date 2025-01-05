@@ -1,3 +1,4 @@
+import { compare } from "@/logic/compare";
 import { TaskPriorityLevelMap, type Task } from "@/resource/task";
 import { beforeAll, describe, expect, test } from "vitest";
 import app from "./tasks";
@@ -148,7 +149,7 @@ describe("項目のリストアップ", () => {
     ).json();
     const taskIds = response.map((t) => t.id);
     expect(taskIds).toStrictEqual(
-      insertedTasks.toSorted((lhs, rhs) => lhs.id - rhs.id).map((t) => t.id)
+      insertedTasks.toSorted(compare<Task>("id", "asc")).map((t) => t.id)
     );
   });
 
@@ -159,11 +160,14 @@ describe("項目のリストアップ", () => {
     const taskIds = response.map((t) => t.id);
     expect(taskIds).toStrictEqual(
       insertedTasks
-        .toSorted(
-          (lhs, rhs) =>
-            TaskPriorityLevelMap[rhs.priority] -
-            TaskPriorityLevelMap[lhs.priority]
-        )
+        .toSorted((lhs, rhs) => {
+          const lpr = lhs.priority;
+          const rpr = rhs.priority;
+          if (lpr === rpr) {
+            return compare<Task>("id", "desc")(lhs, rhs);
+          }
+          return TaskPriorityLevelMap[rpr] - TaskPriorityLevelMap[lpr];
+        })
         .map((t) => t.id)
     );
   });

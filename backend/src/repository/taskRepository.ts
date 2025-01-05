@@ -1,3 +1,4 @@
+import { compare } from "@/logic/compare";
 import { TaskPriorityLevelMap, type Task } from "@/resource/task";
 
 // in-memory storage
@@ -25,21 +26,30 @@ export const listTasks = (
   sortBy: keyof Pick<Task, "id" | "limit" | "priority">,
   order: "asc" | "desc"
 ): Task[] => {
-  // TODO: offsetやlimitを提供する
-  const sortedTasks = Array.from(tasks.values()).sort((lhs, rhs) => {
-    const sortDirection = order === "asc" ? 1 : -1;
-    const lhsKey =
-      sortBy !== "priority" ? lhs[sortBy] : TaskPriorityLevelMap[lhs.priority];
-    const rhsKey =
-      sortBy !== "priority" ? rhs[sortBy] : TaskPriorityLevelMap[rhs.priority];
-    if (lhsKey > rhsKey) {
-      return sortDirection;
-    } else if (lhsKey < rhsKey) {
-      return -sortDirection;
-    } else {
-      // FIXME: 同一でなければIDで比較する
-      return 0;
+  if (sortBy === "id") {
+    return Array.from(tasks.values()).toSorted(compare<Task>(sortBy, order));
+  }
+
+  if (sortBy === "limit") {
+    return Array.from(tasks.values()).toSorted(
+      // 同じ期限ならIDで比較する
+      compare<Task>(sortBy, order, compare<Task>("id", order))
+    );
+  }
+
+  const sortedTasks = Array.from(tasks.values()).toSorted((lhs, rhs) => {
+    const lpr = lhs.priority;
+    const rpr = rhs.priority;
+    if (lpr === rpr) {
+      // 同じ優先度ならIDで比較する
+      return compare<Task>("id", order)(lhs, rhs);
     }
+
+    // 優先度は数値に変換して比較する
+    const lprLevel = TaskPriorityLevelMap[lpr];
+    const rprLevel = TaskPriorityLevelMap[rpr];
+    const direction = order === "asc" ? 1 : -1;
+    return (lprLevel > rprLevel ? 1 : -1) * direction;
   });
   return sortedTasks;
 };

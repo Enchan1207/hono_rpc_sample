@@ -1,13 +1,19 @@
-import { beforeAll, describe, expect, test } from "vitest";
-import { createTaskMock } from "@/mock/task";
 import type { Task } from "@/resource/task";
+import { ulid } from "ulid";
+import { beforeAll, describe, expect, test } from "vitest";
 import { deleteTask, getTask, listTasks, saveTask } from "./taskRepository";
 
 describe("単一項目のCRUD", () => {
   let storedTaskId: Task["id"];
 
   test("項目を作成できること", () => {
-    const newTask = createTaskMock();
+    const newTask: Task = {
+      id: ulid(),
+      title: "test task",
+      limit: new Date(),
+      priority: "middle",
+      description: "",
+    };
     const insertedTask = saveTask(newTask);
     expect(insertedTask).toBeDefined();
     storedTaskId = insertedTask.id;
@@ -39,16 +45,14 @@ describe("単一項目のCRUD", () => {
 });
 
 describe("複数項目のリストとソート", () => {
-  const dummyTasks = Array.from({ length: 5 }).map((_, i) =>
-    createTaskMock({
-      id: i,
-      title: `Task-${i}`,
-      limit: new Date(`2025-01-01T00:${i.toString().padStart(2, "0")}:00Z`),
-      // 強引!
-      priority: ["high", "middle", "low"][i % 3] as Task["priority"],
-      description: `task #${i} info`,
-    })
-  );
+  const dummyTasks: Task[] = Array.from({ length: 5 }).map((_, i) => ({
+    id: i.toString(),
+    title: `Task-${i}`,
+    limit: new Date(`2025-01-01T00:${i.toString().padStart(2, "0")}:00Z`),
+    // 強引!
+    priority: ["high", "middle", "low"][i % 3] as Task["priority"],
+    description: `task #${i} info`,
+  }));
 
   beforeAll(() => {
     dummyTasks.forEach((task) => saveTask(task));
@@ -57,36 +61,36 @@ describe("複数項目のリストとソート", () => {
   describe("IDでソート", () => {
     test("昇順", () => {
       const taskIds = listTasks("id", "asc").map(({ id }) => id);
-      expect(taskIds).toStrictEqual([0, 1, 2, 3, 4]);
+      expect(taskIds).toStrictEqual([0, 1, 2, 3, 4].map((n) => n.toString()));
     });
 
     test("降順", () => {
       const taskIds = listTasks("id", "desc").map(({ id }) => id);
-      expect(taskIds).toStrictEqual([4, 3, 2, 1, 0]);
+      expect(taskIds).toStrictEqual([4, 3, 2, 1, 0].map((n) => n.toString()));
     });
   });
 
   describe("期限でソート", () => {
     test("昇順", () => {
       const taskIds = listTasks("limit", "asc").map(({ id }) => id);
-      expect(taskIds).toStrictEqual([0, 1, 2, 3, 4]);
+      expect(taskIds).toStrictEqual([0, 1, 2, 3, 4].map((n) => n.toString()));
     });
 
     test("降順", () => {
       const taskIds = listTasks("limit", "desc").map(({ id }) => id);
-      expect(taskIds).toStrictEqual([4, 3, 2, 1, 0]);
+      expect(taskIds).toStrictEqual([4, 3, 2, 1, 0].map((n) => n.toString()));
     });
   });
 
   describe("優先度でソート", () => {
     test("昇順", () => {
       const taskIds = listTasks("priority", "asc").map(({ id }) => id);
-      expect(taskIds).toStrictEqual([2, 1, 4, 0, 3]);
+      expect(taskIds).toStrictEqual([2, 1, 4, 0, 3].map((n) => n.toString()));
     });
 
     test("降順", () => {
       const taskIds = listTasks("priority", "desc").map(({ id }) => id);
-      expect(taskIds).toStrictEqual([0, 3, 1, 4, 2]);
+      expect(taskIds).toStrictEqual([3, 0, 4, 1, 2].map((n) => n.toString()));
     });
   });
 });
