@@ -1,4 +1,4 @@
-import { taskPriorityLevelMap, type Task } from "@/resource/task";
+import { TaskPriorityLevelMap, type Task } from "@/resource/task";
 
 // in-memory storage
 const tasks = new Map<Task["id"], Task>();
@@ -7,9 +7,9 @@ export const getTask = (id: Task["id"]): Task | undefined => {
   return tasks.get(id);
 };
 
-export const saveTask = (newTask: Task): Task["id"] => {
+export const saveTask = (newTask: Task): Task => {
   tasks.set(newTask.id, newTask);
-  return newTask.id;
+  return newTask;
 };
 
 export const deleteTask = (id: Task["id"]): Task | undefined => {
@@ -21,7 +21,7 @@ export const deleteTask = (id: Task["id"]): Task | undefined => {
   return storedTask;
 };
 
-export const listTask = (
+export const listTasks = (
   sortBy: keyof Pick<Task, "id" | "limit" | "priority">,
   order: "asc" | "desc"
 ): Task[] => {
@@ -29,9 +29,9 @@ export const listTask = (
   const sortedTasks = Array.from(tasks.values()).sort((lhs, rhs) => {
     const sortDirection = order === "asc" ? 1 : -1;
     const lhsKey =
-      sortBy !== "priority" ? lhs[sortBy] : taskPriorityLevelMap[lhs.priority];
+      sortBy !== "priority" ? lhs[sortBy] : TaskPriorityLevelMap[lhs.priority];
     const rhsKey =
-      sortBy !== "priority" ? rhs[sortBy] : taskPriorityLevelMap[rhs.priority];
+      sortBy !== "priority" ? rhs[sortBy] : TaskPriorityLevelMap[rhs.priority];
     if (lhsKey > rhsKey) {
       return sortDirection;
     } else if (lhsKey < rhsKey) {

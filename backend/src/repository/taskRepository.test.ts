@@ -1,16 +1,16 @@
 import { beforeAll, describe, expect, test } from "vitest";
 import { createTaskMock } from "@/mock/task";
 import type { Task } from "@/resource/task";
-import { deleteTask, getTask, listTask, saveTask } from "./taskRepository";
+import { deleteTask, getTask, listTasks, saveTask } from "./taskRepository";
 
 describe("単一項目のCRUD", () => {
   let storedTaskId: Task["id"];
 
   test("項目を作成できること", () => {
     const newTask = createTaskMock();
-    const newTaskId = saveTask(newTask);
-    expect(newTaskId).toBeDefined();
-    storedTaskId = newTaskId;
+    const insertedTask = saveTask(newTask);
+    expect(insertedTask).toBeDefined();
+    storedTaskId = insertedTask.id;
   });
 
   test("IDを指定して項目を取得できること", () => {
@@ -56,36 +56,36 @@ describe("複数項目のリストとソート", () => {
 
   describe("IDでソート", () => {
     test("昇順", () => {
-      const taskIds = listTask("id", "asc").map(({ id }) => id);
+      const taskIds = listTasks("id", "asc").map(({ id }) => id);
       expect(taskIds).toStrictEqual([0, 1, 2, 3, 4]);
     });
 
     test("降順", () => {
-      const taskIds = listTask("id", "desc").map(({ id }) => id);
+      const taskIds = listTasks("id", "desc").map(({ id }) => id);
       expect(taskIds).toStrictEqual([4, 3, 2, 1, 0]);
     });
   });
 
   describe("期限でソート", () => {
     test("昇順", () => {
-      const taskIds = listTask("limit", "asc").map(({ id }) => id);
+      const taskIds = listTasks("limit", "asc").map(({ id }) => id);
       expect(taskIds).toStrictEqual([0, 1, 2, 3, 4]);
     });
 
     test("降順", () => {
-      const taskIds = listTask("limit", "desc").map(({ id }) => id);
+      const taskIds = listTasks("limit", "desc").map(({ id }) => id);
       expect(taskIds).toStrictEqual([4, 3, 2, 1, 0]);
     });
   });
 
   describe("優先度でソート", () => {
     test("昇順", () => {
-      const taskIds = listTask("priority", "asc").map(({ id }) => id);
+      const taskIds = listTasks("priority", "asc").map(({ id }) => id);
       expect(taskIds).toStrictEqual([2, 1, 4, 0, 3]);
     });
 
     test("降順", () => {
-      const taskIds = listTask("priority", "desc").map(({ id }) => id);
+      const taskIds = listTasks("priority", "desc").map(({ id }) => id);
       expect(taskIds).toStrictEqual([0, 3, 1, 4, 2]);
     });
   });

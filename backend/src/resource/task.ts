@@ -1,7 +1,10 @@
-export type TaskPriority = "high" | "middle" | "low";
+// TODO: is there any better solution...?
+
+export const TaskPriorities = ["high", "middle", "low"] as const;
+export type TaskPriority = (typeof TaskPriorities)[number];
 
 /** タスク優先順位の数値 */
-export const taskPriorityLevelMap = {
+export const TaskPriorityLevelMap = {
   high: 100,
   middle: 50,
   low: 0,
