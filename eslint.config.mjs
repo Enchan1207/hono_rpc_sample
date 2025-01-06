@@ -10,15 +10,15 @@ import vueParser from 'vue-eslint-parser';
 
 export default tseslint.config(
   { 
-    name: "global ignore",
+    name: 'global ignore',
     ignores: [
-        '**/dist',
-        "**/node_modules",
+      '**/dist',
+      '**/node_modules',
     ]
   },
   {
-    name: "styling",
-    files: ["**/*.ts", "**/*.vue", "**/*.mjs"],
+    name: 'styling',
+    files: ['**/*.ts', '**/*.vue', '**/*.mjs'],
     plugins: {
       '@stylistic': stylistic,
       '@stylistic/ts': stylisticTs,
@@ -42,14 +42,14 @@ export default tseslint.config(
   // configurations for TypeScript with type checking
   // based on: https://typescript-eslint.io/getting-started/typed-linting
   {
-    name:"common eslint rules",
+    name:'common eslint rules',
     rules: {
       'no-console': 'warn',
       'eqeqeq': ['error', 'always'],
     }
   },
   {
-    name: "backend config",
+    name: 'backend config',
     files: ['backend/**/*.ts'],
     languageOptions: {
       ecmaVersion: 'latest',
@@ -66,7 +66,7 @@ export default tseslint.config(
     ]
   },
 
-    // configurations for Vue
+  // configurations for Vue
   // based on: 
   //  - https://eslint.vuejs.org/user-guide/#example-configuration-with-typescript-eslint-and-prettier
   //  - https://typescript-eslint.io/troubleshooting/faqs/frameworks#i-am-running-into-errors-when-parsing-typescript-in-my-vue-files

@@ -1,6 +1,10 @@
 {
   "name": "hono_rpc_sample",
   "description": "Try RPC feature of Hono",
+  "scripts": {
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  },
   "workspaces": [
     "backend",
     "frontend"
