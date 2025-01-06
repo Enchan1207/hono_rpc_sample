@@ -7,13 +7,18 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import vueParser from 'vue-eslint-parser';
 
-export default tseslint.config(
-  // .eslintignore
-  { ignores: ['dist'] },
 
-  // TODO: unify
-  // configurations for stylistic
+export default tseslint.config(
+  { 
+    name: "global ignore",
+    ignores: [
+        '**/dist',
+        "**/node_modules",
+    ]
+  },
   {
+    name: "styling",
+    files: ["**/*.ts", "**/*.vue", "**/*.mjs"],
     plugins: {
       '@stylistic': stylistic,
       '@stylistic/ts': stylisticTs,
@@ -34,12 +39,39 @@ export default tseslint.config(
     },
   },
 
-  // configurations for Vue
+  // configurations for TypeScript with type checking
+  // based on: https://typescript-eslint.io/getting-started/typed-linting
+  {
+    name:"common eslint rules",
+    rules: {
+      'no-console': 'warn',
+      'eqeqeq': ['error', 'always'],
+    }
+  },
+  {
+    name: "backend config",
+    files: ['backend/**/*.ts'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: globals.node,
+      parser: tseslint.parser,
+      parserOptions: {
+        project: true,
+      },
+    },
+    extends: [
+      eslint.configs.recommended,
+      tseslint.configs.strictTypeChecked,
+    ]
+  },
+
+    // configurations for Vue
   // based on: 
   //  - https://eslint.vuejs.org/user-guide/#example-configuration-with-typescript-eslint-and-prettier
   //  - https://typescript-eslint.io/troubleshooting/faqs/frameworks#i-am-running-into-errors-when-parsing-typescript-in-my-vue-files
   {
-    files: ['**/*.ts', '**/*.vue'],
+    files: ['frontend/**/*.ts', 'frontend/**/*.vue'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -57,12 +89,4 @@ export default tseslint.config(
       pluginVue.configs['flat/recommended'],
     ],
   },
-
-  // TODO: unify
-  {
-    rules: {
-      'no-console': 'warn',
-      'eqeqeq': ['error', 'always'],
-    }
-  }
 );
