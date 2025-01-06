@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "hono": "^4.6.15",
+    "ulid": "^2.3.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
