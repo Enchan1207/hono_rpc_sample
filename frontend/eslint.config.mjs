@@ -11,6 +11,7 @@ export default tseslint.config(
   // .eslintignore
   { ignores: ['dist'] },
 
+  // TODO: unify
   // configurations for stylistic
   {
     plugins: {
@@ -56,7 +57,8 @@ export default tseslint.config(
       pluginVue.configs['flat/recommended'],
     ],
   },
-    
+
+  // TODO: unify
   {
     rules: {
       'no-console': 'warn',
