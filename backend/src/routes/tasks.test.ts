@@ -1,7 +1,7 @@
-import { compare } from '@/logic/compare';
-import { TaskPriorityLevelMap, type Task } from '@/resource/task';
 import { beforeAll, describe, expect, test } from 'vitest';
 import app from './tasks';
+import { compare } from '@/logic/compare';
+import { TaskPriorityLevelMap, type Task } from '@/resource/task';
 
 describe('単一項目の操作', () => {
   let insertedTaskId: Task['id'];

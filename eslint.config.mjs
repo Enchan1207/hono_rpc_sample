@@ -2,6 +2,8 @@
 import eslint from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import stylisticTs from '@stylistic/eslint-plugin-ts';
+import * as importPlugin from 'eslint-plugin-import';
+import unusedImportPlugin from 'eslint-plugin-unused-imports';
 import pluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -15,6 +17,27 @@ export default tseslint.config(
       '**/dist',
       '**/node_modules',
     ]
+  },
+  {
+    name: 'sort imports',
+    plugins: {
+      'import': importPlugin,
+      'unusedImport': unusedImportPlugin
+    },
+    rules:{
+      'import/order': 'warn',
+      'import/no-duplicates': 'warn',
+      'unusedImport/no-unused-imports': 'error',
+      'unusedImport/no-unused-vars': [
+        'warn',
+        {
+          'vars': 'all',
+          'varsIgnorePattern': '^_',
+          'args': 'after-used',
+          'argsIgnorePattern': '^_',
+        },
+      ]
+    }
   },
   {
     name: 'styling',
@@ -42,13 +65,6 @@ export default tseslint.config(
   // configurations for TypeScript with type checking
   // based on: https://typescript-eslint.io/getting-started/typed-linting
   {
-    name:'common eslint rules',
-    rules: {
-      'no-console': 'warn',
-      'eqeqeq': ['error', 'always'],
-    }
-  },
-  {
     name: 'backend config',
     files: ['backend/**/*.ts'],
     languageOptions: {
@@ -63,7 +79,7 @@ export default tseslint.config(
     extends: [
       eslint.configs.recommended,
       tseslint.configs.strictTypeChecked,
-    ]
+    ],
   },
 
   // configurations for Vue
@@ -71,6 +87,7 @@ export default tseslint.config(
   //  - https://eslint.vuejs.org/user-guide/#example-configuration-with-typescript-eslint-and-prettier
   //  - https://typescript-eslint.io/troubleshooting/faqs/frameworks#i-am-running-into-errors-when-parsing-typescript-in-my-vue-files
   {
+    name: 'frontend config',
     files: ['frontend/**/*.ts', 'frontend/**/*.vue'],
     languageOptions: {
       ecmaVersion: 'latest',
@@ -88,5 +105,14 @@ export default tseslint.config(
       tseslint.configs.strict,
       pluginVue.configs['flat/recommended'],
     ],
+  },
+
+  {
+    name:'common rules',
+    rules: {
+      'no-console': 'warn',
+      'eqeqeq': ['error', 'always'],
+      '@typescript-eslint/no-unused-vars': 'off',
+    }
   },
 );

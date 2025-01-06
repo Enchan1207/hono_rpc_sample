@@ -1,7 +1,7 @@
-import type { Task } from '@/resource/task';
 import { ulid } from 'ulid';
 import { beforeAll, describe, expect, test } from 'vitest';
 import { deleteTask, getTask, listTasks, saveTask } from './taskRepository';
+import type { Task } from '@/resource/task';
 
 describe('単一項目のCRUD', () => {
   let storedTaskId: Task['id'];
