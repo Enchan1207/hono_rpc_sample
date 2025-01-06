@@ -3,33 +3,33 @@ import {
   getTask,
   listTasks,
   saveTask,
-} from "@/repository/taskRepository";
-import { TaskPriorities, type Task } from "@/resource/task";
-import { zValidator } from "@hono/zod-validator";
-import { Hono } from "hono";
-import { ulid } from "ulid";
-import { z } from "zod";
+} from '@/repository/taskRepository';
+import { TaskPriorities, type Task } from '@/resource/task';
+import { zValidator } from '@hono/zod-validator';
+import { Hono } from 'hono';
+import { ulid } from 'ulid';
+import { z } from 'zod';
 
 const app = new Hono()
   .get(
-    "/",
+    '/',
     zValidator(
-      "query",
+      'query',
       z.object({
-        key: z.enum(["id", "limit", "priority"]).default("limit"),
-        order: z.enum(["asc", "desc"]).default("desc"),
+        key: z.enum(['id', 'limit', 'priority']).default('limit'),
+        order: z.enum(['asc', 'desc']).default('desc'),
       })
     ),
     (c) => {
-      const { key, order } = c.req.valid("query");
+      const { key, order } = c.req.valid('query');
       const items = listTasks(key, order);
       return c.json(items);
     }
   )
   .post(
-    "/",
+    '/',
     zValidator(
-      "json",
+      'json',
       z.object({
         title: z.string(),
         limit: z.coerce.date().default(new Date()),
@@ -38,21 +38,21 @@ const app = new Hono()
       })
     ),
     (c) => {
-      const taskData = c.req.valid("json");
+      const taskData = c.req.valid('json');
       const insertResult = saveTask({ id: ulid(), ...taskData });
       return c.json(insertResult, 201);
     }
   )
   .get(
-    "/:id",
+    '/:id',
     zValidator(
-      "param",
+      'param',
       z.object({
         id: z.string().ulid(),
       })
     ),
     (c) => {
-      const id = c.req.valid("param").id;
+      const id = c.req.valid('param').id;
       const storedTask = getTask(id);
       if (storedTask === undefined) {
         return c.notFound();
@@ -61,9 +61,9 @@ const app = new Hono()
     }
   )
   .put(
-    "/:id",
+    '/:id',
     zValidator(
-      "json",
+      'json',
       z.object({
         title: z.string().optional(),
         limit: z.coerce.date().optional(),
@@ -73,7 +73,7 @@ const app = new Hono()
     ),
     (c) => {
       // paramとjsonとを同時にvalidateできないか?
-      const id = z.string().ulid().safeParse(c.req.param("id")).data;
+      const id = z.string().ulid().safeParse(c.req.param('id')).data;
       if (id === undefined) {
         return c.notFound();
       }
@@ -83,22 +83,22 @@ const app = new Hono()
         return c.notFound();
       }
 
-      const taskData = c.req.valid("json");
+      const taskData = c.req.valid('json');
       const updatedTask: Task = { ...storedTask, ...taskData };
       const updateResult = saveTask(updatedTask);
       return c.json(updateResult, 200);
     }
   )
   .delete(
-    "/:id",
+    '/:id',
     zValidator(
-      "param",
+      'param',
       z.object({
         id: z.string().ulid(),
       })
     ),
     (c) => {
-      const id = c.req.valid("param").id;
+      const id = c.req.valid('param').id;
       if (getTask(id) === undefined) {
         return c.notFound();
       }

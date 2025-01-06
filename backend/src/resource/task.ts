@@ -1,4 +1,4 @@
-export const TaskPriorities = ["high", "middle", "low"] as const;
+export const TaskPriorities = ['high', 'middle', 'low'] as const;
 export type TaskPriority = (typeof TaskPriorities)[number];
 
 /** タスク優先順位の数値 */

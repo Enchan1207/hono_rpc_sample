@@ -1,10 +1,10 @@
-import { compare } from "@/logic/compare";
-import { TaskPriorityLevelMap, type Task } from "@/resource/task";
+import { compare } from '@/logic/compare';
+import { TaskPriorityLevelMap, type Task } from '@/resource/task';
 
 // in-memory storage
-const tasks = new Map<Task["id"], Task>();
+const tasks = new Map<Task['id'], Task>();
 
-export const getTask = (id: Task["id"]): Task | undefined => {
+export const getTask = (id: Task['id']): Task | undefined => {
   return tasks.get(id);
 };
 
@@ -13,7 +13,7 @@ export const saveTask = (newTask: Task): Task => {
   return newTask;
 };
 
-export const deleteTask = (id: Task["id"]): Task | undefined => {
+export const deleteTask = (id: Task['id']): Task | undefined => {
   const storedTask = tasks.get(id);
   if (storedTask === undefined) {
     return undefined;
@@ -22,7 +22,7 @@ export const deleteTask = (id: Task["id"]): Task | undefined => {
   return storedTask;
 };
 
-export type TaskListItem = Omit<Task, "description">;
+export type TaskListItem = Omit<Task, 'description'>;
 
 /**
  * 条件をもとにタスクリストのソート関数を構築する
@@ -31,31 +31,31 @@ export type TaskListItem = Omit<Task, "description">;
  * @returns ソート関数
  */
 const buildTaskListItemSortFunction = (
-  sortBy: keyof Pick<Task, "id" | "limit" | "priority">,
-  order: "asc" | "desc"
+  sortBy: keyof Pick<Task, 'id' | 'limit' | 'priority'>,
+  order: 'asc' | 'desc'
 ): ((lhs: TaskListItem, rhs: TaskListItem) => number) => {
-  if (sortBy === "limit") {
+  if (sortBy === 'limit') {
     // 同じ期限ならIDで比較する
     return compare<TaskListItem>(
       sortBy,
       order,
-      compare<TaskListItem>("id", order)
+      compare<TaskListItem>('id', order)
     );
   }
 
-  if (sortBy === "priority") {
+  if (sortBy === 'priority') {
     return (lhs, rhs) => {
       const lpr = lhs.priority;
       const rpr = rhs.priority;
       if (lpr === rpr) {
         // 同じ優先度ならIDで比較する
-        return compare<TaskListItem>("id", order)(lhs, rhs);
+        return compare<TaskListItem>('id', order)(lhs, rhs);
       }
 
       // 優先度は数値に変換して比較する
       const lprLevel = TaskPriorityLevelMap[lpr];
       const rprLevel = TaskPriorityLevelMap[rpr];
-      const direction = order === "asc" ? 1 : -1;
+      const direction = order === 'asc' ? 1 : -1;
       return (lprLevel > rprLevel ? 1 : -1) * direction;
     };
   }
@@ -64,8 +64,8 @@ const buildTaskListItemSortFunction = (
 };
 
 export const listTasks = (
-  sortBy: keyof Pick<Task, "id" | "limit" | "priority">,
-  order: "asc" | "desc"
+  sortBy: keyof Pick<Task, 'id' | 'limit' | 'priority'>,
+  order: 'asc' | 'desc'
 ): TaskListItem[] => {
   const taskListData: TaskListItem[] = Array.from(tasks.values()).map(
     ({ id, title, limit, priority }) => ({
