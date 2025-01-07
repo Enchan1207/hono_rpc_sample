@@ -5,7 +5,9 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "noEmit": true,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
     "moduleResolution": "bundler",
@@ -15,6 +17,7 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "composite": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "paths": {

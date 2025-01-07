@@ -19,10 +19,12 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@backend/*": ["../backend/src/*"]
     }
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"],
+  "references": [{ "path": "../backend" }],
   "compileOnSave": false
 }
