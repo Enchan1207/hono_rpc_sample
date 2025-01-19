@@ -109,14 +109,18 @@ export default tseslint.config(
 
   {
     name:'common rules',
+    files: ['**/*.ts', '**/*.vue'],
+    plugins:{
+      '@typescript-eslint': tseslint.plugin,
+    },
     rules: {
       'no-console': 'warn',
       'eqeqeq': ['error', 'always'],
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/restrict-template-expressions':[
-        "error", 
+        'error', 
         {
-          "allowNumber": true
+          'allowNumber': true
         }
       ]
     }
