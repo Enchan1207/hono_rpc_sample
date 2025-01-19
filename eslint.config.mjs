@@ -113,6 +113,12 @@ export default tseslint.config(
       'no-console': 'warn',
       'eqeqeq': ['error', 'always'],
       '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/restrict-template-expressions':[
+        "error", 
+        {
+          "allowNumber": true
+        }
+      ]
     }
   },
 );

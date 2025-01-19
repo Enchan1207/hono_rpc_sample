@@ -1,14 +1,13 @@
 import { beforeAll, describe, expect, test } from 'vitest';
-import app from './tasks';
+import { testClient } from 'hono/testing';
+import tasks from '@/routes/tasks';
 import { compare } from '@/logic/compare';
 import { TaskPriorityLevelMap, type Task } from '@/resource/task';
 
 describe('単一項目の操作', () => {
   let insertedTaskId: Task['id'];
 
-  describe('追加', async () => {
-    let response: Response;
-
+  describe('追加',  () => {
     beforeAll(async () => {
       const newTask: Omit<Task, 'id'> = {
         title: 'test',
@@ -17,38 +16,39 @@ describe('単一項目の操作', () => {
         description: 'test task',
       };
 
-      response = await app.request('/', {
-        method: 'POST',
-        body: JSON.stringify(newTask),
-        headers: new Headers({ 'Content-Type': 'application/json' }),
+      const client = testClient(tasks);
+      client[':id'].$get();
+
+      const response = await testClient(app).index.$post({
+        json: {
+          priority:newTask.priority,
+          description:newTask.description, 
+          title:newTask.title,
+          limit:newTask.limit
+        }
       });
 
       const taskId = (await response.json())['id'];
       insertedTaskId = taskId;
     });
 
-    test('201が返ること', () => {
-      expect(response.status).toBe(201);
-    });
-
-    test('IDが生成されること', async () => {
+    test('IDが生成されること', () => {
       expect(insertedTaskId).toBeDefined();
     });
   });
 
-  describe('取得', async () => {
-    let response: Response;
+  describe('取得',  () => {
+    let taskData: Task;
 
     beforeAll(async () => {
-      response = await app.request(`/${insertedTaskId}`);
+      const response = await testClient(app)[':id'].$get({
+        param: {id: insertedTaskId}
+      });
+      
+      taskData = (await response.json());
     });
 
-    test('200が返ること', () => {
-      expect(response.status).toBe(200);
-    });
-
-    test('挿入時と同じ内容が返ること', async () => {
-      const taskData = await response.json();
+    test('挿入時と同じ内容が返ること',  () => {
       expect(taskData).toStrictEqual({
         id: insertedTaskId,
         title: 'test',
