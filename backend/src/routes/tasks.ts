@@ -56,7 +56,10 @@ const app = new Hono()
       const id = c.req.valid('param').id
       const storedTask = getTask(id)
       if (storedTask === undefined) {
-        return c.notFound()
+        return c.json({
+          error: `no such task with id ${id}`,
+          ok: false,
+        }, 404)
       }
       return c.json(storedTask)
     },
@@ -76,12 +79,18 @@ const app = new Hono()
       // paramとjsonとを同時にvalidateできないか?
       const id = z.string().ulid().safeParse(c.req.param('id')).data
       if (id === undefined) {
-        return c.notFound()
+        return c.json({
+          error: 'Please specify task id',
+          ok: false,
+        }, 400)
       }
 
       const storedTask = getTask(id)
       if (storedTask === undefined) {
-        return c.notFound()
+        return c.json({
+          error: `no such task with id ${id}`,
+          ok: false,
+        }, 404)
       }
 
       const taskData = c.req.valid('json')
@@ -102,7 +111,10 @@ const app = new Hono()
     (c) => {
       const id = c.req.valid('param').id
       if (getTask(id) === undefined) {
-        return c.notFound()
+        return c.json({
+          error: `no such task with id ${id}`,
+          ok: false,
+        }, 404)
       }
       const deletedTask = deleteTask(id)
       return c.json(deletedTask, 200)
