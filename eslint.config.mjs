@@ -10,44 +10,44 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 import vueParser from 'vue-eslint-parser'
 
-
 export default tseslint.config(
   // MARK: - Base configurations
 
-  { 
+  {
     name: 'global ignore',
     ignores: [
       '**/dist',
       '**/node_modules',
-    ]
+    ],
   },
-  
+
+  // MARK: - Shared configurations
+  eslint.configs.recommended,
+  stylistic.configs.customize({ flat: true }),
+
   // configurations for TypeScript with type checking
   // based on: https://typescript-eslint.io/getting-started/typed-linting
   {
-    name: 'backend config',
+    name: 'backend',
     files: ['backend/**/*.ts'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: globals.node,
       parser: tseslint.parser,
-      parserOptions: {
-        project: true,
-      },
+      parserOptions: { project: true },
     },
     extends: [
-      eslint.configs.recommended,
       tseslint.configs.strictTypeChecked,
     ],
   },
 
   // configurations for Vue
-  // based on: 
+  // based on:
   //  - https://eslint.vuejs.org/user-guide/#example-configuration-with-typescript-eslint-and-prettier
   //  - https://typescript-eslint.io/troubleshooting/faqs/frameworks#i-am-running-into-errors-when-parsing-typescript-in-my-vue-files
   {
-    name: 'frontend config',
+    name: 'frontend',
     files: ['frontend/**/*.ts', 'frontend/**/*.vue'],
     languageOptions: {
       ecmaVersion: 'latest',
@@ -61,10 +61,16 @@ export default tseslint.config(
       },
     },
     extends: [
-      eslint.configs.recommended,
       tseslint.configs.strict,
       vuePlugin.configs['flat/recommended'],
     ],
+  },
+
+  // configurations for config files
+  {
+    name: 'frontend config files',
+    files: ['**/*.config.{j,mj,t.mt}s'],
+    languageOptions: { globals: globals.node },
   },
 
   // MARK: - Plugin settings
@@ -75,32 +81,31 @@ export default tseslint.config(
       'import': importPlugin,
       'unused-import': unusedImportsPlugin,
     },
-    rules:{
+    rules: {
       'import/order': 'warn',
       'import/no-duplicates': 'warn',
       'unused-import/no-unused-imports': 'error',
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-import/no-unused-vars': [
-        'warn',
+        'error',
         {
-          'vars': 'all',
-          'varsIgnorePattern': '^_',
-          'args': 'after-used',
-          'argsIgnorePattern': '^_',
+          vars: 'all',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          argsIgnorePattern: '^_',
         },
-      ]
-    }
+      ],
+    },
   },
 
   {
-    name: 'styling',
+    name: 'custom styling',
     files: ['**/*.ts', '**/*.vue', '**/*.mjs'],
     plugins: {
       '@stylistic': stylistic,
       '@stylistic/ts': stylisticTs,
     },
     rules: {
-      '@stylistic/indent': ['error', 2],
       '@stylistic/max-len': [
         'error',
         {
@@ -108,46 +113,53 @@ export default tseslint.config(
           ignoreUrls: true,
         },
       ],
-      '@stylistic/quotes': ['error', 'single'],
-      '@stylistic/semi': ['error', 'never'],
-      '@stylistic/space-infix-ops': 'error',
-      '@stylistic/ts/space-infix-ops': 'error',
+      '@stylistic/comma-dangle': [
+        'error',
+        {
+          arrays: 'always-multiline',
+          objects: 'always-multiline',
+          imports: 'always-multiline',
+          exports: 'always-multiline',
+          functions: 'always-multiline',
+        },
+      ],
+      '@stylistic/object-property-newline': 'error',
+      '@stylistic/padding-line-between-statements': 'error',
+      '@stylistic/object-curly-newline': ['error',
+        {
+          multiline: true,
+          minProperties: 3,
+        },
+      ],
+      '@stylistic/ts/no-extra-parens': 'error',
     },
   },
 
   {
     name: 'frontend rules',
-    files: ['frontend/**/*.ts','frontend/**/*.vue'],
-    rules:{
-      'no-console': 'warn',
-    }
+    files: ['frontend/**/*.ts', 'frontend/**/*.vue'],
+    rules: { 'no-console': 'warn' },
   },
 
   {
     name: 'backend rules',
-    files: ['backend/**/*.ts','backend/**/*.vue'],
-    rules:{
-
-    }
+    files: ['backend/**/*.ts', 'backend/**/*.vue'],
+    rules: {}, // there is no rules for backend yet...
   },
 
   {
-    name:'common rules',
+    name: 'common rules',
     files: ['**/*.ts', '**/*.vue'],
     rules: {
       'eqeqeq': ['error', 'always'],
-      '@typescript-eslint/restrict-template-expressions':[
-        'error', 
-        {
-          'allowNumber': true
-        }
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        { allowNumber: true },
       ],
       '@typescript-eslint/consistent-type-imports': [
         'error',
-        {
-          prefer: 'type-imports',
-        },
+        { prefer: 'type-imports' },
       ],
-    }
+    },
   },
 )
