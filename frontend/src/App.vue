@@ -13,21 +13,23 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import type { TaskListItem } from '@backend/repository/taskRepository';
-import { client } from './client';
+import { onMounted, ref } from 'vue'
+import type { TaskListItem } from '@backend/repository/taskRepository'
+import { client } from './client'
 
-const tasks = ref<TaskListItem[]>([]);
+const tasks = ref<TaskListItem[]>([])
 
-onMounted(async()=>{
+onMounted(async () => {
   // TODO: 双方プリミティブ型でやりとりした方がよいのでは?
-  const tasksData = await (await client.task.$get({query:{}})).json();
-  tasks.value = tasksData.map(({id, title, limit, priority})=>({
+  const tasksData = await (await client.task.$get({ query: {} })).json()
+  tasks.value = tasksData.map(({
+    id, title, limit, priority,
+  }) => ({
     id,
     title,
     priority,
     limit: new Date(limit),
-  }));
-});
+  }))
+})
 
 </script>
