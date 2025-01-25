@@ -8,7 +8,7 @@
       <ul>
         <li>title: {{ task.title }}</li>
         <li>priority: {{ task.priority }}</li>
-        <li>due: {{ task.limit.toISOString() }}</li>
+        <li>due: {{ new Date(task.limit).toISOString() }}</li>
         <li>
           <button @click="emits('showDetail', task.id)">
             show details

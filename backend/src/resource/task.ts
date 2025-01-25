@@ -12,8 +12,7 @@ export const TaskPriorityLevelMap = {
 export type Task = {
   id: string
   title: string
-  // TODO: use date-processing package
-  limit: Date
+  limit: number
   priority: TaskPriority
   description: string
 }

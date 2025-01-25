@@ -57,13 +57,13 @@ const emits = defineEmits<{ (e: 'submit', task: Omit<Task, 'id'>): void }>()
 const newTask = ref<Omit<Task, 'id'>>({
   title: '',
   priority: 'middle',
-  limit: new Date(),
+  limit: new Date().getTime(),
   description: '',
 })
 
 const limitDateString = ref<string>('')
 watch(limitDateString, () => {
-  newTask.value.limit = new Date(limitDateString.value)
+  newTask.value.limit = new Date(limitDateString.value).getTime()
 })
 
 </script>

@@ -27,12 +27,8 @@ onMounted(async () => {
 })
 
 const loadItem = async () => {
-  // TODO: 双方プリミティブ型でやりとりした方がよいのでは?
   const tasksData = await (await client.task.$get({ query: {} })).json()
-  tasks.value = tasksData.map(task => ({
-    ...task,
-    limit: new Date(task.limit),
-  }))
+  tasks.value = tasksData
 }
 
 // MARK: - Event handlers

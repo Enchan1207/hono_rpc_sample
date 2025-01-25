@@ -33,7 +33,7 @@ const app = new Hono()
       'json',
       z.object({
         title: z.string(),
-        limit: z.coerce.date().default(new Date()),
+        limit: z.number(),
         priority: z.enum(TaskPriorities),
         description: z.string(),
       }),
@@ -71,7 +71,7 @@ const app = new Hono()
       'json',
       z.object({
         title: z.string().optional(),
-        limit: z.coerce.date().optional(),
+        limit: z.number(),
         priority: z.enum(TaskPriorities).optional(),
         description: z.string().optional(),
       }),
