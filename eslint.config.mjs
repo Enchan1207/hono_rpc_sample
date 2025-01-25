@@ -28,6 +28,7 @@ export default tseslint.config(
       'import/order': 'warn',
       'import/no-duplicates': 'warn',
       'unusedImport/no-unused-imports': 'error',
+      'no-unused-vars': 'off',
       'unusedImport/no-unused-vars': [
         'warn',
         {
@@ -108,15 +109,21 @@ export default tseslint.config(
   },
 
   {
+    name: 'frontend rules',
+    files: ['frontend/**/*.ts','frontend/**/*.vue'],
+    rules:{
+      'no-console': 'warn',
+    }
+  },
+
+  {
     name:'common rules',
     files: ['**/*.ts', '**/*.vue'],
     plugins:{
       '@typescript-eslint': tseslint.plugin,
     },
     rules: {
-      'no-console': 'warn',
       'eqeqeq': ['error', 'always'],
-      '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/restrict-template-expressions':[
         'error', 
         {
