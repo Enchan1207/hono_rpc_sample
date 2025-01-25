@@ -84,6 +84,7 @@ export default tseslint.config(
     rules: {
       'import/order': 'warn',
       'import/no-duplicates': 'warn',
+      'import/consistent-type-specifier-style': 'error',
       'unused-import/no-unused-imports': 'error',
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-import/no-unused-vars': [
