@@ -1,5 +1,6 @@
 import { compare } from '@/logic/compare'
-import { TaskPriorityLevelMap, type Task } from '@/resource/task'
+import { TaskPriorityLevelMap } from '@/resource/task'
+import type { Task } from '@/resource/task'
 
 // in-memory storage
 const tasks = new Map<Task['id'], Task>()

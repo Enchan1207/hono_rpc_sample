@@ -5,7 +5,8 @@ import {
 import { testClient } from 'hono/testing'
 import tasks from '@/routes/tasks'
 import { compare } from '@/logic/compare'
-import { TaskPriorityLevelMap, type Task } from '@/resource/task'
+import { TaskPriorityLevelMap } from '@/resource/task'
+import type { Task } from '@/resource/task'
 
 describe('単一項目の操作', () => {
   let insertedTaskId: Task['id']

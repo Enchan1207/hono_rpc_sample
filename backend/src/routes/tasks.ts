@@ -2,7 +2,8 @@ import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { ulid } from 'ulid'
 import { z } from 'zod'
-import { TaskPriorities, type Task } from '@/resource/task'
+import { TaskPriorities } from '@/resource/task'
+import type { Task } from '@/resource/task'
 import {
   deleteTask,
   getTask,
