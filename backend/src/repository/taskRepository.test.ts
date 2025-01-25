@@ -1,6 +1,6 @@
 import { ulid } from 'ulid'
 import {
-  beforeAll, describe, expect, test,
+  assert, beforeAll, describe, expect, test,
 } from 'vitest'
 import {
   deleteTask, getTask, listTasks, saveTask,
@@ -29,7 +29,8 @@ describe('単一項目のCRUD', () => {
   })
 
   test('既存の項目を更新できること', () => {
-    const storedTask = getTask(storedTaskId)!
+    const storedTask = getTask(storedTaskId)
+    assert(storedTask !== undefined)
     const updated: Task = {
       ...storedTask,
       title: 'Updated',
@@ -43,7 +44,8 @@ describe('単一項目のCRUD', () => {
   })
 
   test('項目を削除できること', () => {
-    const deletedTask = deleteTask(storedTaskId)!
+    const deletedTask = deleteTask(storedTaskId)
+    assert(deletedTask !== undefined)
     expect(getTask(deletedTask.id)).toBeUndefined()
   })
 })
