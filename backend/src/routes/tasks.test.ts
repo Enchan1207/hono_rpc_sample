@@ -52,7 +52,7 @@ describe('単一項目の操作', () => {
     expect(taskData).toStrictEqual({
       id: insertedTaskId,
       title: 'test',
-      limit: '2025-01-01T00:00:00.000Z',
+      limit: new Date('2025-01-01T00:00:00.000Z'),
       priority: 'high',
       description: 'test task',
     })
@@ -97,17 +97,10 @@ describe('単一項目の操作', () => {
   })
 
   describe('削除', () => {
-    let response: Response
-
     beforeAll(async () => {
       const request = await testClient(tasks)[':id']
         .$delete({ param: { id: insertedTaskId } })
       assert(request.ok)
-      response = await request.json()
-    })
-
-    test('200が返ること', () => {
-      expect(response.status).toBe(200)
     })
 
     test('項目が削除されていること', async () => {
