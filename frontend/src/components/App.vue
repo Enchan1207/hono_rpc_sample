@@ -16,9 +16,9 @@
 import { onMounted, ref } from 'vue'
 import type { TaskListItem } from '@backend/repository/taskRepository'
 import type { Task } from '@backend/resource/task'
-import { client } from './client'
 import TaskListComponent from './TaskListComponent.vue'
 import TaskRegisterForm from './TaskRegisterForm.vue'
+import { client } from '@/client'
 
 const tasks = ref<TaskListItem[]>([])
 
