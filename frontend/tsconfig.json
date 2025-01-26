@@ -20,7 +20,7 @@
     "verbatimModuleSyntax": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@backend/*": ["../backend/src/*"]
+      "@routes/*": ["../backend/src/routes/*"]
     }
   },
   "include": ["src/**/*"],

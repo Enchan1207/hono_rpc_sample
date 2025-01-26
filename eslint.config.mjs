@@ -149,6 +149,13 @@ export default tseslint.config(
             message: 'Use @/logic/dayjs instead.',
           },
         ],
+        patterns: [
+          {
+            group: ['@routes/**'],
+            message: 'dont use backend types',
+            allowTypeImports: false,
+          },
+        ],
       }],
     },
   },
