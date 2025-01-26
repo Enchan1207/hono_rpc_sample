@@ -1,6 +1,17 @@
 <template>
   <h2>Hono RPC sample</h2>
 
+  <RouterLink to="/tasks">
+    go to tasks
+  </RouterLink>
+  <RouterLink to="/tasks/1">
+    go to tasks
+  </RouterLink>
+  <RouterLink to="/tasks/new">
+    go to tasks
+  </RouterLink>
+  <RouterView />
+
   <TaskRegisterForm @submit="onSubmit" />
 
   <hr>
@@ -14,8 +25,9 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import TaskListComponent from './TaskListComponent.vue'
-import TaskRegisterForm from './TaskRegisterForm.vue'
+import { RouterLink, RouterView } from 'vue-router'
+import TaskListComponent from '@/components/TaskListComponent.vue'
+import TaskRegisterForm from '@/components/TaskRegisterForm.vue'
 import type { Task, TaskListItem } from '@/entities/task'
 import {
   addTask, deleteTask, getTask, listTask,

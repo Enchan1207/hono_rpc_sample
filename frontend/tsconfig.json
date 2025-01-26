@@ -21,9 +21,15 @@
     "paths": {
       "@/*": ["./src/*"],
       "@routes/*": ["../backend/src/routes/*"]
-    }
+    },
+    "types": [
+      "unplugin-vue-router/client"
+    ]
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*",
+    "./typed-router.d.ts"
+  ],
   "exclude": ["dist", "node_modules"],
   "references": [{ "path": "../backend" }],
   "compileOnSave": false
