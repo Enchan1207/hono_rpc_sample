@@ -1,10 +1,10 @@
 <template>
-  <h2>{{ props.task.title }}</h2>
+  <h2>{{ task.title }}</h2>
   <ul>
-    <li>Priority: {{ props.task.priority }}</li>
-    <li>Description: {{ props.task.description }}</li>
+    <li>Priority: {{ task.priority }}</li>
+    <li>Description: {{ task.description }}</li>
     <li :class="limitElementClass">
-      Limit: {{ props.task.limit.fromNow() }}
+      Limit: {{ task.limit.fromNow() }}
     </li>
   </ul>
 </template>
@@ -19,7 +19,6 @@ const limitElementClass = computed(() => {
   const isOver = props.task.limit.isBefore(dayjs())
   return isOver ? 'over' : ''
 })
-
 </script>
 
 <style>

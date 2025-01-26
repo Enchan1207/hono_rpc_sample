@@ -21,7 +21,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useTaskData } from '@/composables/useTaskData'
 import TaskDetail from '@/components/TaskDetail.vue'
 
-const route = useRoute('/tasks/[id]')
+const route = useRoute<'/tasks/[id]'>()
 const router = useRouter()
 
 const {
