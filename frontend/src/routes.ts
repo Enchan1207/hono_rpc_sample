@@ -1,7 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { routes } from 'vue-router/auto-routes'
+import { routes as generatedRoutes } from 'vue-router/auto-routes'
 
 export const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes: [
+    {
+      path: '/',
+      redirect: '/tasks',
+    },
+    ...generatedRoutes,
+  ],
 })
