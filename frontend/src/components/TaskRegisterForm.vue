@@ -49,21 +49,22 @@
 </template>
 
 <script setup lang="ts">
-import type { Task } from '@backend/resource/task'
 import { ref, watch } from 'vue'
+import type { Task } from '@/entities/task'
+import dayjs from '@/logic/dayjs'
 
 const emits = defineEmits<{ (e: 'submit', task: Omit<Task, 'id'>): void }>()
 
 const newTask = ref<Omit<Task, 'id'>>({
   title: '',
   priority: 'middle',
-  limit: new Date().getTime(),
+  limit: dayjs(),
   description: '',
 })
 
 const limitDateString = ref<string>('')
 watch(limitDateString, () => {
-  newTask.value.limit = new Date(limitDateString.value).getTime()
+  newTask.value.limit = dayjs(limitDateString.value)
 })
 
 </script>

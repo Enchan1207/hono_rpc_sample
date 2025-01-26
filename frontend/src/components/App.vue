@@ -14,11 +14,12 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import type { TaskListItem } from '@backend/repository/taskRepository'
-import type { Task } from '@backend/resource/task'
 import TaskListComponent from './TaskListComponent.vue'
 import TaskRegisterForm from './TaskRegisterForm.vue'
-import { client } from '@/client'
+import type { Task, TaskListItem } from '@/entities/task'
+import {
+  addTask, deleteTask, getTask, listTask,
+} from '@/repositories/taskRepository'
 
 const tasks = ref<TaskListItem[]>([])
 
@@ -27,26 +28,20 @@ onMounted(async () => {
 })
 
 const loadItem = async () => {
-  const tasksData = await (await client.task.$get({ query: {} })).json()
-  tasks.value = tasksData
+  tasks.value = await listTask({})
 }
 
 // MARK: - Event handlers
 
 const onClickDetail = async (id: TaskListItem['id']) => {
-  const response = await client.task[':id'].$get({ param: { id } })
-  if (!response.ok) {
-    alert('Failed to get details of task')
-    return
-  }
-  const task = await response.json()
-  alert(task.description)
+  const task = await getTask(id)
+  alert(task?.description ?? 'Failed to fetch')
 }
 
 const onClickDelete = async (id: TaskListItem['id']) => {
-  const response = await client.task[':id'].$delete({ param: { id } })
-  if (!response.ok) {
-    alert('Failed to delete task')
+  const deleted = await deleteTask(id)
+  if (deleted === undefined) {
+    alert('Failed to delete')
     return
   }
 
@@ -54,12 +49,7 @@ const onClickDelete = async (id: TaskListItem['id']) => {
 }
 
 const onSubmit = async (task: Omit<Task, 'id'>) => {
-  const response = await client.task.$post({ json: task })
-  if (!response.ok) {
-    alert('Failed to register new task')
-    return
-  }
-
+  await addTask(task)
   await loadItem()
 }
 
