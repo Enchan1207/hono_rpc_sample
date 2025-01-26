@@ -1,0 +1,24 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "backend server",
+			"type": "npm",
+			"script": "dev",
+			"problemMatcher": [],
+			"presentation": {
+				"group": "server",
+				"echo": false,
+				"reveal": "never",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": true
+			},
+			"icon": {
+				"color": "terminal.ansiBlue",
+				"id": "server"
+			}
+		}
+	]
+}

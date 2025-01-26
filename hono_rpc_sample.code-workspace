@@ -2,6 +2,7 @@
   "folders": [
     { "path": "frontend" },
     { "path": "backend" },
+    { "path": ".github/workflows", "name": "actions" },
     { "path": ".", "name": "(root)" }
   ],
   "settings": {
@@ -29,7 +30,8 @@
     },
     "[vue]": {
       "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-    }
+    },
+    "npm.packageManager": "npm"
   },
   "extensions": {
     "recommendations": ["dbaeumer.vscode-eslint"]

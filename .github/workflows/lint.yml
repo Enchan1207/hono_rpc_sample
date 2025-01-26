@@ -1,0 +1,27 @@
+name: lint
+on:
+  push:
+    paths:
+      - 'frontend/**'
+      - 'backend/**'
+      - './package.json'
+      - './eslint.config.mjs'
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: install
+        run: npm i
+
+      - name: lint
+        run: npm run lint
