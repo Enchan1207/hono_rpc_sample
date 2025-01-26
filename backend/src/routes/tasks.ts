@@ -2,14 +2,14 @@ import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { ulid } from 'ulid'
 import { z } from 'zod'
-import { TaskPriorities } from '@/resource/task'
-import type { Task } from '@/resource/task'
+import { TaskPriorities } from '@/entities/task'
+import type { Task } from '@/entities/task'
 import {
   deleteTask,
   getTask,
   listTasks,
   saveTask,
-} from '@/repository/taskRepository'
+} from '@/repositories/taskRepository'
 
 const app = new Hono()
   .get(
@@ -33,18 +33,18 @@ const app = new Hono()
       'json',
       z.object({
         title: z.string(),
-        limit: z.coerce.date().default(new Date()),
+        limit: z.number(),
         priority: z.enum(TaskPriorities),
         description: z.string(),
       }),
     ),
     (c) => {
       const taskData = c.req.valid('json')
-      const insertResult = saveTask({
+      const created = saveTask({
         id: ulid(),
         ...taskData,
       })
-      return c.json(insertResult, 201)
+      return c.json(created, 201)
     },
   )
   .get(
@@ -55,14 +55,14 @@ const app = new Hono()
     ),
     (c) => {
       const id = c.req.valid('param').id
-      const storedTask = getTask(id)
-      if (storedTask === undefined) {
+      const stored = getTask(id)
+      if (stored === undefined) {
         return c.json({
           error: `no such task with id ${id}`,
           ok: false,
         }, 404)
       }
-      return c.json(storedTask)
+      return c.json(stored)
     },
   )
   .put(
@@ -71,7 +71,7 @@ const app = new Hono()
       'json',
       z.object({
         title: z.string().optional(),
-        limit: z.coerce.date().optional(),
+        limit: z.number().optional(),
         priority: z.enum(TaskPriorities).optional(),
         description: z.string().optional(),
       }),
@@ -95,11 +95,11 @@ const app = new Hono()
       }
 
       const taskData = c.req.valid('json')
-      const updatedTask: Task = {
+      const updated: Task = {
         ...storedTask,
         ...taskData,
       }
-      const updateResult = saveTask(updatedTask)
+      const updateResult = saveTask(updated)
       return c.json(updateResult, 200)
     },
   )
@@ -111,14 +111,14 @@ const app = new Hono()
     ),
     (c) => {
       const id = c.req.valid('param').id
-      if (getTask(id) === undefined) {
+      const deleted = deleteTask(id)
+      if (deleted === undefined) {
         return c.json({
           error: `no such task with id ${id}`,
           ok: false,
         }, 404)
       }
-      const deletedTask = deleteTask(id)
-      return c.json(deletedTask, 200)
+      return c.json(deleted, 200)
     },
   )
 

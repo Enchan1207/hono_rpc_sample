@@ -8,7 +8,7 @@
       <ul>
         <li>title: {{ task.title }}</li>
         <li>priority: {{ task.priority }}</li>
-        <li>due: {{ task.limit.toISOString() }}</li>
+        <li>due: {{ task.limit.format() }}</li>
         <li>
           <button @click="emits('showDetail', task.id)">
             show details
@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskListItem } from '@backend/repository/taskRepository'
+import type { TaskListItem } from '@/entities/task'
 
 const props = defineProps<{ tasks: TaskListItem[] }>()
 const emits = defineEmits<{

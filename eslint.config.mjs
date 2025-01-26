@@ -76,7 +76,7 @@ export default tseslint.config(
   // MARK: - Plugin settings
 
   {
-    name: 'sort imports',
+    name: 'import rules',
     plugins: {
       'import': importPlugin,
       'unused-import': unusedImportsPlugin,
@@ -139,7 +139,25 @@ export default tseslint.config(
   {
     name: 'frontend rules',
     files: ['frontend/**/*.ts', 'frontend/**/*.vue'],
-    rules: { 'no-console': 'warn' },
+    rules: {
+      'no-console': 'warn',
+      'no-restricted-imports': 'off',
+      '@typescript-eslint/no-restricted-imports': ['error', {
+        paths: [
+          {
+            name: 'dayjs',
+            message: 'Use @/logic/dayjs instead.',
+          },
+        ],
+        patterns: [
+          {
+            group: ['@routes/**'],
+            message: 'dont use backend types',
+            allowTypeImports: false,
+          },
+        ],
+      }],
+    },
   },
 
   {

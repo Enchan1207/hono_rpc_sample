@@ -5,8 +5,8 @@ import {
 import { testClient } from 'hono/testing'
 import tasks from '@/routes/tasks'
 import { compare } from '@/logic/compare'
-import { TaskPriorityLevelMap } from '@/resource/task'
-import type { Task } from '@/resource/task'
+import { TaskPriorityLevelMap } from '@/entities/task'
+import type { Task } from '@/entities/task'
 
 describe('単一項目の操作', () => {
   let insertedTaskId: Task['id']
@@ -15,7 +15,7 @@ describe('単一項目の操作', () => {
     beforeAll(async () => {
       const newTask: Omit<Task, 'id'> = {
         title: 'test',
-        limit: new Date('2025-01-01T00:00:00.000Z'),
+        limit: new Date('2025-01-01T00:00:00.000Z').getTime(),
         priority: 'high',
         description: 'test task',
       }
@@ -44,16 +44,10 @@ describe('単一項目の操作', () => {
     assert(response.ok)
 
     const task = await response.json()
-    // TODO: use primitive type
-    const taskData = {
-      ...task,
-      limit: new Date(task.limit),
-    }
-
-    expect(taskData).toStrictEqual({
+    expect(task).toStrictEqual({
       id: insertedTaskId,
       title: 'test',
-      limit: new Date('2025-01-01T00:00:00.000Z'),
+      limit: new Date('2025-01-01T00:00:00.000Z').getTime(),
       priority: 'high',
       description: 'test task',
     })
@@ -64,7 +58,6 @@ describe('単一項目の操作', () => {
 
     beforeAll(async () => {
       const updated = {
-        id: insertedTaskId,
         title: 'updated title',
         priority: 'low',
         description: 'test task *updated*',
@@ -90,7 +83,7 @@ describe('単一項目の操作', () => {
       expect(updatedTask).toStrictEqual({
         id: insertedTaskId,
         title: 'updated title',
-        limit: '2025-01-01T00:00:00.000Z',
+        limit: new Date('2025-01-01T00:00:00.000Z').getTime(),
         priority: 'low',
         description: 'test task *updated*',
       })
@@ -119,26 +112,24 @@ describe('項目のリストアップ', () => {
   beforeAll(async () => {
     // ダミータスクを生成して流し込む
     const dummyTaskData: Omit<Task, 'id'>[] = Array.from({ length: 5 }).map(
-      (_, i) => ({
-        title: `Task-${i}`,
-        limit: new Date(`2025-01-01T00:${i.toString().padStart(2, '0')}:00Z`),
-        // 強引!
-        priority: ['high', 'middle', 'low'][i % 3] as Task['priority'],
-        description: '',
-      }),
+      (_, i) => {
+        const hourString = i.toString().padStart(2, '0')
+        const dummyLimit = new Date(`2025-01-01T00:${hourString}:00Z`)
+        return {
+          title: `Task-${i}`,
+          limit: dummyLimit.getTime(),
+          // 強引!
+          priority: ['high', 'middle', 'low'][i % 3] as Task['priority'],
+          description: '',
+        }
+      },
     )
 
     const client = testClient(tasks).index
 
     const requests = dummyTaskData.map(task => client.$post({ json: task }))
     const responses = await Promise.all(requests)
-    const insertedTaskInfos = await Promise.all(responses.map(r => r.json()))
-
-    // TODO: use primitive type
-    insertedTasks = insertedTaskInfos.map(task => ({
-      ...task,
-      limit: new Date(task.limit),
-    }))
+    insertedTasks = await Promise.all(responses.map(r => r.json()))
   })
 
   // NOTE: ロジックの詳細はここでは確認しない
