@@ -1,6 +1,4 @@
 <template>
-  <h2>Register new task</h2>
-
   <form @submit.prevent="emits('submit', newTask)">
     <label for="title">タスク名</label>
     <input

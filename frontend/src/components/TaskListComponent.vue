@@ -1,5 +1,4 @@
 <template>
-  <h2>Registered tasks</h2>
   <ul>
     <li
       v-for="task in props.tasks"
