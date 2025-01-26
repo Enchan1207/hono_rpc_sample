@@ -22,7 +22,7 @@ const limitElementClass = computed(() => {
 
 </script>
 
-<style scoped>
+<style>
 .over{
     color: red;
     font-weight: bold;

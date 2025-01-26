@@ -1,9 +1,9 @@
 <template>
   <h2>Registered tasks</h2>
   <hr>
-  <TaskListComponent
+  <TaskList
     :tasks="tasks"
-    @show-detail="onClickDetail"
+    @detail="onClickDetail"
     @delete="onClickDelete"
   />
   <hr>
@@ -17,7 +17,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { TaskListItem } from '@/entities/task'
 import { deleteTask, listTask } from '@/repositories/taskRepository'
-import TaskListComponent from '@/components/TaskListComponent.vue'
+import TaskList from '@/components/TaskList.vue'
 
 const tasks = ref<TaskListItem[]>([])
 const router = useRouter()
