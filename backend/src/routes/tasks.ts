@@ -2,14 +2,14 @@ import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { ulid } from 'ulid'
 import { z } from 'zod'
-import { TaskPriorities } from '@/resource/task'
-import type { Task } from '@/resource/task'
+import { TaskPriorities } from '@/entities/task'
+import type { Task } from '@/entities/task'
 import {
   deleteTask,
   getTask,
   listTasks,
   saveTask,
-} from '@/repository/taskRepository'
+} from '@/repositories/taskRepository'
 
 const app = new Hono()
   .get(
@@ -71,7 +71,7 @@ const app = new Hono()
       'json',
       z.object({
         title: z.string().optional(),
-        limit: z.number(),
+        limit: z.number().optional(),
         priority: z.enum(TaskPriorities).optional(),
         description: z.string().optional(),
       }),

@@ -5,8 +5,8 @@ import {
 import { testClient } from 'hono/testing'
 import tasks from '@/routes/tasks'
 import { compare } from '@/logic/compare'
-import { TaskPriorityLevelMap } from '@/resource/task'
-import type { Task } from '@/resource/task'
+import { TaskPriorityLevelMap } from '@/entities/task'
+import type { Task } from '@/entities/task'
 
 describe('単一項目の操作', () => {
   let insertedTaskId: Task['id']
@@ -58,7 +58,6 @@ describe('単一項目の操作', () => {
 
     beforeAll(async () => {
       const updated = {
-        id: insertedTaskId,
         title: 'updated title',
         priority: 'low',
         description: 'test task *updated*',
@@ -84,7 +83,7 @@ describe('単一項目の操作', () => {
       expect(updatedTask).toStrictEqual({
         id: insertedTaskId,
         title: 'updated title',
-        limit: '2025-01-01T00:00:00.000Z',
+        limit: new Date('2025-01-01T00:00:00.000Z').getTime(),
         priority: 'low',
         description: 'test task *updated*',
       })

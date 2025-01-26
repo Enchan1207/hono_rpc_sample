@@ -5,7 +5,7 @@ import {
 import {
   deleteTask, getTask, listTasks, saveTask,
 } from './taskRepository'
-import type { Task } from '@/resource/task'
+import type { Task } from '@/entities/task'
 
 describe('単一項目のCRUD', () => {
   let storedTaskId: Task['id']
@@ -14,7 +14,7 @@ describe('単一項目のCRUD', () => {
     const newTask: Task = {
       id: ulid(),
       title: 'test task',
-      limit: new Date(),
+      limit: new Date().getTime(),
       priority: 'middle',
       description: '',
     }
@@ -54,7 +54,7 @@ describe('複数項目のリストとソート', () => {
   const dummyTasks: Task[] = Array.from({ length: 5 }).map((_, i) => ({
     id: i.toString(),
     title: `Task-${i}`,
-    limit: new Date(`2025-01-01T00:${i.toString().padStart(2, '0')}:00Z`),
+    limit: new Date().getTime(),
     // 強引!
     priority: ['high', 'middle', 'low'][i % 3] as Task['priority'],
     description: `task #${i} info`,
