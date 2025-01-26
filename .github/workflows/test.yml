@@ -4,6 +4,9 @@ on:
       - 'backend/**'
       - './package.json'
       - './eslint.config.mjs'
+  pull_request:
+    branches:
+      - master
 
 jobs:
   lint:
