@@ -7,14 +7,8 @@
     <div>some error occured: {{ error.message }}</div>
   </template>
 
-  <!-- TODO: ここをTaskCardとか切り出す -->
   <template v-if="task">
-    <h2>Stored task: {{ task.title }}</h2>
-    <ul>
-      <li>Priority: {{ task.priority }}</li>
-      <li>Description: {{ task.description }}</li>
-      <li>Limit: {{ task.limit.format() }}</li>
-    </ul>
+    <TaskDetail :task="task" />
   </template>
 
   <button @click="router.back()">
@@ -25,6 +19,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import { useTaskData } from '@/composables/useTaskData'
+import TaskDetail from '@/components/TaskDetail.vue'
 
 const route = useRoute('/tasks/[id]')
 const router = useRouter()
