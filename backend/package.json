@@ -3,7 +3,7 @@
   "scripts": {
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch --env-file=.env src/devServer.ts",
     "test": "vitest"
   },
   "dependencies": {

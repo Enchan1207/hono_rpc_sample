@@ -3,5 +3,5 @@
 import type { AppType } from '@routes/index'
 import { hc } from 'hono/client'
 
-// TODO: unify backend URL
-export const client = hc<AppType>('http://localhost:3000/')
+const env = import.meta.env
+export const client = hc<AppType>(env.VITE_BACKEND_URL)
