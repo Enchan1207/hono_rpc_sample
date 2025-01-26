@@ -46,23 +46,44 @@ Promise<Task | undefined> => {
   }
 }
 
-// TODO: updateTask?
+export const updateTask = async (props: {
+  exist: Task
+  input: Partial<Omit<Task, 'id'>>
+}): Promise<Task | undefined> => {
+  const updatedData: Task = {
+    ...props.exist,
+    ...props.input,
+  }
+  const response = await client.task[':id'].$put({
+    param: { id: props.exist.id },
+    json: {
+      title: updatedData.title,
+      description: updatedData.description,
+      limit: updatedData.limit.utc().valueOf(),
+      priority: updatedData.priority,
+    },
+  })
+  if (!response.ok) {
+    return undefined
+  }
+
+  const updatedTask = await response.json()
+  return {
+    ...updatedTask,
+    limit: dayjs(updatedTask.limit),
+  }
+}
 
 export const deleteTask = async (id: Task['id']):
-Promise<Task['id'] | undefined> => {
+Promise<Task | undefined> => {
   const response = await client.task[':id'].$delete({ param: { id } })
   if (!response.ok) {
     return undefined
   }
 
-  return id
-
-  // TODO: 本当はこうあるべき、バックエンドのrouter実装が正しくない
-  /*
   const deletedTaskData = await response.json()
   return {
     ...deletedTaskData,
     limit: dayjs(deletedTaskData.limit),
   }
-*/
 }

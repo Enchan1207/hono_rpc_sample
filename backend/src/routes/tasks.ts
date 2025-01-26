@@ -40,11 +40,11 @@ const app = new Hono()
     ),
     (c) => {
       const taskData = c.req.valid('json')
-      const insertResult = saveTask({
+      const created = saveTask({
         id: ulid(),
         ...taskData,
       })
-      return c.json(insertResult, 201)
+      return c.json(created, 201)
     },
   )
   .get(
@@ -55,14 +55,14 @@ const app = new Hono()
     ),
     (c) => {
       const id = c.req.valid('param').id
-      const storedTask = getTask(id)
-      if (storedTask === undefined) {
+      const stored = getTask(id)
+      if (stored === undefined) {
         return c.json({
           error: `no such task with id ${id}`,
           ok: false,
         }, 404)
       }
-      return c.json(storedTask)
+      return c.json(stored)
     },
   )
   .put(
@@ -95,11 +95,11 @@ const app = new Hono()
       }
 
       const taskData = c.req.valid('json')
-      const updatedTask: Task = {
+      const updated: Task = {
         ...storedTask,
         ...taskData,
       }
-      const updateResult = saveTask(updatedTask)
+      const updateResult = saveTask(updated)
       return c.json(updateResult, 200)
     },
   )
@@ -111,14 +111,14 @@ const app = new Hono()
     ),
     (c) => {
       const id = c.req.valid('param').id
-      if (getTask(id) === undefined) {
+      const deleted = deleteTask(id)
+      if (deleted === undefined) {
         return c.json({
           error: `no such task with id ${id}`,
           ok: false,
         }, 404)
       }
-      const deletedTask = deleteTask(id)
-      return c.json(deletedTask, 200)
+      return c.json(deleted, 200)
     },
   )
 
