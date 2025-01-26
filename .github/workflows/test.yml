@@ -1,0 +1,19 @@
+on:
+  push:
+    paths:
+      - 'backend/**'
+      - './package.json'
+      - './eslint.config.mjs'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: test
+        run: npm run -w backend test
