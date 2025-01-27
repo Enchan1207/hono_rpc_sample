@@ -8,7 +8,10 @@
   </template>
 
   <template v-if="task">
-    <TaskDetail :task="task" />
+    <TaskDetail
+      :task="task"
+      @commit="update"
+    />
   </template>
 
   <button @click="router.back()">
@@ -25,7 +28,6 @@ const route = useRoute<'/tasks/[id]'>()
 const router = useRouter()
 
 const {
-  task, isLoading, error,
+  task, isLoading, error, update,
 } = useTaskData(route.params.id)
-
 </script>

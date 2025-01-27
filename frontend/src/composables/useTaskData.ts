@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import type { Task } from '@/entities/task'
-import { getTask } from '@/repositories/taskRepository'
+import { getTask, updateTask } from '@/repositories/taskRepository'
 
 export const useTaskData = (id: Task['id']) => {
   const isLoading = ref(true)
@@ -24,11 +24,37 @@ export const useTaskData = (id: Task['id']) => {
     isLoading.value = false
   }
 
+  const update = async (input: Omit<Task, 'id'>) => {
+    error.value = undefined
+
+    const exist = task.value
+    if (exist === undefined) {
+      error.value = new Error('update() invoked before fetch completed')
+      return
+    }
+
+    isLoading.value = true
+
+    const updatedTask = await updateTask({
+      exist,
+      input,
+    })
+    if (updatedTask === undefined) {
+      error.value = new Error(`no such task with id ${id}`)
+      task.value = undefined
+      isLoading.value = false
+      return
+    }
+    task.value = updatedTask
+    isLoading.value = false
+  }
+
   fetchData(id)
 
   return {
     task,
     isLoading,
     error,
+    update,
   }
 }
