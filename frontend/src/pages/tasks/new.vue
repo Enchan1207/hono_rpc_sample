@@ -1,15 +1,27 @@
 <template>
   <h2>Add new task</h2>
-  <TaskRegisterForm @submit="onSubmit" />
+  <TaskDetail
+    :task="task"
+    @commit="onSubmit"
+  />
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import TaskRegisterForm from '@/components/TaskRegisterForm.vue'
+import { ref } from 'vue'
 import { addTask } from '@/repositories/taskRepository'
 import type { Task } from '@/entities/task'
+import TaskDetail from '@/components/TaskDetail.vue'
+import dayjs from '@/logic/dayjs'
 
 const router = useRouter()
+
+const task = ref<Omit<Task, 'id'>>({
+  title: '',
+  priority: 'middle',
+  limit: dayjs(),
+  description: '',
+})
 
 const onSubmit = async (task: Omit<Task, 'id'>) => {
   await addTask(task)
