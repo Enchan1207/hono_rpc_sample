@@ -7,7 +7,7 @@
       <TaskListRow
         :item="task"
         @detail="emits('detail', task.id)"
-        @delete="emits('delete', task.id)"
+        @remove="emits('remove', task.id)"
       />
     </li>
   </ul>
@@ -20,7 +20,7 @@ import type { TaskListItem } from '@/entities/task'
 const props = defineProps<{ tasks: TaskListItem[] }>()
 const emits = defineEmits<{
   (
-    operation: 'detail' | 'delete',
+    operation: 'detail' | 'remove',
     id: TaskListItem['id']
   ): void
 }>()

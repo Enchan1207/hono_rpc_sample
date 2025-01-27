@@ -11,7 +11,7 @@
       </button>
     </span>
     <span>
-      <button @click="emits('delete')">
+      <button @click="emits('remove')">
         Delete
       </button>
     </span>
@@ -25,7 +25,7 @@ import dayjs from '@/logic/dayjs'
 
 const props = defineProps<{ item: TaskListItem }>()
 
-const emits = defineEmits(['detail', 'delete'])
+const emits = defineEmits(['detail', 'remove'])
 
 const limitElementClass = computed(() => {
   const isOver = props.item.limit.isBefore(dayjs())
