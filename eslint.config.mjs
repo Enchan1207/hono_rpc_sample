@@ -161,6 +161,16 @@ export default tseslint.config(
   },
 
   {
+    name: 'custom rules for pages',
+    files: ['frontend/src/pages/**/*.vue'],
+    plugins: { vue: vuePlugin },
+    rules: {
+      // NOTE: ファイルベースルーティングでは index.vue や [id].vue を作りたくなるため
+      'vue/multi-word-component-names': 'off',
+    },
+  },
+
+  {
     name: 'backend rules',
     files: ['backend/**/*.ts', 'backend/**/*.vue'],
     rules: {}, // there is no rules for backend yet...

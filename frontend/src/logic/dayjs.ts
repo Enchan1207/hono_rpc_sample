@@ -4,11 +4,13 @@ import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import isLeapYear from 'dayjs/plugin/isLeapYear'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/ja'
 
 dayjs.extend(timezone)
 dayjs.extend(utc)
 dayjs.extend(isLeapYear)
+dayjs.extend(relativeTime)
 
 dayjs.tz.setDefault('Asia/Tokyo')
 
