@@ -5,7 +5,8 @@
     "lint:fix": "eslint --fix",
     "dev": "wrangler dev",
     "test": "vitest",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute hono-rpc-sample-backend-db --local --file='init.sql'"
   },
   "dependencies": {
     "hono": "^4.6.15",

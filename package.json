@@ -10,6 +10,7 @@
     "frontend"
   ],
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250129.0",
     "@stylistic/eslint-plugin": "^2.12.1",
     "@stylistic/eslint-plugin-ts": "^2.12.1",
     "@types/node": "^22.10.5",
