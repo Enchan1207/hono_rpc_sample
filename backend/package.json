@@ -3,8 +3,9 @@
   "scripts": {
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "dev": "tsx watch --env-file=.env src/devServer.ts",
-    "test": "vitest"
+    "dev": "wrangler dev",
+    "test": "vitest",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "hono": "^4.6.15",
