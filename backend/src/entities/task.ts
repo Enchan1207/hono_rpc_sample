@@ -12,7 +12,7 @@ export const TaskPriorityLevelMap = {
 export type Task = {
   id: string
   title: string
-  limit: number
+  due: number
   priority: TaskPriority
   description: string
 }

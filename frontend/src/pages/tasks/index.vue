@@ -41,7 +41,7 @@ import { useTaskList } from '@/composables/useTaskList'
 
 const router = useRouter()
 
-const key = ref<'id' | 'limit' | 'priority'>('id')
+const key = ref<'id' | 'due' | 'priority'>('id')
 const order = ref <'asc' | 'desc'>('desc')
 
 const {
@@ -75,10 +75,10 @@ const onClickOrder = () => {
 const onClickKey = () => {
   switch (key.value) {
     case 'id':
-      key.value = 'limit'
+      key.value = 'due'
       break
 
-    case 'limit':
+    case 'due':
       key.value = 'priority'
       break
 

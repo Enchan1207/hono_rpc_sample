@@ -17,7 +17,7 @@ const app = new Hono()
     zValidator(
       'query',
       z.object({
-        key: z.enum(['id', 'limit', 'priority']).default('limit'),
+        key: z.enum(['id', 'due', 'priority']).default('due'),
         order: z.enum(['asc', 'desc']).default('desc'),
       }),
     ),
@@ -33,7 +33,7 @@ const app = new Hono()
       'json',
       z.object({
         title: z.string(),
-        limit: z.number(),
+        due: z.number(),
         priority: z.enum(TaskPriorities),
         description: z.string(),
       }),
@@ -71,7 +71,7 @@ const app = new Hono()
       'json',
       z.object({
         title: z.string().optional(),
-        limit: z.number().optional(),
+        due: z.number().optional(),
         priority: z.enum(TaskPriorities).optional(),
         description: z.string().optional(),
       }),

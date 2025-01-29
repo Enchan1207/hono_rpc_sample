@@ -19,7 +19,7 @@ const router = useRouter()
 const task = ref<Omit<Task, 'id'>>({
   title: '',
   priority: 'middle',
-  limit: dayjs(),
+  due: dayjs(),
   description: '',
 })
 

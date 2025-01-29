@@ -15,7 +15,7 @@ describe('単一項目の操作', () => {
     beforeAll(async () => {
       const newTask: Omit<Task, 'id'> = {
         title: 'test',
-        limit: new Date('2025-01-01T00:00:00.000Z').getTime(),
+        due: new Date('2025-01-01T00:00:00.000Z').getTime(),
         priority: 'high',
         description: 'test task',
       }
@@ -25,7 +25,7 @@ describe('単一項目の操作', () => {
           priority: newTask.priority,
           description: newTask.description,
           title: newTask.title,
-          limit: newTask.limit,
+          due: newTask.due,
         },
       })
 
@@ -47,7 +47,7 @@ describe('単一項目の操作', () => {
     expect(task).toStrictEqual({
       id: insertedTaskId,
       title: 'test',
-      limit: new Date('2025-01-01T00:00:00.000Z').getTime(),
+      due: new Date('2025-01-01T00:00:00.000Z').getTime(),
       priority: 'high',
       description: 'test task',
     })
@@ -83,7 +83,7 @@ describe('単一項目の操作', () => {
       expect(updatedTask).toStrictEqual({
         id: insertedTaskId,
         title: 'updated title',
-        limit: new Date('2025-01-01T00:00:00.000Z').getTime(),
+        due: new Date('2025-01-01T00:00:00.000Z').getTime(),
         priority: 'low',
         description: 'test task *updated*',
       })
@@ -114,10 +114,10 @@ describe('項目のリストアップ', () => {
     const dummyTaskData: Omit<Task, 'id'>[] = Array.from({ length: 5 }).map(
       (_, i) => {
         const hourString = i.toString().padStart(2, '0')
-        const dummyLimit = new Date(`2025-01-01T00:${hourString}:00Z`)
+        const dummyDue = new Date(`2025-01-01T00:${hourString}:00Z`)
         return {
           title: `Task-${i}`,
-          limit: dummyLimit.getTime(),
+          due: dummyDue.getTime(),
           // 強引!
           priority: ['high', 'middle', 'low'][i % 3] as Task['priority'],
           description: '',

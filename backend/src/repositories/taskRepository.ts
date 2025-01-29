@@ -32,10 +32,10 @@ export type TaskListItem = Omit<Task, 'description'>
  * @returns ソート関数
  */
 const buildTaskListItemSortFunction = (
-  sortBy: keyof Pick<Task, 'id' | 'limit' | 'priority'>,
+  sortBy: keyof Pick<Task, 'id' | 'due' | 'priority'>,
   order: 'asc' | 'desc',
 ): ((lhs: TaskListItem, rhs: TaskListItem) => number) => {
-  if (sortBy === 'limit') {
+  if (sortBy === 'due') {
     // 同じ期限ならIDで比較する
     return compare<TaskListItem>(
       sortBy,
@@ -65,16 +65,16 @@ const buildTaskListItemSortFunction = (
 }
 
 export const listTasks = (
-  sortBy: keyof Pick<Task, 'id' | 'limit' | 'priority'>,
+  sortBy: keyof Pick<Task, 'id' | 'due' | 'priority'>,
   order: 'asc' | 'desc',
 ): TaskListItem[] => {
   const taskListData: TaskListItem[] = Array.from(tasks.values()).map(
     ({
-      id, title, limit, priority,
+      id, title, due, priority,
     }) => ({
       id,
       title,
-      limit,
+      due,
       priority,
     }),
   )

@@ -38,10 +38,10 @@
       </li>
 
       <li>
-        <label for="limit">期日</label>
+        <label for="due">期日</label>
         <input
-          id="limit"
-          v-model="internalLimit"
+          id="due"
+          v-model="internalDue"
           type="date"
         >
       </li>
@@ -74,9 +74,9 @@ const emits = defineEmits<{
 
 const formData = ref<TaskDetailProps>(props.task)
 
-const internalLimit: WritableComputedRef<string> = computed({
-  get: () => formData.value.limit.format('YYYY-MM-DD'),
-  set: value => formData.value.limit = dayjs.tz(value),
+const internalDue: WritableComputedRef<string> = computed({
+  get: () => formData.value.due.format('YYYY-MM-DD'),
+  set: value => formData.value.due = dayjs.tz(value),
 })
 
 // 親から渡された値に変更があればそれを反映する

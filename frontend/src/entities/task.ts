@@ -11,7 +11,7 @@ export const TaskPriority = {
 export type Task = {
   id: string
   title: string
-  limit: dayjs.Dayjs
+  due: dayjs.Dayjs
   priority: TaskPriority
   description: string
 }

@@ -14,7 +14,7 @@ describe('単一項目のCRUD', () => {
     const newTask: Task = {
       id: ulid(),
       title: 'test task',
-      limit: new Date().getTime(),
+      due: new Date().getTime(),
       priority: 'middle',
       description: '',
     }
@@ -54,7 +54,7 @@ describe('複数項目のリストとソート', () => {
   const dummyTasks: Task[] = Array.from({ length: 5 }).map((_, i) => ({
     id: i.toString(),
     title: `Task-${i}`,
-    limit: new Date().getTime(),
+    due: new Date().getTime(),
     // 強引!
     priority: ['high', 'middle', 'low'][i % 3] as Task['priority'],
     description: `task #${i} info`,
@@ -78,12 +78,12 @@ describe('複数項目のリストとソート', () => {
 
   describe('期限でソート', () => {
     test('昇順', () => {
-      const taskIds = listTasks('limit', 'asc').map(({ id }) => id)
+      const taskIds = listTasks('due', 'asc').map(({ id }) => id)
       expect(taskIds).toStrictEqual([0, 1, 2, 3, 4].map(n => n.toString()))
     })
 
     test('降順', () => {
-      const taskIds = listTasks('limit', 'desc').map(({ id }) => id)
+      const taskIds = listTasks('due', 'desc').map(({ id }) => id)
       expect(taskIds).toStrictEqual([4, 3, 2, 1, 0].map(n => n.toString()))
     })
   })
