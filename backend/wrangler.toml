@@ -1,5 +1,6 @@
 name = "hono-rpc-sample-backend"
 compatibility_date = "2025-01-28"
+compatibility_flags = [ "nodejs_compat" ]
 main = "./src/routes/index.ts"
 
 [observability]
