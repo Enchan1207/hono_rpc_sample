@@ -31,7 +31,10 @@
     "[vue]": {
       "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
-    "npm.packageManager": "npm"
+    "npm.packageManager": "npm",
+    "files.associations": {
+      "*.toml": "ini"
+    }
   },
   "extensions": {
     "recommendations": ["dbaeumer.vscode-eslint"]
