@@ -48,7 +48,6 @@ const {
   tasks,
   isLoading,
   error,
-  next: _,
   remove,
 } = useTaskList({
   key,
