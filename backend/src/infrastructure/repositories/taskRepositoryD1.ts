@@ -1,29 +1,40 @@
+import type { D1Database } from '@cloudflare/workers-types'
 import { compare } from '@/logic/compare'
-import { TaskPriorityLevelMap } from '@/entities/task'
-import type { Task } from '@/entities/task'
+import { TaskPriorityLevelMap } from '@/domain/entities/task'
+import type { Task } from '@/domain/entities/task'
+import type {
+  TaskRepository,
+  TaskListItem,
+} from '@/domain/repositories/taskRepository'
 
 // in-memory storage
 const tasks = new Map<Task['id'], Task>()
 
-export const getTask = (id: Task['id']): Task | undefined => {
-  return tasks.get(id)
-}
-
-export const saveTask = (newTask: Task): Task => {
-  tasks.set(newTask.id, newTask)
-  return newTask
-}
-
-export const deleteTask = (id: Task['id']): Task | undefined => {
-  const storedTask = tasks.get(id)
-  if (storedTask === undefined) {
-    return undefined
+const getTask = (db: D1Database): TaskRepository['getTask'] =>
+  async (id: Task['id']) => {
+    const stmt = 'SELECT id, title, due, priority, description FROM tasks WHERE id=?'
+    const result = await db.prepare(stmt).bind(id).first<Task>()
+    return result ?? undefined
   }
-  tasks.delete(id)
-  return storedTask
-}
 
-export type TaskListItem = Omit<Task, 'description'>
+const saveTask = (db: D1Database): TaskRepository['saveTask'] =>
+  async (newTask: Task) => {
+    const stmt = 'INSERT INTO tasks VALUES (?,?,?,?,?)'
+    // FIXME: UPSERTにしないといかんのでは
+    await db.prepare(stmt).bind(newTask).run()
+    return newTask
+  }
+
+const deleteTask = (db: D1Database): TaskRepository['deleteTask'] =>
+  async (id: Task['id']) => {
+    const storedTask = await getTask(db)(id)
+    if (storedTask === undefined) {
+      return undefined
+    }
+    const stmt = 'DELETE FROM tasks WHERE id=?'
+    await db.prepare(stmt).bind(id).run()
+    return storedTask
+  }
 
 /**
  * 条件をもとにタスクリストのソート関数を構築する
@@ -64,10 +75,12 @@ const buildTaskListItemSortFunction = (
   return compare<TaskListItem>(sortBy, order)
 }
 
-export const listTasks = (
+const listTasks = (db: D1Database): TaskRepository['listTasks'] => async (
   sortBy: keyof Pick<Task, 'id' | 'due' | 'priority'>,
   order: 'asc' | 'desc',
-): TaskListItem[] => {
+) => {
+  // NOTE: この中でdbを使ってクエリする
+  console.log(db)
   const taskListData: TaskListItem[] = Array.from(tasks.values()).map(
     ({
       id, title, due, priority,
@@ -81,4 +94,13 @@ export const listTasks = (
 
   const sortFunction = buildTaskListItemSortFunction(sortBy, order)
   return taskListData.toSorted(sortFunction)
+}
+
+export const useTaskRepositoryD1 = (db: D1Database): TaskRepository => {
+  return {
+    getTask: getTask(db),
+    saveTask: saveTask(db),
+    deleteTask: deleteTask(db),
+    listTasks: listTasks(db),
+  }
 }
