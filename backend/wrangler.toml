@@ -7,6 +7,6 @@ main = "./src/routes/index.ts"
 enabled = true
 
 [[d1_databases]]
-binding = "DB"
+binding = "D1"
 database_name = "hono-rpc-sample-backend-db"
 database_id = "f1f9bbae-f053-4de7-a05d-0462b76185fe"
