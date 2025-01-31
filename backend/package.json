@@ -16,6 +16,7 @@
   "devDependencies": {
     "@hono/node-server": "^1.13.7",
     "@hono/zod-validator": "^0.4.2",
+    "miniflare": "^3.20250124.1",
     "tsx": "^4.19.2"
   }
 }
