@@ -9,5 +9,7 @@ export interface TaskRepository {
   listTasks(
     sortBy: keyof Pick<Task, 'id' | 'due' | 'priority'>,
     order: 'asc' | 'desc',
+    limit: number,
+    offset?: number
   ): Promise<TaskListItem[]>
 }
