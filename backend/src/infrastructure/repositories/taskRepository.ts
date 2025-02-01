@@ -14,8 +14,14 @@ const getTask = (db: D1Database): TaskRepository['getTask'] =>
 
 const saveTask = (db: D1Database): TaskRepository['saveTask'] =>
   async (newTask: Task) => {
-    const stmt = 'INSERT INTO tasks VALUES (?,?,?,?,?)'
-    // FIXME: UPSERTにしないといかんのでは
+    const stmt = `INSERT INTO tasks
+      VALUES (?1,?2,?3,?4,?5)
+      ON CONFLICT (id) DO UPDATE SET
+        title = ?2,
+        due = ?3,
+        priority = ?4,
+        description = ?5
+    `
     await db.prepare(stmt).bind(
       newTask.id,
       newTask.title,
