@@ -80,15 +80,12 @@ const app = new Hono<{ Bindings: Env }>()
         description: z.string().optional(),
       }),
     ),
+    zValidator(
+      'param',
+      z.object({ id: z.string().ulid() }),
+    ),
     async (c) => {
-      // paramとjsonとを同時にvalidateできないか?
-      const id = z.string().ulid().safeParse(c.req.param('id')).data
-      if (id === undefined) {
-        return c.json({
-          error: 'Please specify task id',
-          ok: false,
-        }, 400)
-      }
+      const id = c.req.valid('param').id
       const taskData = c.req.valid('json')
 
       const repo = useTaskRepositoryD1(c.env.D1)
