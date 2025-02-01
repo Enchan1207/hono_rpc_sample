@@ -9,7 +9,7 @@ import {
 import { ulid } from 'ulid'
 import type { Task } from '@/domain/entities/task'
 import { TaskPriorityLevelMap } from '@/domain/entities/task'
-import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepositoryD1'
+import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepository'
 import { compare } from '@/logic/compare'
 import tasks from '@/routes/tasks'
 

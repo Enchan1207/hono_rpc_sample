@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { env } from 'hono/adapter'
 import { TaskPriorities } from '@/domain/entities/task'
 import type { Task } from '@/domain/entities/task'
-import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepositoryD1'
+import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepository'
 import type { Binding } from '@/cf_bindings'
 
 const app = new Hono()

@@ -3,7 +3,7 @@ import {
   beforeAll, describe, expect, test, beforeEach,
 } from 'vitest'
 import { env } from 'cloudflare:test'
-import { useTaskRepositoryD1 } from './taskRepositoryD1'
+import { useTaskRepositoryD1 } from './taskRepository'
 import type { Task } from '@/domain/entities/task'
 import type { TaskRepository } from '@/domain/repositories/taskRepository'
 
