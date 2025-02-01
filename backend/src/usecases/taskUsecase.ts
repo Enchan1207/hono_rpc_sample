@@ -1,8 +1,8 @@
-import { ulid } from 'ulid'
-import type { Task, TaskListItem } from '@/domain/entities/task'
+import { createTaskEntity } from '@/domain/entities/task'
+import type {
+  Task, TaskData, TaskSummary,
+} from '@/domain/entities/task'
 import type { TaskRepository } from '@/domain/repositories/taskRepository'
-
-type TaskData = Omit<Task, 'id'>
 
 export interface TaskUsecase {
   createTask(taskData: TaskData): Promise<Task>
@@ -14,17 +14,12 @@ export interface TaskUsecase {
     order: 'asc' | 'desc',
     limit: number,
     offset?: number
-  ): Promise<TaskListItem[]>
+  ): Promise<TaskSummary[]>
 }
 
 const createTask = (repository: TaskRepository): TaskUsecase['createTask'] =>
   async (taskData: Omit<Task, 'id'>) => {
-    // FIXME: ここでIDを生成するのはおかしい
-    const task: Task = {
-      ...taskData,
-      id: ulid(),
-    }
-    return await repository.saveTask(task)
+    return await repository.saveTask(createTaskEntity(taskData))
   }
 
 const getTask = (repository: TaskRepository): TaskUsecase['getTask'] =>

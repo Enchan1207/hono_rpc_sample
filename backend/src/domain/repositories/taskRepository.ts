@@ -1,4 +1,4 @@
-import type { Task, TaskListItem } from '@/domain/entities/task'
+import type { Task, TaskSummary } from '@/domain/entities/task'
 
 export interface TaskRepository {
   getTask(id: Task['id']): Promise<Task | undefined>
@@ -9,5 +9,5 @@ export interface TaskRepository {
     order: 'asc' | 'desc',
     limit: number,
     offset?: number
-  ): Promise<TaskListItem[]>
+  ): Promise<TaskSummary[]>
 }

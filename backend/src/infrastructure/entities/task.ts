@@ -1,5 +1,5 @@
-/** タスクのORMエンティティ */
-export type TaskEntity = {
+/** RDB上に保存されるタスクのレコード */
+export type TaskRecord = {
   id: string
   title: string
   due: number
@@ -7,4 +7,4 @@ export type TaskEntity = {
   description: string
 }
 
-export type TaskListItemEntity = Omit<TaskEntity, 'description'>
+export type TaskSummaryRecord = Omit<TaskRecord, 'description'>
