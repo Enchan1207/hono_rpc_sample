@@ -1,112 +1,128 @@
+import { env } from 'cloudflare:test'
+import { testClient } from 'hono/testing'
 import {
   assert,
-  beforeAll, describe, expect, test,
+  beforeAll,
+  beforeEach,
+  describe, expect, test,
 } from 'vitest'
-import { testClient } from 'hono/testing'
-import tasks from '@/routes/tasks'
+import { ulid } from 'ulid'
+import type { Task } from '@/domain/entities/task'
+import { TaskPriorityLevelMap } from '@/domain/entities/task'
+import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepositoryD1'
 import { compare } from '@/logic/compare'
-import { TaskPriorityLevelMap } from '@/entities/task'
-import type { Task } from '@/entities/task'
+import tasks from '@/routes/tasks'
 
 describe('単一項目の操作', () => {
-  let insertedTaskId: Task['id']
+  const client = testClient(tasks, env)
+  const repo = useTaskRepositoryD1(env.D1)
 
-  describe('追加', () => {
-    beforeAll(async () => {
-      const newTask: Omit<Task, 'id'> = {
-        title: 'test',
-        due: new Date('2025-01-01T00:00:00.000Z').getTime(),
-        priority: 'high',
-        description: 'test task',
-      }
-
-      const response = await testClient(tasks).index.$post({
-        json: {
-          priority: newTask.priority,
-          description: newTask.description,
-          title: newTask.title,
-          due: newTask.due,
-        },
-      })
-
-      const taskId = (await response.json())['id']
-      insertedTaskId = taskId
-    })
-
-    test('IDが生成されること', () => {
-      expect(insertedTaskId).toBeDefined()
-    })
-  })
-
-  test('挿入時と同じ内容を取得できること', async () => {
-    const response = await testClient(tasks)[':id']
-      .$get({ param: { id: insertedTaskId } })
-    assert(response.ok)
-
-    const task = await response.json()
-    expect(task).toStrictEqual({
-      id: insertedTaskId,
+  describe('POST /task', () => {
+    const taskData: Omit<Task, 'id'> = {
       title: 'test',
       due: new Date('2025-01-01T00:00:00.000Z').getTime(),
       priority: 'high',
       description: 'test task',
+    }
+
+    test('DBにレコードが登録されること', async () => {
+      const response = await client.index.$post({ json: taskData })
+      const { id } = await response.json()
+
+      const stored = await repo.getTask(id)
+      expect(stored).toStrictEqual({
+        id,
+        ...taskData,
+      })
     })
   })
 
-  describe('更新', () => {
-    let response: Response
+  describe('GET /task/:id', () => {
+    const validTaskId = ulid()
+    const invalidTaskId = ulid()
+    const taskData: Task = {
+      id: validTaskId,
+      title: 'test',
+      due: new Date('2025-01-01T00:00:00.000Z').getTime(),
+      priority: 'high',
+      description: 'test task',
+    }
 
-    beforeAll(async () => {
-      const updated = {
-        title: 'updated title',
+    beforeEach(async () => {
+      await repo.saveTask(taskData)
+    })
+
+    test('項目を取得できること', async () => {
+      const result = await client[':id'].$get({ param: { id: validTaskId } })
+      const stored = await result.json()
+      expect(stored).toStrictEqual(taskData)
+    })
+
+    test('存在しない項目は取得できないこと', async () => {
+      const result = await client[':id'].$get({ param: { id: invalidTaskId } })
+      expect(result.ok).toBeFalsy()
+    })
+  })
+
+  describe('PUT /task/:id', () => {
+    const taskId = ulid()
+    const taskData: Task = {
+      id: taskId,
+      title: 'test',
+      due: new Date('2025-01-01T00:00:00.000Z').getTime(),
+      priority: 'high',
+      description: 'test task',
+    }
+
+    beforeEach(async () => {
+      await repo.saveTask(taskData)
+    })
+
+    test('項目が更新されること', async () => {
+      const input: Omit<Task, 'id'> = {
+        title: 'modified',
+        due: new Date('2025-01-02T00:00:00.000Z').getTime(),
         priority: 'low',
-        description: 'test task *updated*',
+        description: 'modified task',
       }
-
-      response = await tasks.request(`/${insertedTaskId}`, {
-        method: 'PUT',
-        body: JSON.stringify(updated),
-        headers: new Headers({ 'Content-Type': 'application/json' }),
+      await client[':id'].$put({
+        json: input,
+        param: { id: taskId },
       })
-    })
 
-    test('200が返ること', () => {
-      expect(response.status).toBe(200)
-    })
-
-    test('項目が更新されていること', async () => {
-      const request = await testClient(tasks)[':id']
-        .$get({ param: { id: insertedTaskId } })
-      assert(request.ok)
-
-      const updatedTask = await request.json()
-      expect(updatedTask).toStrictEqual({
-        id: insertedTaskId,
-        title: 'updated title',
-        due: new Date('2025-01-01T00:00:00.000Z').getTime(),
-        priority: 'low',
-        description: 'test task *updated*',
+      const updated = await repo.getTask(taskId)
+      expect(updated).toStrictEqual({
+        id: taskId,
+        ...input,
       })
     })
   })
 
-  describe('削除', () => {
-    beforeAll(async () => {
-      const request = await testClient(tasks)[':id']
-        .$delete({ param: { id: insertedTaskId } })
-      assert(request.ok)
+  describe('DELETE /task/:id', () => {
+    const taskId = ulid()
+    const taskData: Task = {
+      id: taskId,
+      title: 'test',
+      due: new Date('2025-01-01T00:00:00.000Z').getTime(),
+      priority: 'high',
+      description: 'test task',
+    }
+
+    beforeEach(async () => {
+      await repo.saveTask(taskData)
     })
 
-    test('項目が削除されていること', async () => {
-      const request = await testClient(tasks)[':id']
-        .$get({ param: { id: insertedTaskId } })
+    test('項目が削除されること', async () => {
+      await client[':id'].$delete({ param: { id: taskId } })
 
-      expect(request.status).toBe(404)
+      const removed = await repo.getTask(taskId)
+      expect(removed).toBeUndefined()
     })
   })
 })
 
 describe('項目のリストアップ', () => {
+  const client = testClient(tasks, env)
   let insertedTasks: Task[]
 
   beforeAll(async () => {
@@ -124,18 +140,15 @@ describe('項目のリストアップ', () => {
         }
       },
     )
-
-    const client = testClient(tasks).index
-
-    const requests = dummyTaskData.map(task => client.$post({ json: task }))
+    const requests = dummyTaskData
+      .map(task => client.index.$post({ json: task }))
     const responses = await Promise.all(requests)
     insertedTasks = await Promise.all(responses.map(r => r.json()))
   })
 
   // NOTE: ロジックの詳細はここでは確認しない
   test('全ての項目がIDの昇順にリストアップされること', async () => {
-    const client = testClient(tasks).index
-    const request = await client.$get({
+    const request = await client.index.$get({
       query: {
         key: 'id',
         order: 'asc',
@@ -151,8 +164,7 @@ describe('項目のリストアップ', () => {
   })
 
   test('全ての項目が優先度の降順にリストアップされること', async () => {
-    const client = testClient(tasks).index
-    const request = await client.$get({
+    const request = await client.index.$get({
       query: {
         key: 'priority',
         order: 'desc',

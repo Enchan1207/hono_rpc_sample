@@ -16,7 +16,13 @@ const saveTask = (db: D1Database): TaskRepository['saveTask'] =>
   async (newTask: Task) => {
     const stmt = 'INSERT INTO tasks VALUES (?,?,?,?,?)'
     // FIXME: UPSERTにしないといかんのでは
-    await db.prepare(stmt).bind(newTask).run()
+    await db.prepare(stmt).bind(
+      newTask.id,
+      newTask.title,
+      newTask.due,
+      newTask.priority,
+      newTask.description,
+    ).run()
     return newTask
   }
 
@@ -38,14 +44,18 @@ const listTasks = (db: D1Database): TaskRepository['listTasks'] => async (
   offset?: number,
 ) => {
   // build query
-  const rawQuery = [
-    'SELECT id, title, due, priority FROM tasks ORDER BY ?',
-    order === 'asc' ? 'ASC' : 'DESC',
-    'LIMIT ?',
-    offset ? 'OFFSET ?' : '',
-  ].join(' ')
-  const stmt = db.prepare(rawQuery).bind(sortBy, order, limit, offset)
-  const results = await stmt.run<TaskListItem>()
+  const query = `SELECT id, title, due, priority 
+    FROM tasks
+    ORDER BY ${sortBy} ${order === 'asc' ? 'ASC' : 'DESC'}
+    LIMIT ?
+    ${offset ? 'OFFSET ?' : ''}
+  `
+
+  const stmt = db.prepare(query)
+  const bound = offset !== undefined
+    ? stmt.bind(limit, offset)
+    : stmt.bind(limit)
+  const results = await bound.run<TaskListItem>()
   return results.results
 }
 

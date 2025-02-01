@@ -1,57 +1,83 @@
 import { ulid } from 'ulid'
 import {
-  assert, beforeAll, describe, expect, test,
+  beforeAll, describe, expect, test, beforeEach,
 } from 'vitest'
+import { env } from 'cloudflare:test'
 import { useTaskRepositoryD1 } from './taskRepositoryD1'
-import { db } from './miniflare'
 import type { Task } from '@/domain/entities/task'
 import type { TaskRepository } from '@/domain/repositories/taskRepository'
 
+// NOTE: @cloudflare/vitest-pool-workers を使ったテストでは、test単位で実行がロルバされる
+// NOTE: cf.https://github.com/cloudflare/workers-sdk/blob/f9fd9df8f6e11d87bb34ed5005730de1d593989a/fixtures/vitest-pool-workers-examples/d1/test/queries.test.ts#L28
+
 describe('単一項目のCRUD', () => {
-  let storedTaskId: Task['id']
   let repo: TaskRepository
 
   beforeAll(() => {
-    repo = useTaskRepositoryD1(db)
+    repo = useTaskRepositoryD1(env.D1)
   })
 
   test('項目を作成できること', async () => {
-    const newTask: Task = {
+    const task: Task = {
       id: ulid(),
       title: 'test task',
       due: new Date().getTime(),
       priority: 'middle',
-      description: '',
+      description: 'test task description',
     }
-    const insertedTask = await repo.saveTask(newTask)
-    expect(insertedTask).toBeDefined()
-    storedTaskId = insertedTask.id
+    const inserted = await repo.saveTask(task)
+    expect(task).toStrictEqual(inserted)
   })
 
   test('IDを指定して項目を取得できること', async () => {
-    const storedTask = await repo.getTask(storedTaskId)
-    expect(storedTask).toBeDefined()
-  })
-
-  test('既存の項目を更新できること', async () => {
-    const storedTask = await repo.getTask(storedTaskId)
-    assert(storedTask !== undefined)
-    const updated: Task = {
-      ...storedTask,
-      title: 'Updated',
-      priority: 'high',
-      description: 'updated description',
+    const task: Task = {
+      id: ulid(),
+      title: 'test task',
+      due: new Date().getTime(),
+      priority: 'middle',
+      description: 'test task description',
     }
-    await repo.saveTask(updated)
+    const { id } = await repo.saveTask(task)
 
-    const updatedTask = await repo.getTask(storedTaskId)
-    expect(updatedTask).toBe(updated)
+    const stored = await repo.getTask(id)
+    expect(stored).toBeDefined()
   })
 
-  test('項目を削除できること', async () => {
-    const deletedTask = await repo.deleteTask(storedTaskId)
-    assert(deletedTask !== undefined)
-    expect(await repo.getTask(deletedTask.id)).toBeUndefined()
+  test('挿入した項目を更新できること', async () => {
+    const task: Task = {
+      id: ulid(),
+      title: 'test task',
+      due: new Date('2024-08-08 00:00:00').getTime(),
+      priority: 'middle',
+      description: 'test task description',
+    }
+    const stored = await repo.saveTask(task)
+
+    const input: Task = {
+      ...stored,
+      title: 'modified',
+      priority: 'high',
+      due: new Date('2024-12-07 00:00:00').getTime(),
+      description: 'modified',
+    }
+    const updated = await repo.saveTask(input)
+    expect(updated).toStrictEqual(input)
+  })
+
+  test('挿入した項目を削除できること', async () => {
+    const task: Task = {
+      id: ulid(),
+      title: 'test task',
+      due: new Date('2024-08-08 00:00:00').getTime(),
+      priority: 'middle',
+      description: 'test task description',
+    }
+    const { id } = await repo.saveTask(task)
+
+    await repo.deleteTask(id)
+
+    const stored = await repo.getTask(id)
+    expect(stored).toBeUndefined()
   })
 })
 
@@ -59,20 +85,20 @@ describe('複数項目のリストとソート', () => {
   let repo: TaskRepository
 
   beforeAll(() => {
-    repo = useTaskRepositoryD1(db)
+    repo = useTaskRepositoryD1(env.D1)
   })
 
   const dummyTasks: Task[] = Array.from({ length: 5 }).map((_, i) => ({
     id: i.toString(),
     title: `Task-${i}`,
-    due: new Date().getTime(),
+    due: i,
     // 強引!
     priority: ['high', 'middle', 'low'][i % 3] as Task['priority'],
     description: `task #${i} info`,
   }))
 
-  beforeAll(async () => {
-    await Promise.all(dummyTasks.map(task => repo.deleteTask(task.id)))
+  beforeEach(async () => {
+    await Promise.all(dummyTasks.map(task => repo.saveTask(task)))
   })
 
   describe('IDでソート', () => {
