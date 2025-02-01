@@ -5,14 +5,14 @@ import type { Task, TaskListItem } from '@/entities/task'
 // TODO: error handling or use `Result`
 
 export const listTask = async (query: {
-  key?: 'id' | 'limit' | 'priority'
+  key?: 'id' | 'due' | 'priority'
   order?: 'desc' | 'asc'
 }): Promise<TaskListItem[]> => {
   const response = await client.task.$get({ query })
   const taskDatas = await response.json()
   const tasks: TaskListItem[] = taskDatas.map(task => ({
     ...task,
-    limit: dayjs(task.limit),
+    due: dayjs(task.due),
   }))
   return tasks
 }
@@ -21,14 +21,14 @@ export const addTask = async (task: Omit<Task, 'id'>): Promise<Task> => {
   const response = await client.task.$post({
     json: {
       ...task,
-      limit: task.limit.utc().valueOf(),
+      due: task.due.utc().valueOf(),
     },
   })
 
   const newTaskData = await response.json()
   return {
     ...newTaskData,
-    limit: dayjs(newTaskData.limit),
+    due: dayjs(newTaskData.due),
   }
 }
 
@@ -42,7 +42,7 @@ Promise<Task | undefined> => {
   const taskData = await response.json()
   return {
     ...taskData,
-    limit: dayjs(taskData.limit),
+    due: dayjs(taskData.due),
   }
 }
 
@@ -59,7 +59,7 @@ export const updateTask = async (props: {
     json: {
       title: updatedData.title,
       description: updatedData.description,
-      limit: updatedData.limit.utc().valueOf(),
+      due: updatedData.due.utc().valueOf(),
       priority: updatedData.priority,
     },
   })
@@ -70,7 +70,7 @@ export const updateTask = async (props: {
   const updatedTask = await response.json()
   return {
     ...updatedTask,
-    limit: dayjs(updatedTask.limit),
+    due: dayjs(updatedTask.due),
   }
 }
 
@@ -84,6 +84,6 @@ Promise<Task | undefined> => {
   const deletedTaskData = await response.json()
   return {
     ...deletedTaskData,
-    limit: dayjs(deletedTaskData.limit),
+    due: dayjs(deletedTaskData.due),
   }
 }

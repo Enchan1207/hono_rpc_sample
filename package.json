@@ -10,6 +10,7 @@
     "frontend"
   ],
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250129.0",
     "@stylistic/eslint-plugin": "^2.12.1",
     "@stylistic/eslint-plugin-ts": "^2.12.1",
     "@types/node": "^22.10.5",
@@ -19,6 +20,7 @@
     "globals": "^15.14.0",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.19.0",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "wrangler": "^3.106.0"
   }
 }

@@ -2,8 +2,8 @@
   <div class="row">
     <span>{{ props.item.title }}</span>
     <span>Priority: {{ props.item.priority }}</span>
-    <span :class="limitElementClass">
-      Limit: {{ props.item.limit.fromNow() }}
+    <span :class="dueElementClass">
+      Due: {{ props.item.due.fromNow() }}
     </span>
     <span>
       <button @click="emits('detail')">
@@ -27,8 +27,8 @@ const props = defineProps<{ item: TaskListItem }>()
 
 const emits = defineEmits(['detail', 'remove'])
 
-const limitElementClass = computed(() => {
-  const isOver = props.item.limit.isBefore(dayjs())
+const dueElementClass = computed(() => {
+  const isOver = props.item.due.isBefore(dayjs())
   return isOver ? 'over' : ''
 })
 

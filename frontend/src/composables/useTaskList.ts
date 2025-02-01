@@ -45,11 +45,9 @@ export const useTaskList = (props: {
   }
 
   watchEffect(() => {
-    // keyかorderが変わった時はリストをクリアする このとき、重複ロードしないように
-    if (!isLoading.value) {
-      tasks.value = []
-      next()
-    }
+    // keyかorderが変わった時はリストをクリアする
+    tasks.value = []
+    next()
   })
 
   return {

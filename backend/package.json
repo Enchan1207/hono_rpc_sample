@@ -3,8 +3,10 @@
   "scripts": {
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "dev": "tsx watch --env-file=.env src/devServer.ts",
-    "test": "vitest"
+    "dev": "wrangler dev",
+    "test": "vitest",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute hono-rpc-sample-backend-db --local --file='src/infrastructure/migrations/0000-init.sql'"
   },
   "dependencies": {
     "hono": "^4.6.15",
@@ -12,8 +14,10 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.6.10",
     "@hono/node-server": "^1.13.7",
     "@hono/zod-validator": "^0.4.2",
+    "miniflare": "^3.20250124.1",
     "tsx": "^4.19.2"
   }
 }

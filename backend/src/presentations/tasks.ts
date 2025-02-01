@@ -1,29 +1,41 @@
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
-import { ulid } from 'ulid'
 import { z } from 'zod'
-import { TaskPriorities } from '@/entities/task'
-import type { Task } from '@/entities/task'
-import {
-  deleteTask,
-  getTask,
-  listTasks,
-  saveTask,
-} from '@/repositories/taskRepository'
+import { createMiddleware } from 'hono/factory'
+import { TaskPriorities } from '@/domain/entities/task'
+import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepository'
+import { useTaskUsecase } from '@/usecases/taskUsecase'
+import type { TaskUsecase } from '@/usecases/taskUsecase'
 
-const app = new Hono()
+const taskUsecaseMiddleware = createMiddleware<{
+  Bindings: Env
+  Variables: { usecase: TaskUsecase }
+}>(async (c, next) => {
+  const repo = useTaskRepositoryD1(c.env.D1)
+  const usecase = useTaskUsecase(repo)
+  c.set('usecase', usecase)
+  await next()
+})
+
+const app = new Hono<{ Bindings: Env }>()
+  .use(taskUsecaseMiddleware)
   .get(
     '/',
     zValidator(
       'query',
       z.object({
-        key: z.enum(['id', 'limit', 'priority']).default('limit'),
+        key: z.enum(['id', 'due', 'priority']).default('due'),
         order: z.enum(['asc', 'desc']).default('desc'),
+        limit: z.number().optional().default(30),
+        offset: z.number().optional(),
       }),
     ),
-    (c) => {
-      const { key, order } = c.req.valid('query')
-      const items = listTasks(key, order)
+    async (c) => {
+      const {
+        key, order, limit, offset,
+      } = c.req.valid('query')
+
+      const items = await c.var.usecase.listTasks(key, order, limit, offset)
       return c.json(items)
     },
   )
@@ -33,17 +45,15 @@ const app = new Hono()
       'json',
       z.object({
         title: z.string(),
-        limit: z.number(),
+        due: z.number(),
         priority: z.enum(TaskPriorities),
         description: z.string(),
       }),
     ),
-    (c) => {
+    async (c) => {
       const taskData = c.req.valid('json')
-      const created = saveTask({
-        id: ulid(),
-        ...taskData,
-      })
+
+      const created = await c.var.usecase.createTask(taskData)
       return c.json(created, 201)
     },
   )
@@ -53,9 +63,10 @@ const app = new Hono()
       'param',
       z.object({ id: z.string().ulid() }),
     ),
-    (c) => {
+    async (c) => {
       const id = c.req.valid('param').id
-      const stored = getTask(id)
+
+      const stored = await c.var.usecase.getTask(id)
       if (stored === undefined) {
         return c.json({
           error: `no such task with id ${id}`,
@@ -71,35 +82,20 @@ const app = new Hono()
       'json',
       z.object({
         title: z.string().optional(),
-        limit: z.number().optional(),
+        due: z.number().optional(),
         priority: z.enum(TaskPriorities).optional(),
         description: z.string().optional(),
       }),
     ),
-    (c) => {
-      // paramとjsonとを同時にvalidateできないか?
-      const id = z.string().ulid().safeParse(c.req.param('id')).data
-      if (id === undefined) {
-        return c.json({
-          error: 'Please specify task id',
-          ok: false,
-        }, 400)
-      }
-
-      const storedTask = getTask(id)
-      if (storedTask === undefined) {
-        return c.json({
-          error: `no such task with id ${id}`,
-          ok: false,
-        }, 404)
-      }
-
+    zValidator(
+      'param',
+      z.object({ id: z.string().ulid() }),
+    ),
+    async (c) => {
+      const id = c.req.valid('param').id
       const taskData = c.req.valid('json')
-      const updated: Task = {
-        ...storedTask,
-        ...taskData,
-      }
-      const updateResult = saveTask(updated)
+
+      const updateResult = await c.var.usecase.updateTask(id, taskData)
       return c.json(updateResult, 200)
     },
   )
@@ -109,9 +105,10 @@ const app = new Hono()
       'param',
       z.object({ id: z.string().ulid() }),
     ),
-    (c) => {
+    async (c) => {
       const id = c.req.valid('param').id
-      const deleted = deleteTask(id)
+
+      const deleted = await c.var.usecase.deleteTask(id)
       if (deleted === undefined) {
         return c.json({
           error: `no such task with id ${id}`,

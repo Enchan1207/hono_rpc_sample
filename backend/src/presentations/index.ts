@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import tasks from '@/routes/tasks'
+import tasks from '@/presentations/tasks'
 
 const app = new Hono()
   .use('/task/*', cors())

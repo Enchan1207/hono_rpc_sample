@@ -1,0 +1,12 @@
+name = "hono-rpc-sample-backend"
+compatibility_date = "2025-01-28"
+compatibility_flags = [ "nodejs_compat" ]
+main = "./src/presentations/index.ts"
+
+[observability]
+enabled = true
+
+[[d1_databases]]
+binding = "D1"
+database_name = "hono-rpc-sample-backend-db"
+database_id = "f1f9bbae-f053-4de7-a05d-0462b76185fe"
