@@ -6,7 +6,7 @@
     "dev": "wrangler dev",
     "test": "vitest",
     "deploy": "wrangler deploy",
-    "db:init": "wrangler d1 execute hono-rpc-sample-backend-db --local --file='init.sql'"
+    "db:init": "wrangler d1 execute hono-rpc-sample-backend-db --local --file='src/infrastructure/migrations/0000-init.sql'"
   },
   "dependencies": {
     "hono": "^4.6.15",
