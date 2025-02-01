@@ -7,8 +7,7 @@ import {
   describe, expect, test,
 } from 'vitest'
 import { ulid } from 'ulid'
-import type { Task } from '@/domain/entities/task'
-import { TaskPriorityLevelMap } from '@/domain/entities/task'
+import type { Task, TaskPriority } from '@/domain/entities/task'
 import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepository'
 import { compare } from '@/logic/compare'
 import tasks from '@/routes/tasks'
@@ -174,15 +173,21 @@ describe('項目のリストアップ', () => {
 
     const response = await request.json()
     const taskIds = response.map(task => task.id)
+    const priorityMap: Record<TaskPriority, number> = {
+      high: 100,
+      middle: 50,
+      low: 0,
+    }
+
     expect(taskIds).toStrictEqual(
       insertedTasks
         .toSorted((lhs, rhs) => {
           const lpr = lhs.priority
           const rpr = rhs.priority
           if (lpr === rpr) {
-            return compare('id', 'desc')(lhs, rhs)
+            return compare('id', 'asc')(lhs, rhs)
           }
-          return TaskPriorityLevelMap[rpr] - TaskPriorityLevelMap[lpr]
+          return priorityMap[rpr] - priorityMap[lpr]
         })
         .map(task => task.id),
     )
