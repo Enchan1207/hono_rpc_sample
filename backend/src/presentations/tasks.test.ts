@@ -10,7 +10,7 @@ import { ulid } from 'ulid'
 import type { Task, TaskPriority } from '@/domain/entities/task'
 import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepository'
 import { compare } from '@/logic/compare'
-import tasks from '@/routes/tasks'
+import tasks from '@/presentations/tasks'
 
 describe('単一項目の操作', () => {
   const client = testClient(tasks, env)

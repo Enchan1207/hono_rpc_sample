@@ -2,13 +2,11 @@ import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { ulid } from 'ulid'
 import { z } from 'zod'
-import { env } from 'hono/adapter'
 import { TaskPriorities } from '@/domain/entities/task'
 import type { Task } from '@/domain/entities/task'
 import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepository'
-import type { Binding } from '@/cf_bindings'
 
-const app = new Hono()
+const app = new Hono<{ Bindings: Env }>()
   .get(
     '/',
     zValidator(
@@ -23,9 +21,7 @@ const app = new Hono()
       const {
         key, order, limit,
       } = c.req.valid('query')
-      const db = env<Binding>(c).D1
-      const repo = useTaskRepositoryD1(db)
-
+      const repo = useTaskRepositoryD1(c.env.D1)
       const items = await repo.listTasks(key, order, limit)
       return c.json(items)
     },
@@ -43,9 +39,7 @@ const app = new Hono()
     ),
     async (c) => {
       const taskData = c.req.valid('json')
-      const db = env<Binding>(c).D1
-      const repo = useTaskRepositoryD1(db)
-
+      const repo = useTaskRepositoryD1(c.env.D1)
       const created = await repo.saveTask({
         id: ulid(),
         ...taskData,
@@ -61,9 +55,7 @@ const app = new Hono()
     ),
     async (c) => {
       const id = c.req.valid('param').id
-      const db = env<Binding>(c).D1
-      const repo = useTaskRepositoryD1(db)
-
+      const repo = useTaskRepositoryD1(c.env.D1)
       const stored = await repo.getTask(id)
       if (stored === undefined) {
         return c.json({
@@ -95,9 +87,7 @@ const app = new Hono()
         }, 400)
       }
 
-      const db = env<Binding>(c).D1
-      const repo = useTaskRepositoryD1(db)
-
+      const repo = useTaskRepositoryD1(c.env.D1)
       const storedTask = await repo.getTask(id)
       if (storedTask === undefined) {
         return c.json({
@@ -123,8 +113,7 @@ const app = new Hono()
     ),
     async (c) => {
       const id = c.req.valid('param').id
-      const db = env<Binding>(c).D1
-      const repo = useTaskRepositoryD1(db)
+      const repo = useTaskRepositoryD1(c.env.D1)
       const deleted = await repo.deleteTask(id)
       if (deleted === undefined) {
         return c.json({

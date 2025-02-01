@@ -6,11 +6,11 @@ export default defineWorkersConfig({
   resolve: { alias: { '@': `${__dirname}/src` } },
   test: {
     setupFiles: [
-      'src/apply_d1_migrations.ts',
+      'src/infrastructure/migrations/apply_d1.ts',
     ],
     poolOptions: {
       workers: {
-        main: 'src/routes/index.ts',
+        main: 'src/presentations/index.ts',
         miniflare: {
           d1Databases: ['D1'],
           // NOTE: テスト用のマイグレーションを定義
