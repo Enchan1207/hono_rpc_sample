@@ -2,14 +2,11 @@ import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { ulid } from 'ulid'
 import { z } from 'zod'
-import { TaskPriorities } from '@/entities/task'
-import type { Task } from '@/entities/task'
-import {
-  deleteTask,
-  getTask,
-  listTasks,
-  saveTask,
-} from '@/repositories/taskRepository'
+import { env } from 'hono/adapter'
+import { TaskPriorities } from '@/domain/entities/task'
+import type { Task } from '@/domain/entities/task'
+import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepositoryD1'
+import type { Binding } from '@/cf_bindings'
 
 const app = new Hono()
   .get(
@@ -19,11 +16,17 @@ const app = new Hono()
       z.object({
         key: z.enum(['id', 'due', 'priority']).default('due'),
         order: z.enum(['asc', 'desc']).default('desc'),
+        limit: z.number().optional().default(30),
       }),
     ),
-    (c) => {
-      const { key, order } = c.req.valid('query')
-      const items = listTasks(key, order)
+    async (c) => {
+      const {
+        key, order, limit,
+      } = c.req.valid('query')
+      const db = env<Binding>(c).D1
+      const repo = useTaskRepositoryD1(db)
+
+      const items = await repo.listTasks(key, order, limit)
       return c.json(items)
     },
   )
@@ -38,9 +41,12 @@ const app = new Hono()
         description: z.string(),
       }),
     ),
-    (c) => {
+    async (c) => {
       const taskData = c.req.valid('json')
-      const created = saveTask({
+      const db = env<Binding>(c).D1
+      const repo = useTaskRepositoryD1(db)
+
+      const created = await repo.saveTask({
         id: ulid(),
         ...taskData,
       })
@@ -53,9 +59,12 @@ const app = new Hono()
       'param',
       z.object({ id: z.string().ulid() }),
     ),
-    (c) => {
+    async (c) => {
       const id = c.req.valid('param').id
-      const stored = getTask(id)
+      const db = env<Binding>(c).D1
+      const repo = useTaskRepositoryD1(db)
+
+      const stored = await repo.getTask(id)
       if (stored === undefined) {
         return c.json({
           error: `no such task with id ${id}`,
@@ -76,7 +85,7 @@ const app = new Hono()
         description: z.string().optional(),
       }),
     ),
-    (c) => {
+    async (c) => {
       // paramとjsonとを同時にvalidateできないか?
       const id = z.string().ulid().safeParse(c.req.param('id')).data
       if (id === undefined) {
@@ -86,7 +95,10 @@ const app = new Hono()
         }, 400)
       }
 
-      const storedTask = getTask(id)
+      const db = env<Binding>(c).D1
+      const repo = useTaskRepositoryD1(db)
+
+      const storedTask = await repo.getTask(id)
       if (storedTask === undefined) {
         return c.json({
           error: `no such task with id ${id}`,
@@ -99,7 +111,7 @@ const app = new Hono()
         ...storedTask,
         ...taskData,
       }
-      const updateResult = saveTask(updated)
+      const updateResult = await repo.saveTask(updated)
       return c.json(updateResult, 200)
     },
   )
@@ -109,9 +121,11 @@ const app = new Hono()
       'param',
       z.object({ id: z.string().ulid() }),
     ),
-    (c) => {
+    async (c) => {
       const id = c.req.valid('param').id
-      const deleted = deleteTask(id)
+      const db = env<Binding>(c).D1
+      const repo = useTaskRepositoryD1(db)
+      const deleted = await repo.deleteTask(id)
       if (deleted === undefined) {
         return c.json({
           error: `no such task with id ${id}`,
