@@ -1,5 +1,6 @@
 /** タスクの優先度 */
-export type TaskPriority = 'high' | 'middle' | 'low'
+export const TaskPriorities = ['high', 'middle', 'low'] as const
+export type TaskPriority = typeof TaskPriorities[number]
 
 /** タスクインタフェース */
 export type Task = {
