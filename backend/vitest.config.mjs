@@ -1,12 +1,14 @@
 import { defineWorkersConfig, readD1Migrations } from '@cloudflare/vitest-pool-workers/config'
 
-const migrations = await readD1Migrations(`${__dirname}/migrations`)
+const migrationRelPath = 'src/infrastructure/migrations'
+
+const migrations = await readD1Migrations(`${__dirname}/${migrationRelPath}`)
 
 export default defineWorkersConfig({
   resolve: { alias: { '@': `${__dirname}/src` } },
   test: {
     setupFiles: [
-      'src/infrastructure/migrations/apply_d1.ts',
+      `${migrationRelPath}/apply_d1.ts`,
     ],
     poolOptions: {
       workers: {

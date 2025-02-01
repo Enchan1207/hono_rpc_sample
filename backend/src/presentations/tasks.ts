@@ -1,10 +1,9 @@
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
-import { ulid } from 'ulid'
 import { z } from 'zod'
 import { TaskPriorities } from '@/domain/entities/task'
-import type { Task } from '@/domain/entities/task'
 import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepository'
+import { useTaskUsecase } from '@/usecases/taskUsecase'
 
 const app = new Hono<{ Bindings: Env }>()
   .get(
@@ -15,14 +14,17 @@ const app = new Hono<{ Bindings: Env }>()
         key: z.enum(['id', 'due', 'priority']).default('due'),
         order: z.enum(['asc', 'desc']).default('desc'),
         limit: z.number().optional().default(30),
+        offset: z.number().optional(),
       }),
     ),
     async (c) => {
       const {
-        key, order, limit,
+        key, order, limit, offset,
       } = c.req.valid('query')
+
       const repo = useTaskRepositoryD1(c.env.D1)
-      const items = await repo.listTasks(key, order, limit)
+      const usecase = useTaskUsecase(repo)
+      const items = await usecase.listTasks(key, order, limit, offset)
       return c.json(items)
     },
   )
@@ -39,11 +41,10 @@ const app = new Hono<{ Bindings: Env }>()
     ),
     async (c) => {
       const taskData = c.req.valid('json')
+
       const repo = useTaskRepositoryD1(c.env.D1)
-      const created = await repo.saveTask({
-        id: ulid(),
-        ...taskData,
-      })
+      const usecase = useTaskUsecase(repo)
+      const created = await usecase.createTask(taskData)
       return c.json(created, 201)
     },
   )
@@ -55,8 +56,10 @@ const app = new Hono<{ Bindings: Env }>()
     ),
     async (c) => {
       const id = c.req.valid('param').id
+
       const repo = useTaskRepositoryD1(c.env.D1)
-      const stored = await repo.getTask(id)
+      const usecase = useTaskUsecase(repo)
+      const stored = await usecase.getTask(id)
       if (stored === undefined) {
         return c.json({
           error: `no such task with id ${id}`,
@@ -86,22 +89,11 @@ const app = new Hono<{ Bindings: Env }>()
           ok: false,
         }, 400)
       }
+      const taskData = c.req.valid('json')
 
       const repo = useTaskRepositoryD1(c.env.D1)
-      const storedTask = await repo.getTask(id)
-      if (storedTask === undefined) {
-        return c.json({
-          error: `no such task with id ${id}`,
-          ok: false,
-        }, 404)
-      }
-
-      const taskData = c.req.valid('json')
-      const updated: Task = {
-        ...storedTask,
-        ...taskData,
-      }
-      const updateResult = await repo.saveTask(updated)
+      const usecase = useTaskUsecase(repo)
+      const updateResult = await usecase.updateTask(id, taskData)
       return c.json(updateResult, 200)
     },
   )
@@ -114,7 +106,9 @@ const app = new Hono<{ Bindings: Env }>()
     async (c) => {
       const id = c.req.valid('param').id
       const repo = useTaskRepositoryD1(c.env.D1)
-      const deleted = await repo.deleteTask(id)
+      const usecase = useTaskUsecase(repo)
+
+      const deleted = await usecase.deleteTask(id)
       if (deleted === undefined) {
         return c.json({
           error: `no such task with id ${id}`,
