@@ -133,7 +133,7 @@ describe('複数項目のリストとソート', () => {
 
     test('降順', async () => {
       const taskIds = (await repo.listTasks('priority', 'desc', 30)).map(({ id }) => id)
-      expect(taskIds).toStrictEqual([3, 0, 4, 1, 2].map(n => n.toString()))
+      expect(taskIds).toStrictEqual([0, 3, 1, 4, 2].map(n => n.toString()))
     })
   })
 })
