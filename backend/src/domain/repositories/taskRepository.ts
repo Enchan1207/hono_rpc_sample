@@ -1,6 +1,4 @@
-import type { Task } from '@/domain/entities/task'
-
-export type TaskListItem = Omit<Task, 'description'>
+import type { Task, TaskListItem } from '@/domain/entities/task'
 
 export interface TaskRepository {
   getTask(id: Task['id']): Promise<Task | undefined>

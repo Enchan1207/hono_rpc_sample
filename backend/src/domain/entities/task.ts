@@ -1,14 +1,7 @@
-export const TaskPriorities = ['high', 'middle', 'low'] as const
-export type TaskPriority = (typeof TaskPriorities)[number]
+/** タスクの優先度 */
+export type TaskPriority = 'high' | 'middle' | 'low'
 
-/** タスク優先順位の数値 */
-export const TaskPriorityLevelMap = {
-  high: 100,
-  middle: 50,
-  low: 0,
-} as const satisfies Record<TaskPriority, number>
-
-/** タスク */
+/** タスクインタフェース */
 export type Task = {
   id: string
   title: string
@@ -16,3 +9,6 @@ export type Task = {
   priority: TaskPriority
   description: string
 }
+
+/** タスクリストの各項目 */
+export type TaskListItem = Omit<Task, 'description'>
