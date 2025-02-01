@@ -1,15 +1,45 @@
 import type { D1Database } from '@cloudflare/workers-types'
-import type { Task } from '@/domain/entities/task'
+import type { TaskEntity, TaskListItemEntity } from '@/infrastructure/entities/task'
+import type { TaskRepository } from '@/domain/repositories/taskRepository'
 import type {
-  TaskListItem,
-  TaskRepository,
-} from '@/domain/repositories/taskRepository'
+  Task, TaskListItem, TaskPriority,
+} from '@/domain/entities/task'
+
+const priorityMap: Record<TaskPriority, number> = {
+  high: 100,
+  middle: 50,
+  low: 0,
+}
+
+const reversePriorityMap: Record<number, TaskPriority> = {
+  100: 'high',
+  50: 'middle',
+  0: 'low',
+}
+
+const makeTask = (entity: TaskEntity): Task => ({
+  ...entity,
+  priority: reversePriorityMap[entity.priority] ?? 'low',
+})
+
+const makeTaskEntity = (task: Task): TaskEntity => ({
+  ...task,
+  priority: priorityMap[task.priority],
+})
+
+const makeTaskListItem = (entity: TaskListItemEntity): TaskListItem => ({
+  ...entity,
+  priority: reversePriorityMap[entity.priority] ?? 'low',
+})
 
 const getTask = (db: D1Database): TaskRepository['getTask'] =>
   async (id: Task['id']) => {
     const stmt = 'SELECT id, title, due, priority, description FROM tasks WHERE id=?'
-    const result = await db.prepare(stmt).bind(id).first<Task>()
-    return result ?? undefined
+    const result = await db.prepare(stmt).bind(id).first<TaskEntity>()
+    if (!result) {
+      return undefined
+    }
+    return makeTask(result)
   }
 
 const saveTask = (db: D1Database): TaskRepository['saveTask'] =>
@@ -22,12 +52,14 @@ const saveTask = (db: D1Database): TaskRepository['saveTask'] =>
         priority = ?4,
         description = ?5
     `
+    const entity = makeTaskEntity(newTask)
+
     await db.prepare(stmt).bind(
-      newTask.id,
-      newTask.title,
-      newTask.due,
-      newTask.priority,
-      newTask.description,
+      entity.id,
+      entity.title,
+      entity.due,
+      entity.priority,
+      entity.description,
     ).run()
     return newTask
   }
@@ -53,6 +85,7 @@ const listTasks = (db: D1Database): TaskRepository['listTasks'] => async (
   const query = `SELECT id, title, due, priority 
     FROM tasks
     ORDER BY ${sortBy} ${order === 'asc' ? 'ASC' : 'DESC'}
+    ${sortBy !== 'id' ? ', id ASC' : ''}
     LIMIT ?
     ${offset ? 'OFFSET ?' : ''}
   `
@@ -61,8 +94,8 @@ const listTasks = (db: D1Database): TaskRepository['listTasks'] => async (
   const bound = offset !== undefined
     ? stmt.bind(limit, offset)
     : stmt.bind(limit)
-  const results = await bound.run<TaskListItem>()
-  return results.results
+  const result = await bound.run<TaskListItemEntity>()
+  return result.results.map(entity => makeTaskListItem(entity))
 }
 
 export const useTaskRepositoryD1 = (db: D1Database): TaskRepository => {
