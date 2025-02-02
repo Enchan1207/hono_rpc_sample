@@ -3,11 +3,11 @@
   "scripts": {
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "dev": "wrangler dev --port=3000",
+    "dev": "wrangler --env=development dev --port=3000",
     "test": "vitest",
-    "deploy": "wrangler deploy",
-    "db:init": "wrangler d1 execute hono-rpc-sample-backend-db --local --file='src/infrastructure/migrations/0000-init.sql'",
-    "db:init:remote": "wrangler d1 execute hono-rpc-sample-backend-db --remote --file='src/infrastructure/migrations/0000-init.sql'"
+    "deploy": "wrangler --env=production deploy",
+    "db:init": "wrangler --env=development d1 execute hono-rpc-sample-backend-db --local --file='src/infrastructure/migrations/0000-init.sql'",
+    "db:init:remote": "wrangler --env=production d1 execute hono-rpc-sample-backend-db --remote --file='src/infrastructure/migrations/0000-init.sql'"
   },
   "dependencies": {
     "hono": "^4.6.15",
