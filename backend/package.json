@@ -3,7 +3,7 @@
   "scripts": {
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "dev": "wrangler dev",
+    "dev": "wrangler dev --port=3000",
     "test": "vitest",
     "deploy": "wrangler deploy",
     "db:init": "wrangler d1 execute hono-rpc-sample-backend-db --local --file='src/infrastructure/migrations/0000-init.sql'",
