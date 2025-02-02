@@ -4,4 +4,4 @@ import type { AppType } from '@routes/index'
 import { hc } from 'hono/client'
 
 const env = import.meta.env
-export const client = hc<AppType>(env.VITE_BACKEND_URL)
+export const client = hc<AppType>(env.VITE_BACKEND_URL, { init: { credentials: 'include' } })
