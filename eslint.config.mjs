@@ -140,6 +140,7 @@ export default tseslint.config(
   {
     name: 'frontend rules',
     files: ['frontend/**/*.ts', 'frontend/**/*.vue'],
+    plugins: { vue: vuePlugin },
     rules: {
       'no-console': 'warn',
       'no-restricted-imports': 'off',
@@ -158,6 +159,7 @@ export default tseslint.config(
           },
         ],
       }],
+      'vue/no-undef-components': 'error',
     },
   },
 
