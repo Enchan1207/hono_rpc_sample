@@ -3,7 +3,8 @@
   "scripts": {
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "build": "vite build",
+    "prebuild": "npm run -w backend build",
+    "build": "npx vue-tsc && vite build",
     "dev": "vite dev --port=3002",
     "predeploy": "npm run build",
     "deploy": "wrangler pages deploy"
@@ -19,6 +20,8 @@
     "eslint-plugin-vue": "^9.32.0",
     "unplugin-vue-router": "^0.11.1",
     "vite": "^6.0.7",
-    "vue-eslint-parser": "^9.4.3"
+    "vite-plugin-checker": "^0.8.0",
+    "vue-eslint-parser": "^9.4.3",
+    "vue-tsc": "^2.2.0"
   }
 }
