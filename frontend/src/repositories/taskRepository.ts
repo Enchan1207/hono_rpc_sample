@@ -7,8 +7,16 @@ import type { Task, TaskListItem } from '@/entities/task'
 export const listTask = async (query: {
   key?: 'id' | 'due' | 'priority'
   order?: 'desc' | 'asc'
+  limit?: number
+  offset?: number
 }): Promise<TaskListItem[]> => {
-  const response = await client.task.$get({ query })
+  const response = await client.task.$get({
+    query: {
+      ...query,
+      limit: query.limit?.toString(),
+      offset: query.offset?.toString(),
+    },
+  })
   const taskDatas = await response.json()
   const tasks: TaskListItem[] = taskDatas.map(task => ({
     ...task,

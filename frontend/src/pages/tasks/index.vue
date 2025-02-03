@@ -25,6 +25,16 @@
       @detail="onClickDetail"
       @remove="remove"
     />
+    <button
+      v-if="hasNext"
+      :disabled="isLoading"
+      @click="next"
+    >
+      load more
+    </button>
+    <template v-else>
+      -- last item --
+    </template>
   </template>
   <hr>
   <button @click="onClickAdd">
@@ -43,15 +53,19 @@ const router = useRouter()
 
 const key = ref<'id' | 'due' | 'priority'>('id')
 const order = ref <'asc' | 'desc'>('desc')
+const itemPerPage = ref(20)
 
 const {
   tasks,
   isLoading,
   error,
+  next,
+  hasNext,
   remove,
 } = useTaskList({
   key,
   order,
+  itemPerPage,
 })
 
 // MARK: - Event handlers
