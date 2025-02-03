@@ -1,23 +1,26 @@
 import {
-  ref, toValue, watchEffect,
+  ref, toValue, watch,
 } from 'vue'
 import type { Ref } from 'vue'
 import type { TaskListItem } from '@/entities/task'
 import { deleteTask, listTask } from '@/repositories/taskRepository'
 
 type ListTaskParams = Parameters<typeof listTask>[0]
-type Referencable<T> = Ref<T> | T
 
 export const useTaskList = (props: {
-  key: Referencable<ListTaskParams['key']>
-  order: Referencable<ListTaskParams['order']>
+  key: Ref<ListTaskParams['key']>
+  order: Ref<ListTaskParams['order']>
+  itemPerPage: Ref<number>
 }) => {
   const isLoading = ref(true)
 
   const tasks = ref<TaskListItem[]>([])
   const error = ref<Error>()
 
-  // TODO: 今は想定していないけど、ページングする時のことを考えてnextにしている
+  const limit = ref<number>(toValue(props.itemPerPage))
+  const offset = ref<number>(0)
+  const hasNext = ref<boolean>(true)
+
   const next = async () => {
     isLoading.value = true
     error.value = undefined
@@ -25,9 +28,21 @@ export const useTaskList = (props: {
     const fetchedTasks = await listTask({
       key: toValue(props.key),
       order: toValue(props.order),
+      limit: limit.value,
+      offset: offset.value,
     })
-    tasks.value = fetchedTasks
+    tasks.value.push(...fetchedTasks)
+    offset.value += fetchedTasks.length
+    hasNext.value = fetchedTasks.length > 0
     isLoading.value = false
+  }
+
+  const reload = async () => {
+    tasks.value = []
+    limit.value = toValue(props.itemPerPage)
+    offset.value = 0
+    hasNext.value = true
+    await next()
   }
 
   const remove = async (id: TaskListItem['id']) => {
@@ -44,17 +59,17 @@ export const useTaskList = (props: {
     isLoading.value = false
   }
 
-  watchEffect(() => {
-    // keyかorderが変わった時はリストをクリアする
-    tasks.value = []
-    next()
-  })
+  watch([props.key, props.order, props.itemPerPage], async () => {
+    await reload()
+  }, { immediate: true })
 
   return {
     tasks,
     isLoading,
     error,
     next,
+    reload,
+    hasNext,
     remove,
   }
 }

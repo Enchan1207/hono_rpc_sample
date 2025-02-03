@@ -9,6 +9,23 @@
     <button @click="onClickKey">
       key: {{ key }}
     </button>
+
+    <label for="item_per_page">Items per page:</label>
+    <select
+      id="item_per_page"
+      v-model="itemPerPage"
+    >
+      <template
+        v-for="count in itemCountSelections"
+        :key="count"
+      >
+        <option
+          :value="count"
+        >
+          {{ count }}
+        </option>
+      </template>
+    </select>
   </div>
 
   <template v-if="isLoading">
@@ -25,6 +42,16 @@
       @detail="onClickDetail"
       @remove="remove"
     />
+    <button
+      v-if="hasNext"
+      :disabled="isLoading"
+      @click="next"
+    >
+      load more
+    </button>
+    <template v-else>
+      -- last item --
+    </template>
   </template>
   <hr>
   <button @click="onClickAdd">
@@ -35,6 +62,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+import type { Ref } from 'vue'
 import type { TaskListItem } from '@/entities/task'
 import TaskList from '@/components/TaskList.vue'
 import { useTaskList } from '@/composables/useTaskList'
@@ -44,14 +72,20 @@ const router = useRouter()
 const key = ref<'id' | 'due' | 'priority'>('id')
 const order = ref <'asc' | 'desc'>('desc')
 
+const itemCountSelections = [5, 10, 20, 50] as const
+const itemPerPage: Ref<(typeof itemCountSelections)[number]> = ref(20)
+
 const {
   tasks,
   isLoading,
   error,
+  next,
+  hasNext,
   remove,
 } = useTaskList({
   key,
   order,
+  itemPerPage,
 })
 
 // MARK: - Event handlers

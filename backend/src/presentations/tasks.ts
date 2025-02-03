@@ -26,8 +26,8 @@ const app = new Hono<{ Bindings: Env }>()
       z.object({
         key: z.enum(['id', 'due', 'priority']).default('due'),
         order: z.enum(['asc', 'desc']).default('desc'),
-        limit: z.number().optional().default(30),
-        offset: z.number().optional(),
+        limit: z.string().pipe(z.coerce.number().min(1).int()).default('20'),
+        offset: z.string().pipe(z.coerce.number().min(0).int()).optional(),
       }),
     ),
     async (c) => {

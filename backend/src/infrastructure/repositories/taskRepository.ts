@@ -87,7 +87,7 @@ const listTasks = (db: D1Database): TaskRepository['listTasks'] => async (
     ORDER BY ${sortBy} ${order === 'asc' ? 'ASC' : 'DESC'}
     ${sortBy !== 'id' ? ', id ASC' : ''}
     LIMIT ?
-    ${offset ? 'OFFSET ?' : ''}
+    ${offset !== undefined ? 'OFFSET ?' : ''}
   `
 
   const stmt = db.prepare(query)
