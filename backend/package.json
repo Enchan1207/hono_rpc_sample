@@ -12,7 +12,6 @@
     "db:init:remote": "wrangler --env=production d1 execute hono-rpc-sample-backend-db --remote --file='src/infrastructure/migrations/0000-init.sql'"
   },
   "dependencies": {
-    "hono": "^4.6.15",
     "ulid": "^2.3.0",
     "zod": "^3.24.1"
   },
