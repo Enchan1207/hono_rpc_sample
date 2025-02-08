@@ -1,20 +1,6 @@
-<template>
-  <ul>
-    <li
-      v-for="task in props.tasks"
-      :key="task.id"
-    >
-      <TaskListRow
-        :item="task"
-        @detail="emits('detail', task.id)"
-        @remove="emits('remove', task.id)"
-      />
-    </li>
-  </ul>
-</template>
-
 <script setup lang="ts">
-import TaskListRow from './TaskListRow.vue'
+import { DeleteFilled } from '@element-plus/icons-vue'
+import dayjs from '@/logic/dayjs'
 import type { TaskListItem } from '@/entities/task'
 
 const props = defineProps<{ tasks: TaskListItem[] }>()
@@ -25,3 +11,72 @@ const emits = defineEmits<{
   ): void
 }>()
 </script>
+
+<template>
+  <el-table
+    :data="props.tasks"
+    @cell-dblclick="task=>emits('detail', task.id)"
+  >
+    <el-table-column
+      prop="title"
+      label="タイトル"
+    >
+      <template #default="{row: task}">
+        <div class="title-cell">
+          <span>{{ task.title }}</span>
+          <el-button
+            class="remove-button"
+            type="danger"
+            :icon="DeleteFilled"
+            size="small"
+            circle
+            @click.stop="emits('remove', task.id)"
+          />
+        </div>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="priority"
+      label="優先度"
+    />
+    <el-table-column
+      prop="due"
+      label="期日"
+    >
+      <template #default="{row: task}">
+        <span :class="task.due.isBefore(dayjs()) ? 'over':''">
+          {{ task.due.fromNow() }}
+        </span>
+      </template>
+    </el-table-column>
+  </el-table>
+</template>
+
+<style>
+.el-table__row {
+  cursor: pointer;
+  user-select: none;
+}
+
+.remove-button {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity ease-in-out .1s;
+}
+
+.el-table__row:hover .remove-button{
+  opacity: 1;
+  pointer-events: all;
+}
+
+.el-table__row .over{
+  color: red;
+  font-weight: bold;
+}
+
+.title-cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>

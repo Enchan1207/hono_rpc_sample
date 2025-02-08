@@ -1,6 +1,4 @@
 <template>
-  <h2>Registered tasks</h2>
-  <hr>
   <div>
     <button @click="onClickOrder">
       order: {{ order }}
@@ -53,10 +51,6 @@
       -- last item --
     </template>
   </template>
-  <hr>
-  <button @click="onClickAdd">
-    Add new task
-  </button>
 </template>
 
 <script setup lang="ts">
@@ -89,10 +83,6 @@ const {
 })
 
 // MARK: - Event handlers
-
-const onClickAdd = () => {
-  router.push('/tasks/new')
-}
 
 const onClickDetail = (id: TaskListItem['id']) => {
   router.push({
