@@ -6,7 +6,7 @@ import tasks from '@/presentations/tasks'
 const app = new Hono()
   .use('/task/*', createMiddleware<{ Bindings: Env }>(async (c, next) => {
     const corsMiddleware = cors({
-      origin: c.env.FRONTEND_URL,
+      origin: c.env.CORS_ALLOW_ORIGINS,
       credentials: true,
     })
     return corsMiddleware(c, next)
