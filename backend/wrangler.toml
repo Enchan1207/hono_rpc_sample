@@ -10,7 +10,7 @@ enabled = true
 
 # local
 [env.development.vars]
-FRONTEND_URL = "http://localhost:3002"
+CORS_ALLOW_ORIGINS = "http://localhost:5173"
 
 [[env.development.d1_databases]]
 binding = "D1"
@@ -19,7 +19,7 @@ database_id = "f1f9bbae-f053-4de7-a05d-0462b76185fe"
 
 # Cloudflare
 [env.production.vars]
-FRONTEND_URL = [
+CORS_ALLOW_ORIGINS = [
   "https://hono-rpc-sample.enchan.me",
   "https://master.hono-rpc-sample-frontend.pages.dev"
 ]

@@ -1,6 +1,6 @@
 interface Env {
   D1: D1Database
-  FRONTEND_URL: string | string[]
+  CORS_ALLOW_ORIGINS: string | string[]
 }
 
 declare module 'cloudflare:test' {
