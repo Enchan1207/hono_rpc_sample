@@ -64,7 +64,7 @@ import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 import type { TaskListItem } from '@/entities/task'
-import TaskList from '@/components/TaskList.vue'
+import TaskList from '@/components/tasks/TaskList.vue'
 import { useTaskList } from '@/composables/useTaskList'
 
 const router = useRouter()

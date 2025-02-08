@@ -11,7 +11,7 @@ import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { addTask } from '@/repositories/taskRepository'
 import type { Task } from '@/entities/task'
-import TaskDetail from '@/components/TaskDetail.vue'
+import TaskDetail from '@/components/tasks/TaskDetail.vue'
 import dayjs from '@/logic/dayjs'
 
 const router = useRouter()

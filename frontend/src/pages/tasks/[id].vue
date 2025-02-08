@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import { useTaskData } from '@/composables/useTaskData'
-import TaskDetail from '@/components/TaskDetail.vue'
+import TaskDetail from '@/components/tasks/TaskDetail.vue'
 
 const route = useRoute<'/tasks/[id]'>()
 const router = useRouter()
