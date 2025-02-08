@@ -10,7 +10,7 @@ enabled = true
 
 # local
 [env.development.vars]
-CORS_ALLOW_ORIGINS = "*"
+CORS_ALLOW_ORIGINS = "http://localhost:5173"
 
 [[env.development.d1_databases]]
 binding = "D1"
