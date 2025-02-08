@@ -4,7 +4,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "build": "tsc",
-    "dev": "wrangler --env=development dev --port=3000",
+    "dev": "wrangler --env=development dev",
     "test": "vitest",
     "predeploy": "npm run build",
     "deploy": "wrangler --env=production deploy",
