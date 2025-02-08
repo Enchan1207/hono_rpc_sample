@@ -160,7 +160,15 @@ export default tseslint.config(
           },
         ],
       }],
-      'vue/no-undef-components': 'error',
+      'vue/no-undef-components': ['error', {
+        ignorePatterns: [
+          '^Router[A-Z]',
+          '^router-[a-z]',
+          '^el-[a-z]+',
+        ],
+      },
+
+      ],
     },
   },
 
