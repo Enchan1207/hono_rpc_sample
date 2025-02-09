@@ -11,6 +11,7 @@ const router = useRouter()
       type="primary"
       :icon="Edit"
       size="large"
+      round
       @click="router.push('/tasks/new')"
     >
       追加
@@ -34,8 +35,7 @@ const router = useRouter()
 }
 
 .add-button-container .el-button {
-  width: 100%;
-  height: 50px;
+  height: 40px;
   justify-content: left;
 }
 </style>
