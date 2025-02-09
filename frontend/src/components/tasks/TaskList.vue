@@ -19,7 +19,11 @@ const emits = defineEmits<{
 </script>
 
 <template>
-  <ul class="task-list">
+  <ul
+    v-infinite-scroll="()=>emits('next')"
+    :infinite-scroll-disabled="isLoading || !hasNext"
+    class="task-list"
+  >
     <li
       v-for="task in props.tasks"
       :key="task.id"

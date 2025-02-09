@@ -1,5 +1,5 @@
 <template>
-  <el-row>
+  <el-row class="task-list-header">
     <el-select v-model="key">
       <el-option
         v-for="[sortKey, label] in Object.entries(sortOpts)"
@@ -87,3 +87,13 @@ const onClickOrder = () => {
   order.value = currentOrder === 'asc' ? 'desc' : 'asc'
 }
 </script>
+
+<style>
+.task-list-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 10px;
+  background-color: var(--el-fill-color-blank);
+}
+</style>

@@ -28,4 +28,9 @@ html, body {
 .root-container {
   height: 100vh;
 }
+
+.el-main {
+  height: calc(100vh - 60px);
+  padding: 0 var(--el-main-padding);
+}
 </style>
