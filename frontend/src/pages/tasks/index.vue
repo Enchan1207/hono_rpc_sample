@@ -15,34 +15,20 @@
     >
       {{ orderLabel[order] }}
     </el-button>
-
-    <button
-      v-if="hasNext"
-      :disabled="isLoading"
-      @click="next"
-    >
-      load more
-    </button>
-    <template v-else>
-      -- last item --
-    </template>
   </div>
-
-  <template v-if="isLoading">
-    <div>now loading...</div>
-  </template>
 
   <template v-if="error">
     <div>some error occured: {{ error.message }}</div>
   </template>
 
-  <template v-if="tasks">
-    <TaskList
-      :tasks="tasks"
-      @detail="onClickDetail"
-      @remove="remove"
-    />
-  </template>
+  <TaskList
+    :tasks="tasks"
+    :has-next="hasNext"
+    :is-loading="isLoading"
+    @detail="onClickDetail"
+    @remove="remove"
+    @next="next"
+  />
 </template>
 
 <script setup lang="ts">

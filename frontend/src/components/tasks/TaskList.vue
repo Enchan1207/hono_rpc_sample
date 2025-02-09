@@ -3,17 +3,31 @@ import { DeleteFilled } from '@element-plus/icons-vue'
 import dayjs from '@/logic/dayjs'
 import type { TaskListItem } from '@/entities/task'
 
-const props = defineProps<{ tasks: TaskListItem[] }>()
+const props = defineProps<{
+  tasks: TaskListItem[]
+  hasNext: boolean
+  isLoading: boolean
+}>()
 const emits = defineEmits<{
   (
     operation: 'detail' | 'remove',
     id: TaskListItem['id']
   ): void
+  (
+    operation: 'next',
+  ): void
 }>()
 </script>
 
 <template>
-  <el-table :data="props.tasks">
+  <el-table
+    v-loading="isLoading"
+    v-infinite-scroll="()=>emits('next')"
+    :v-infinite-scroll-distance="10"
+    :infinite-scroll-disabled="isLoading || !hasNext"
+    :data="props.tasks"
+    :height="200"
+  >
     <el-table-column
       prop="title"
       label="タイトル"
