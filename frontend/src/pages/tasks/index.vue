@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <el-row>
     <el-select v-model="key">
       <el-option
         v-for="[sortKey, label] in Object.entries(sortOpts)"
@@ -15,20 +15,20 @@
     >
       {{ orderLabel[order] }}
     </el-button>
-  </div>
+  </el-row>
 
-  <template v-if="error">
-    <div>some error occured: {{ error.message }}</div>
-  </template>
-
-  <TaskList
-    :tasks="tasks"
-    :has-next="hasNext"
-    :is-loading="isLoading"
-    @detail="onClickDetail"
-    @remove="remove"
-    @next="next"
-  />
+  <el-row justify="center">
+    <el-col :span="16">
+      <TaskList
+        :tasks="tasks"
+        :has-next="hasNext"
+        :is-loading="isLoading"
+        @detail="onClickDetail"
+        @remove="remove"
+        @next="next"
+      />
+    </el-col>
+  </el-row>
 </template>
 
 <script setup lang="ts">
@@ -64,7 +64,6 @@ const itemPerPage = ref(20)
 const {
   tasks,
   isLoading,
-  error,
   next,
   hasNext,
   remove,
