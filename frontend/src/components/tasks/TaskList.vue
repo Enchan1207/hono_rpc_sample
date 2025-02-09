@@ -13,17 +13,20 @@ const emits = defineEmits<{
 </script>
 
 <template>
-  <el-table
-    :data="props.tasks"
-    @cell-dblclick="task=>emits('detail', task.id)"
-  >
+  <el-table :data="props.tasks">
     <el-table-column
       prop="title"
       label="タイトル"
     >
       <template #default="{row: task}">
         <div class="title-cell">
-          <span>{{ task.title }}</span>
+          <el-button
+            link
+            type="primary"
+            @click="emits('detail', task.id)"
+          >
+            {{ task.title }}
+          </el-button>
           <el-button
             class="remove-button"
             type="danger"
@@ -54,14 +57,13 @@ const emits = defineEmits<{
 
 <style>
 .el-table__row {
-  cursor: pointer;
   user-select: none;
 }
 
 .remove-button {
   opacity: 0;
   pointer-events: none;
-  transition: opacity ease-in-out .1s;
+  transition: all ease-in-out .1s;
 }
 
 .el-table__row:hover .remove-button{
