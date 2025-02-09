@@ -6,7 +6,7 @@ import Sidebar from '@/components/SideBar.vue'
 <template>
   <el-container class="root-container">
     <el-header>
-      <h1>Hono RPC sample</h1>
+      <h1>Simple ToDo</h1>
     </el-header>
     <el-container>
       <el-aside>

@@ -1,20 +1,27 @@
 <template>
-  <el-row class="task-list-header">
-    <el-select v-model="key">
-      <el-option
-        v-for="[sortKey, label] in Object.entries(sortOpts)"
-        :key="sortKey"
-        :label="label"
-        :value="sortKey"
-      />
-    </el-select>
+  <el-row
+    justify="end"
+    class="task-list-header"
+  >
+    <el-col :span="4">
+      <el-select v-model="key">
+        <el-option
+          v-for="[sortKey, label] in Object.entries(sortOpts)"
+          :key="sortKey"
+          :label="label"
+          :value="sortKey"
+        />
+      </el-select>
+    </el-col>
 
-    <el-button
-      :icon="order==='asc' ? SortUp : SortDown"
-      @click="onClickOrder"
-    >
-      {{ orderLabel[order] }}
-    </el-button>
+    <el-col :span="2">
+      <el-button
+        :icon="order==='asc' ? SortUp : SortDown"
+        @click="onClickOrder"
+      >
+        {{ orderLabel[order] }}
+      </el-button>
+    </el-col>
   </el-row>
 
   <el-row justify="center">
@@ -95,5 +102,9 @@ const onClickOrder = () => {
   z-index: 10;
   padding: 10px;
   background-color: var(--el-fill-color-blank);
+}
+
+.task-list-header .el-col:not(:last-child){
+  padding-right: 10px;
 }
 </style>
