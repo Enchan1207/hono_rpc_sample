@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { DeleteFilled } from '@element-plus/icons-vue'
 import type { TaskListItem } from '@/entities/task'
+import dayjs from '@/logic/dayjs'
 
 const props = defineProps<{ item: TaskListItem }>()
 const emits = defineEmits(['detail', 'remove'])
@@ -17,8 +18,12 @@ const emits = defineEmits(['detail', 'remove'])
         >
           {{ props.item.title }}
         </el-button>
-        <div>priority: {{ props.item.priority }}</div>
-        <div>due:{{ props.item.due.fromNow() }}</div>
+        <div>
+          priority: {{ props.item.priority }}
+        </div>
+        <div :class="props.item.due.isBefore(dayjs()) ? 'over':''">
+          due:{{ props.item.due.fromNow() }}
+        </div>
       </el-col>
 
       <el-col :span="2">
@@ -36,6 +41,10 @@ const emits = defineEmits(['detail', 'remove'])
 </template>
 
 <style>
+.el-card {
+  user-select: none;
+}
+
 .remove-button {
   pointer-events: none;
   opacity: 0;
@@ -45,5 +54,10 @@ const emits = defineEmits(['detail', 'remove'])
 .el-card:hover .remove-button {
   pointer-events: all;
   opacity: 1;
+}
+
+.el-card .over{
+  color: red;
+  font-weight: bold;
 }
 </style>
