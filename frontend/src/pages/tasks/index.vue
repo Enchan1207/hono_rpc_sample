@@ -4,7 +4,10 @@
     class="task-list-header"
   >
     <el-col :span="4">
-      <el-select v-model="key">
+      <el-select
+        v-model="key"
+        :disabled="isLoading"
+      >
         <el-option
           v-for="[sortKey, label] in Object.entries(sortOpts)"
           :key="sortKey"
@@ -16,6 +19,7 @@
 
     <el-col :span="2">
       <el-button
+        :disabled="isLoading"
         :icon="order==='asc' ? SortUp : SortDown"
         @click="onClickOrder"
       >

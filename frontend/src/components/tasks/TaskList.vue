@@ -34,7 +34,12 @@ const emits = defineEmits<{
       />
     </li>
     <li
-      v-if="!hasNext"
+      v-if="isLoading"
+      v-loading="isLoading"
+      style="height: 60px"
+    />
+    <li
+      v-if="!isLoading && !hasNext"
       class="last-element-info"
     >
       <el-text
