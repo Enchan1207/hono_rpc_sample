@@ -1,84 +1,39 @@
-<template>
-  <h2>Registered tasks</h2>
-  <hr>
-  <div>
-    <button @click="onClickOrder">
-      order: {{ order }}
-    </button>
-
-    <button @click="onClickKey">
-      key: {{ key }}
-    </button>
-
-    <label for="item_per_page">Items per page:</label>
-    <select
-      id="item_per_page"
-      v-model="itemPerPage"
-    >
-      <template
-        v-for="count in itemCountSelections"
-        :key="count"
-      >
-        <option
-          :value="count"
-        >
-          {{ count }}
-        </option>
-      </template>
-    </select>
-  </div>
-
-  <template v-if="isLoading">
-    <div>now loading...</div>
-  </template>
-
-  <template v-if="error">
-    <div>some error occured: {{ error.message }}</div>
-  </template>
-
-  <template v-if="tasks">
-    <TaskList
-      :tasks="tasks"
-      @detail="onClickDetail"
-      @remove="remove"
-    />
-    <button
-      v-if="hasNext"
-      :disabled="isLoading"
-      @click="next"
-    >
-      load more
-    </button>
-    <template v-else>
-      -- last item --
-    </template>
-  </template>
-  <hr>
-  <button @click="onClickAdd">
-    Add new task
-  </button>
-</template>
-
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import {
+  SortDown, SortUp, Edit,
+} from '@element-plus/icons-vue'
 import { ref } from 'vue'
-import type { Ref } from 'vue'
-import type { TaskListItem } from '@/entities/task'
-import TaskList from '@/components/TaskList.vue'
+import { breakpointsElement, useBreakpoints } from '@vueuse/core'
+import TaskList from '@/components/tasks/TaskList.vue'
 import { useTaskList } from '@/composables/useTaskList'
+import { router } from '@/routes'
 
-const router = useRouter()
+const breakpoints = useBreakpoints(breakpointsElement)
+const isSmartphone = breakpoints.isSmaller('sm')
 
-const key = ref<'id' | 'due' | 'priority'>('id')
-const order = ref <'asc' | 'desc'>('desc')
+// 並べ替え項目
+type SortKeys = 'id' | 'due' | 'priority'
+const sortOpts: Record<SortKeys, string> = {
+  id: '作成日',
+  due: '期日',
+  priority: '優先度',
+}
+const key = ref<SortKeys>('id')
 
-const itemCountSelections = [5, 10, 20, 50] as const
-const itemPerPage: Ref<(typeof itemCountSelections)[number]> = ref(20)
+// 並べ替え順序
+type Orders = 'asc' | 'desc'
+const orderLabel: Record<Orders, string> = {
+  asc: '昇順',
+  desc: '降順',
+}
+const order = ref <Orders>('desc')
+
+/** @deprecated 無限スクロール実装するならUIとして項目用意する必要ないはず */
+const itemPerPage = ref(20)
 
 const {
   tasks,
   isLoading,
-  error,
   next,
   hasNext,
   remove,
@@ -90,35 +45,100 @@ const {
 
 // MARK: - Event handlers
 
-const onClickAdd = () => {
-  router.push('/tasks/new')
-}
-
-const onClickDetail = (id: TaskListItem['id']) => {
-  router.push({
-    name: '/tasks/[id]',
-    params: { id },
-  })
-}
-
 const onClickOrder = () => {
   const currentOrder = order.value
   order.value = currentOrder === 'asc' ? 'desc' : 'asc'
 }
-
-const onClickKey = () => {
-  switch (key.value) {
-    case 'id':
-      key.value = 'due'
-      break
-
-    case 'due':
-      key.value = 'priority'
-      break
-
-    case 'priority':
-      key.value = 'id'
-      break
-  }
-}
 </script>
+
+<template>
+  <el-button
+    v-if="isSmartphone"
+    type="primary"
+    class="add-btn"
+    :icon="Edit"
+    @click="router.push('/tasks/new')"
+  />
+
+  <div class="task-list-header">
+    <el-row>
+      <el-col>
+        <h2>タスク一覧</h2>
+      </el-col>
+    </el-row>
+
+    <el-row justify="end">
+      <el-select
+        v-model="key"
+        class="sort-key-selector"
+        :disabled="isLoading"
+      >
+        <el-option
+          v-for="[sortKey, label] in Object.entries(sortOpts)"
+          :key="sortKey"
+          :label="label"
+          :value="sortKey"
+        />
+      </el-select>
+
+      <el-button
+        :disabled="isLoading"
+        :icon="order==='asc' ? SortUp : SortDown"
+        @click="onClickOrder"
+      >
+        {{ orderLabel[order] }}
+      </el-button>
+    </el-row>
+  </div>
+
+  <el-row justify="center">
+    <el-col
+      :xs="22"
+      :sm="20"
+      :md="18"
+      :lg="14"
+      :xl="10"
+    >
+      <TaskList
+        :tasks="tasks"
+        :has-next="hasNext"
+        :is-loading="isLoading"
+        @remove="remove"
+        @next="next"
+      />
+    </el-col>
+  </el-row>
+</template>
+
+<style scoped>
+h2{
+  margin: 0;
+}
+
+.el-row:not(:last-child){
+  margin-bottom: 15px;
+}
+
+.task-list-header {
+  position: sticky;
+  top: calc(-1 * var(--el-main-padding));
+  z-index: 10;
+  padding: 10px;
+  background-color: var(--el-bg-color);
+  gap: 5px 10px;
+}
+
+.sort-key-selector {
+  max-width: 120px;
+}
+
+.add-btn {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  right: 30px;
+  bottom: 40px;
+  z-index: 20;
+}
+</style>

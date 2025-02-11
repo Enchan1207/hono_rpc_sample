@@ -11,6 +11,7 @@ dayjs.extend(timezone)
 dayjs.extend(utc)
 dayjs.extend(isLeapYear)
 dayjs.extend(relativeTime)
+dayjs.locale(window.navigator.language)
 
 dayjs.tz.setDefault('Asia/Tokyo')
 

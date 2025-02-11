@@ -23,12 +23,15 @@
       "@routes/*": ["../backend/src/presentations/*"]
     },
     "types": [
-      "unplugin-vue-router/client"
+      "unplugin-vue-router/client",
+      "element-plus/global"
     ]
   },
   "include": [
     "src/**/*",
-    "./typed-router.d.ts"
+    "./typed-router.d.ts",
+    "./auto-imports.d.ts",
+    "./components.d.ts",
   ],
   "exclude": ["dist", "node_modules"],
   "references": [{ "path": "../backend" }],

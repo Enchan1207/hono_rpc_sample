@@ -59,7 +59,12 @@ export const useTaskList = (props: {
     isLoading.value = false
   }
 
-  watch([props.key, props.order, props.itemPerPage], async () => {
+  watch([props.key, props.order, props.itemPerPage], async (_, prevValue) => {
+    // prevValueがある = 初回でないと判断、ロード中ならpreventする
+    if (prevValue.length > 0 && isLoading.value) {
+      return
+    }
+
     await reload()
   }, { immediate: true })
 
