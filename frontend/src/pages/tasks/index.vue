@@ -30,7 +30,6 @@
         :tasks="tasks"
         :has-next="hasNext"
         :is-loading="isLoading"
-        @detail="onClickDetail"
         @remove="remove"
         @next="next"
       />
@@ -40,13 +39,9 @@
 
 <script setup lang="ts">
 import { SortDown, SortUp } from '@element-plus/icons-vue'
-import { useRouter } from 'vue-router'
 import { ref } from 'vue'
-import type { TaskListItem } from '@/entities/task'
 import TaskList from '@/components/tasks/TaskList.vue'
 import { useTaskList } from '@/composables/useTaskList'
-
-const router = useRouter()
 
 // 並べ替え項目
 type SortKeys = 'id' | 'due' | 'priority'
@@ -81,13 +76,6 @@ const {
 })
 
 // MARK: - Event handlers
-
-const onClickDetail = (id: TaskListItem['id']) => {
-  router.push({
-    name: '/tasks/[id]',
-    params: { id },
-  })
-}
 
 const onClickOrder = () => {
   const currentOrder = order.value
