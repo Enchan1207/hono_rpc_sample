@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+import { ArrowLeft } from '@element-plus/icons-vue'
 import { addTask } from '@/repositories/taskRepository'
 import type { Task } from '@/entities/task'
 import TaskDetail from '@/components/tasks/TaskDetail.vue'
@@ -22,9 +23,39 @@ const onSubmit = async (task: Omit<Task, 'id'>) => {
 </script>
 
 <template>
-  <h2>Add new task</h2>
-  <TaskDetail
-    :task="task"
-    @commit="onSubmit"
-  />
+  <el-row>
+    <el-col>
+      <el-button
+        type="info"
+        link
+        :icon="ArrowLeft"
+        @click="router.push('/tasks')"
+      >
+        一覧に戻る
+      </el-button>
+    </el-col>
+  </el-row>
+
+  <el-row justify="center">
+    <el-col
+      :xs="22"
+      :sm="20"
+      :md="18"
+      :lg="14"
+      :xl="10"
+    >
+      <h2>タスクの登録</h2>
+
+      <TaskDetail
+        :task="task"
+        @commit="onSubmit"
+      />
+    </el-col>
+  </el-row>
 </template>
+
+<style scoped>
+.el-row:not(:last-child){
+  margin-bottom: 15px;
+}
+</style>

@@ -4,7 +4,7 @@ import {
 } from 'vue'
 import type { WritableComputedRef } from 'vue'
 import dayjs from '@/logic/dayjs'
-import type { Task } from '@/entities/task'
+import type { Task, TaskPriority } from '@/entities/task'
 
 // idだけはオプショナルにする
 export type TaskDetailProps = Omit<Task, 'id'> & { id?: Task['id'] }
@@ -17,9 +17,8 @@ const emits = defineEmits<{
 }>()
 
 const formData = ref<TaskDetailProps>(props.task)
-
 const internalDue: WritableComputedRef<string> = computed({
-  get: () => formData.value.due.format('YYYY-MM-DD'),
+  get: () => formData.value.due.format('YYYY-MM-DD HH:mm:ss'),
   set: value => formData.value.due = dayjs.tz(value),
 })
 
@@ -30,6 +29,12 @@ watch(props, ({ task }) => {
 
 const onCommit = () => {
   emits('commit', formData.value)
+}
+
+const priorityOptions: Record<TaskPriority, string> = {
+  high: '高',
+  middle: '中',
+  low: '低',
 }
 
 const commitButtonString = computed(() => {
@@ -43,57 +48,49 @@ const commitButtonString = computed(() => {
 </script>
 
 <template>
-  <form @submit.prevent="onCommit">
-    <ul>
-      <li>
-        <label for="title">タイトル</label>
-        <input
-          id="title"
-          v-model="formData.title"
-          type="text"
-        >
-      </li>
-      <li>
-        <label for="priority">優先度</label>
-        <select
-          id="priority"
-          v-model="formData.priority"
-        >
-          <option value="high">
-            高
-          </option>
-          <option value="middle">
-            中
-          </option>
-          <option value="low">
-            低
-          </option>
-        </select>
-      </li>
+  <el-form
+    label-position="left"
+    label-width="auto"
+    :model="formData"
+  >
+    <el-form-item label="タイトル">
+      <el-input v-model="formData.title" />
+    </el-form-item>
 
-      <li>
-        <label for="description">詳細</label>
-        <textarea
-          id="description"
-          v-model="formData.description"
-          cols="30"
-          rows="10"
+    <el-form-item label="優先度">
+      <el-select v-model="formData.priority">
+        <el-option
+          v-for="[sortKey, label] in Object.entries(priorityOptions)"
+          :key="sortKey"
+          :label="label"
+          :value="sortKey"
         />
-      </li>
+      </el-select>
+    </el-form-item>
 
-      <li>
-        <label for="due">期日</label>
-        <input
-          id="due"
-          v-model="internalDue"
-          type="date"
-        >
-      </li>
-      <li>
-        <button type="submit">
-          {{ commitButtonString }}
-        </button>
-      </li>
-    </ul>
-  </form>
+    <el-form-item label="詳細">
+      <el-input
+        v-model="formData.description"
+        type="textarea"
+      />
+    </el-form-item>
+
+    <el-form-item label="期日">
+      <el-date-picker
+        v-model="internalDue"
+        type="datetime"
+        placeholder="Select date and time"
+        :editable="false"
+      />
+    </el-form-item>
+
+    <el-form-item>
+      <el-button
+        type="primary"
+        @click="onCommit"
+      >
+        {{ commitButtonString }}
+      </el-button>
+    </el-form-item>
+  </el-form>
 </template>
