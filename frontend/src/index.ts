@@ -1,7 +1,8 @@
-import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
-import { router } from './routes'
 import 'element-plus/dist/index.css'
+import 'element-plus/theme-chalk/dark/css-vars.css'
+import { createApp } from 'vue'
+import { router } from './routes'
 import App from '@/App.vue'
 
 const app = createApp(App)

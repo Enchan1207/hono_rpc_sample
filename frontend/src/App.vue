@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Expand, Fold } from '@element-plus/icons-vue'
-import { breakpointsElement, useBreakpoints } from '@vueuse/core'
+import {
+  Expand, Fold, Sunny, Moon,
+} from '@element-plus/icons-vue'
+import {
+  breakpointsElement, useBreakpoints, useDark, useToggle,
+} from '@vueuse/core'
 import Sidebar from '@/components/SideBar.vue'
 
 const breakpoints = useBreakpoints(breakpointsElement)
 const isSmartphone = breakpoints.isSmaller('sm')
+
+const isDark = useDark()
+const toggleDark = useToggle(isDark)
 
 const isSidebarVisible = ref(!isSmartphone)
 </script>
@@ -21,6 +28,15 @@ const isSidebarVisible = ref(!isSmartphone)
           />
         </span>
         <h1>Tasks</h1>
+        <span>
+          <el-switch
+            :model-value="isDark"
+            :active-action-icon="Moon"
+            :inactive-action-icon="Sunny"
+            class="color-mode-switch"
+            @change="toggleDark()"
+          />
+        </span>
       </el-row>
     </el-header>
     <el-container>
@@ -65,8 +81,7 @@ html, body {
 
 .el-header {
   --el-header-height: unset;
-  border-bottom: 1px #aaa solid;
-  background: white;
+  border-bottom: 1px solid var(--el-menu-border-color);
   align-items: center;
 }
 
@@ -80,6 +95,7 @@ html, body {
 }
 
 .el-header h1 {
+  flex: 1;
   font-weight: normal;
   margin: 0;
 }
@@ -104,6 +120,11 @@ html, body {
 
 .el-menu {
   border-right: none;
+}
+
+.color-mode-switch {
+  --el-switch-on-color: var(--el-color-info);
+  --el-switch-off-color: var(--el-color-info);
 }
 
 .root-container {
