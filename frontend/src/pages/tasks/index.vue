@@ -3,13 +3,17 @@ import {
   SortDown, SortUp, Edit,
 } from '@element-plus/icons-vue'
 import { ref } from 'vue'
-import { breakpointsElement, useBreakpoints } from '@vueuse/core'
+import {
+  breakpointsElement, useBreakpoints, useTitle,
+} from '@vueuse/core'
 import TaskList from '@/components/tasks/TaskList.vue'
 import { useTaskList } from '@/composables/useTaskList'
 import { router } from '@/routes'
 
 const breakpoints = useBreakpoints(breakpointsElement)
 const isSmartphone = breakpoints.isSmaller('sm')
+
+useTitle('タスク一覧')
 
 // 並べ替え項目
 type SortKeys = 'id' | 'due' | 'priority'

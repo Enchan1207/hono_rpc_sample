@@ -1,15 +1,24 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowLeft } from '@element-plus/icons-vue'
+import { useTitle } from '@vueuse/core'
+import { watch } from 'vue'
 import { useTaskData } from '@/composables/useTaskData'
 import TaskDetail from '@/components/tasks/TaskDetail.vue'
 
 const route = useRoute<'/tasks/[id]'>()
 const router = useRouter()
 
+const title = useTitle('タスク詳細')
+
 const {
   task, isLoading, error, update,
 } = useTaskData(route.params.id)
+
+watch(task, () => {
+  title.value = task.value?.title
+})
+
 </script>
 
 <template>
