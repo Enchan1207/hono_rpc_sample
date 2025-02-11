@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { Edit } from '@element-plus/icons-vue'
+import { breakpointsElement, useBreakpoints } from '@vueuse/core'
 import { useRouter } from 'vue-router'
+
+const breakpoints = useBreakpoints(breakpointsElement)
+const isSmartphone = breakpoints.isSmaller('sm')
 
 const router = useRouter()
 
@@ -13,7 +17,10 @@ const onClickNew = () => {
 </script>
 
 <template>
-  <div class="add-button-container">
+  <div
+    v-if="!isSmartphone"
+    class="add-button-container"
+  >
     <el-button
       type="primary"
       :icon="Edit"

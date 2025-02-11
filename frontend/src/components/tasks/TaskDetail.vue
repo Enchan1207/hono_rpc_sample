@@ -1,3 +1,47 @@
+<script setup lang="ts">
+import {
+  computed, ref, watch,
+} from 'vue'
+import type { WritableComputedRef } from 'vue'
+import dayjs from '@/logic/dayjs'
+import type { Task } from '@/entities/task'
+
+// idだけはオプショナルにする
+export type TaskDetailProps = Omit<Task, 'id'> & { id?: Task['id'] }
+
+const props = defineProps<{ task: TaskDetailProps }>()
+const emits = defineEmits<{
+  (e:
+  'commit',
+    formData: TaskDetailProps): void
+}>()
+
+const formData = ref<TaskDetailProps>(props.task)
+
+const internalDue: WritableComputedRef<string> = computed({
+  get: () => formData.value.due.format('YYYY-MM-DD'),
+  set: value => formData.value.due = dayjs.tz(value),
+})
+
+// 親から渡された値に変更があればそれを反映する
+watch(props, ({ task }) => {
+  formData.value = task
+})
+
+const onCommit = () => {
+  emits('commit', formData.value)
+}
+
+const commitButtonString = computed(() => {
+  if (formData.value.id !== undefined) {
+    return '更新'
+  }
+  else {
+    return '登録'
+  }
+})
+</script>
+
 <template>
   <form @submit.prevent="onCommit">
     <ul>
@@ -53,47 +97,3 @@
     </ul>
   </form>
 </template>
-
-<script setup lang="ts">
-import {
-  computed, ref, watch,
-} from 'vue'
-import type { WritableComputedRef } from 'vue'
-import dayjs from '@/logic/dayjs'
-import type { Task } from '@/entities/task'
-
-// idだけはオプショナルにする
-export type TaskDetailProps = Omit<Task, 'id'> & { id?: Task['id'] }
-
-const props = defineProps<{ task: TaskDetailProps }>()
-const emits = defineEmits<{
-  (e:
-  'commit',
-    formData: TaskDetailProps): void
-}>()
-
-const formData = ref<TaskDetailProps>(props.task)
-
-const internalDue: WritableComputedRef<string> = computed({
-  get: () => formData.value.due.format('YYYY-MM-DD'),
-  set: value => formData.value.due = dayjs.tz(value),
-})
-
-// 親から渡された値に変更があればそれを反映する
-watch(props, ({ task }) => {
-  formData.value = task
-})
-
-const onCommit = () => {
-  emits('commit', formData.value)
-}
-
-const commitButtonString = computed(() => {
-  if (formData.value.id !== undefined) {
-    return '更新'
-  }
-  else {
-    return '登録'
-  }
-})
-</script>

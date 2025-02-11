@@ -1,11 +1,3 @@
-<template>
-  <h2>Add new task</h2>
-  <TaskDetail
-    :task="task"
-    @commit="onSubmit"
-  />
-</template>
-
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
@@ -28,3 +20,11 @@ const onSubmit = async (task: Omit<Task, 'id'>) => {
   router.back()
 }
 </script>
+
+<template>
+  <h2>Add new task</h2>
+  <TaskDetail
+    :task="task"
+    @commit="onSubmit"
+  />
+</template>

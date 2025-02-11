@@ -1,3 +1,16 @@
+<script setup lang="ts">
+import { useRoute, useRouter } from 'vue-router'
+import { useTaskData } from '@/composables/useTaskData'
+import TaskDetail from '@/components/tasks/TaskDetail.vue'
+
+const route = useRoute<'/tasks/[id]'>()
+const router = useRouter()
+
+const {
+  task, isLoading, error, update,
+} = useTaskData(route.params.id)
+</script>
+
 <template>
   <template v-if="isLoading">
     <div>now loading...</div>
@@ -18,16 +31,3 @@
     back
   </button>
 </template>
-
-<script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
-import { useTaskData } from '@/composables/useTaskData'
-import TaskDetail from '@/components/tasks/TaskDetail.vue'
-
-const route = useRoute<'/tasks/[id]'>()
-const router = useRouter()
-
-const {
-  task, isLoading, error, update,
-} = useTaskData(route.params.id)
-</script>
