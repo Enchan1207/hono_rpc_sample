@@ -69,14 +69,33 @@ const isSidebarVisible = ref(!isSmartphone)
 </template>
 
 <style>
-:root{
-  --el-aside-width: 200px;
+:root {
+  --el-main-padding: 20px;
+  --el-aside-width: 220px;
   --el-header-height: 60px;
+  --el-font-family: "Helvetica Neue",
+    Arial,
+    "Hiragino Kaku Gothic ProN",
+    "Hiragino Sans",
+    Meiryo,
+    sans-serif;
+  font-family: var(--el-font-family);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --el-main-padding: 10px;
+    --el-header-height: 50px;
+  }
 }
 
 html, body {
   margin: 0;
   padding: 0;
+}
+
+body {
+  background-color: var(--el-bg-color);
 }
 
 .el-header {
@@ -129,10 +148,11 @@ html, body {
 }
 
 .root-container {
-  height: 100vh;
+  height: 100dvh;
 }
 
 .el-main {
-  height: calc(100vh - var(--el-header-height));
+  --el-main-padding: unset;
+  height: calc(100dvh - var(--el-header-height));
 }
 </style>

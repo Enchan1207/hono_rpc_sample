@@ -32,9 +32,9 @@ const onCommit = () => {
 }
 
 const priorityOptions: Record<TaskPriority, string> = {
+  low: '低',
   high: '高',
   middle: '中',
-  low: '低',
 }
 
 const commitButtonString = computed(() => {
@@ -50,7 +50,7 @@ const commitButtonString = computed(() => {
 <template>
   <el-form
     label-position="left"
-    label-width="auto"
+    label-width="80"
     :model="formData"
   >
     <el-form-item label="タイトル">
