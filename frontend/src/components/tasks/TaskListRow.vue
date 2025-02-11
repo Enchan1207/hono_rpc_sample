@@ -77,9 +77,11 @@ const emits = defineEmits(['remove'])
   transition: opacity .2s ease-in-out;
 }
 
-.task-card:hover .remove-button {
-  pointer-events: all;
-  opacity: 1;
+@media (hover: hover){
+  .task-card:hover .remove-button {
+    pointer-events: all;
+    opacity: 1;
+  }
 }
 
 .task-card .over{

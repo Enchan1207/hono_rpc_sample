@@ -2,12 +2,15 @@
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { ArrowLeft } from '@element-plus/icons-vue'
+import { useTitle } from '@vueuse/core'
 import { addTask } from '@/repositories/taskRepository'
 import type { Task } from '@/entities/task'
 import TaskDetail from '@/components/tasks/TaskDetail.vue'
 import dayjs from '@/logic/dayjs'
 
 const router = useRouter()
+
+useTitle('タスク登録')
 
 const task = ref<Omit<Task, 'id'>>({
   title: '',
