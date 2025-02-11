@@ -3,33 +3,36 @@
     justify="end"
     class="task-list-header"
   >
-    <el-col :span="4">
-      <el-select
-        v-model="key"
-        :disabled="isLoading"
-      >
-        <el-option
-          v-for="[sortKey, label] in Object.entries(sortOpts)"
-          :key="sortKey"
-          :label="label"
-          :value="sortKey"
-        />
-      </el-select>
-    </el-col>
+    <el-select
+      v-model="key"
+      class="sort-key-selector"
+      :disabled="isLoading"
+    >
+      <el-option
+        v-for="[sortKey, label] in Object.entries(sortOpts)"
+        :key="sortKey"
+        :label="label"
+        :value="sortKey"
+      />
+    </el-select>
 
-    <el-col :span="2">
-      <el-button
-        :disabled="isLoading"
-        :icon="order==='asc' ? SortUp : SortDown"
-        @click="onClickOrder"
-      >
-        {{ orderLabel[order] }}
-      </el-button>
-    </el-col>
+    <el-button
+      :disabled="isLoading"
+      :icon="order==='asc' ? SortUp : SortDown"
+      @click="onClickOrder"
+    >
+      {{ orderLabel[order] }}
+    </el-button>
   </el-row>
 
   <el-row justify="center">
-    <el-col :span="16">
+    <el-col
+      :xs="22"
+      :sm="20"
+      :md="18"
+      :lg="14"
+      :xl="10"
+    >
       <TaskList
         :tasks="tasks"
         :has-next="hasNext"
@@ -94,9 +97,10 @@ const onClickOrder = () => {
   z-index: 10;
   padding: 10px;
   background-color: var(--el-fill-color-blank);
+  gap: 5px 10px;
 }
 
-.task-list-header .el-col:not(:last-child){
-  padding-right: 10px;
+.sort-key-selector {
+  max-width: 120px;
 }
 </style>
