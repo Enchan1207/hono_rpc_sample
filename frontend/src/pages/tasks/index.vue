@@ -59,31 +59,37 @@ const onClickOrder = () => {
     :icon="Edit"
     @click="router.push('/tasks/new')"
   />
-  <el-row
-    justify="end"
-    class="task-list-header"
-  >
-    <el-select
-      v-model="key"
-      class="sort-key-selector"
-      :disabled="isLoading"
-    >
-      <el-option
-        v-for="[sortKey, label] in Object.entries(sortOpts)"
-        :key="sortKey"
-        :label="label"
-        :value="sortKey"
-      />
-    </el-select>
 
-    <el-button
-      :disabled="isLoading"
-      :icon="order==='asc' ? SortUp : SortDown"
-      @click="onClickOrder"
-    >
-      {{ orderLabel[order] }}
-    </el-button>
-  </el-row>
+  <div class="task-list-header">
+    <el-row>
+      <el-col>
+        <h2>タスク一覧</h2>
+      </el-col>
+    </el-row>
+
+    <el-row justify="end">
+      <el-select
+        v-model="key"
+        class="sort-key-selector"
+        :disabled="isLoading"
+      >
+        <el-option
+          v-for="[sortKey, label] in Object.entries(sortOpts)"
+          :key="sortKey"
+          :label="label"
+          :value="sortKey"
+        />
+      </el-select>
+
+      <el-button
+        :disabled="isLoading"
+        :icon="order==='asc' ? SortUp : SortDown"
+        @click="onClickOrder"
+      >
+        {{ orderLabel[order] }}
+      </el-button>
+    </el-row>
+  </div>
 
   <el-row justify="center">
     <el-col
@@ -104,13 +110,21 @@ const onClickOrder = () => {
   </el-row>
 </template>
 
-<style>
+<style scoped>
+h2{
+  margin: 0;
+}
+
+.el-row:not(:last-child){
+  margin-bottom: 15px;
+}
+
 .task-list-header {
   position: sticky;
-  top: 0;
+  top: calc(-1 * var(--el-main-padding));
   z-index: 10;
   padding: 10px;
-  background-color: var(--el-fill-color-blank);
+  background-color: var(--el-bg-color);
   gap: 5px 10px;
 }
 

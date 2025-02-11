@@ -134,6 +134,5 @@ html, body {
 
 .el-main {
   height: calc(100vh - var(--el-header-height));
-  padding: 0 var(--el-main-padding);
 }
 </style>
