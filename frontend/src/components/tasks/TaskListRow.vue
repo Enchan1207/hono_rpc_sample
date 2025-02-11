@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { DeleteFilled } from '@element-plus/icons-vue'
+import PriorityTag from './PriorityTag.vue'
 import type { TaskListItem } from '@/entities/task'
 import dayjs from '@/logic/dayjs'
 
-const props = defineProps<{ item: TaskListItem }>()
+defineProps<{ item: TaskListItem }>()
 const emits = defineEmits(['detail', 'remove'])
 </script>
 
@@ -16,13 +17,13 @@ const emits = defineEmits(['detail', 'remove'])
           link
           @click="emits('detail')"
         >
-          {{ props.item.title }}
+          {{ item.title }}
         </el-button>
         <div>
-          priority: {{ props.item.priority }}
+          <PriorityTag :priority="item.priority" />
         </div>
-        <div :class="props.item.due.isBefore(dayjs()) ? 'over':''">
-          due:{{ props.item.due.fromNow() }}
+        <div :class="item.due.isBefore(dayjs()) ? 'over':''">
+          due:{{ item.due.fromNow() }}
         </div>
       </el-col>
 
