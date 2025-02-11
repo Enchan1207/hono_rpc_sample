@@ -58,4 +58,8 @@ const {
 .el-row:not(:last-child){
   margin-bottom: 15px;
 }
+
+h2{
+  user-select: none;
+}
 </style>

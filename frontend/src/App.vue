@@ -83,6 +83,7 @@ html, body {
   --el-header-height: unset;
   border-bottom: 1px solid var(--el-menu-border-color);
   align-items: center;
+  user-select: none;
 }
 
 .el-header .el-row {

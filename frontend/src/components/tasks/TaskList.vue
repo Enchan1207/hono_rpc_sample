@@ -65,5 +65,6 @@ const emits = defineEmits<{
 li.last-element-info {
   padding: 5px 0;
   text-align: center;
+  user-select: none;
 }
 </style>

@@ -94,3 +94,9 @@ const commitButtonString = computed(() => {
     </el-form-item>
   </el-form>
 </template>
+
+<style>
+label {
+  user-select: none;
+}
+</style>
