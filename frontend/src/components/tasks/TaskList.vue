@@ -9,7 +9,7 @@ const props = defineProps<{
 }>()
 const emits = defineEmits<{
   (
-    operation: 'detail' | 'remove',
+    operation: 'remove',
     id: TaskListItem['id']
   ): void
   (
@@ -30,9 +30,18 @@ const emits = defineEmits<{
     >
       <TaskListRow
         :item="task"
-        @detail="emits('detail', task.id)"
         @remove="emits('remove', task.id)"
       />
+    </li>
+    <li
+      v-if="!hasNext"
+      class="last-element-info"
+    >
+      <el-text
+        size="small"
+      >
+        最後のアイテムです
+      </el-text>
     </li>
   </ul>
 </template>
@@ -46,5 +55,10 @@ const emits = defineEmits<{
 
 .task-list > li {
   margin-bottom: 10px;
+}
+
+li.last-element-info {
+  padding: 5px 0;
+  text-align: center;
 }
 </style>

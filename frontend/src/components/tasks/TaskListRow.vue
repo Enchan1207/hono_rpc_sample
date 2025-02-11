@@ -1,63 +1,88 @@
 <script setup lang="ts">
 import { DeleteFilled } from '@element-plus/icons-vue'
 import PriorityTag from './PriorityTag.vue'
+import DueTag from './DueTag.vue'
 import type { TaskListItem } from '@/entities/task'
-import dayjs from '@/logic/dayjs'
 
 defineProps<{ item: TaskListItem }>()
-const emits = defineEmits(['detail', 'remove'])
+const emits = defineEmits(['remove'])
 </script>
 
 <template>
-  <el-card>
-    <el-row>
-      <el-col :span="22">
-        <el-button
-          type="primary"
-          link
-          @click="emits('detail')"
-        >
-          {{ item.title }}
-        </el-button>
-        <div>
-          <PriorityTag :priority="item.priority" />
-        </div>
-        <div :class="item.due.isBefore(dayjs()) ? 'over':''">
-          due:{{ item.due.fromNow() }}
-        </div>
-      </el-col>
+  <el-card
+    shadow="hover"
+    class="task-card"
+    body-class="task-card-body"
+  >
+    <router-link
+      :to="`/tasks/${item.id}`"
+      class="task-card-link"
+    />
+    <div>
+      <p class="task-card-title">
+        {{ item.title }}
+      </p>
+      <div class="task-card-infos">
+        <DueTag :due="item.due" />
+        <PriorityTag :priority="item.priority" />
+      </div>
+    </div>
 
-      <el-col :span="2">
-        <el-button
-          class="remove-button"
-          type="danger"
-          :icon="DeleteFilled"
-          circle
-          size="small"
-          @click="emits('remove')"
-        />
-      </el-col>
-    </el-row>
+    <div class="task-card-menu">
+      <el-button
+        class="remove-button"
+        type="danger"
+        :icon="DeleteFilled"
+        circle
+        size="small"
+        @click.stop="emits('remove')"
+      />
+    </div>
   </el-card>
 </template>
 
 <style>
-.el-card {
+.task-card {
   user-select: none;
+}
+
+.task-card-body {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.task-card-link {
+  position: absolute;
+  inset: 0px;
+}
+
+.task-card-title {
+  margin: 0 0 10px 0;
+}
+
+.task-card-infos>*:not(:last-child) {
+  margin-right: 10px;
+}
+
+.task-card-menu {
+  display: flex;
+  justify-content: right;
+  align-items: center;
 }
 
 .remove-button {
   pointer-events: none;
   opacity: 0;
-  transition: opacity .1s ease-in-out;
+  transition: opacity .2s ease-in-out;
 }
 
-.el-card:hover .remove-button {
+.task-card:hover .remove-button {
   pointer-events: all;
   opacity: 1;
 }
 
-.el-card .over{
+.task-card .over{
   color: red;
   font-weight: bold;
 }
