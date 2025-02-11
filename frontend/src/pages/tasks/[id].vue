@@ -3,6 +3,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import { useTitle } from '@vueuse/core'
 import { watch } from 'vue'
+import { ElMessage } from 'element-plus'
 import { useTaskData } from '@/composables/useTaskData'
 import TaskDetail from '@/components/tasks/TaskDetail.vue'
 
@@ -12,12 +13,19 @@ const router = useRouter()
 const title = useTitle('タスク詳細')
 
 const {
-  task, isLoading, error, update,
+  task, isLoading, error, update, remove,
 } = useTaskData(route.params.id)
 
 watch(task, () => {
   title.value = task.value?.title
 })
+
+const onClickRemove = async () => {
+  await remove()
+  const taskTitle = task.value?.title ?? '(不明)'
+  ElMessage(`タスクアイテム 「${taskTitle}」を削除しました。`)
+  router.push('/tasks')
+}
 
 </script>
 
@@ -57,6 +65,7 @@ watch(task, () => {
         <TaskDetail
           :task="task"
           @commit="update"
+          @remove="onClickRemove"
         />
       </template>
     </el-col>

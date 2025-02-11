@@ -14,6 +14,7 @@ const emits = defineEmits<{
   (e:
   'commit',
     formData: TaskDetailProps): void
+  (e: 'remove'): void
 }>()
 
 const formData = ref<TaskDetailProps>(props.task)
@@ -31,19 +32,22 @@ const onCommit = () => {
   emits('commit', formData.value)
 }
 
+const onRemove = () => {
+  emits('remove')
+}
+
 const priorityOptions: Record<TaskPriority, string> = {
   low: '低',
   high: '高',
   middle: '中',
 }
 
+const isTaskExists = computed(() => {
+  return formData.value.id !== undefined
+})
+
 const commitButtonString = computed(() => {
-  if (formData.value.id !== undefined) {
-    return '更新'
-  }
-  else {
-    return '登録'
-  }
+  return isTaskExists.value ? '更新' : '登録'
 })
 </script>
 
@@ -90,6 +94,13 @@ const commitButtonString = computed(() => {
         @click="onCommit"
       >
         {{ commitButtonString }}
+      </el-button>
+      <el-button
+        v-if="isTaskExists"
+        type="danger"
+        @click="onRemove"
+      >
+        削除
       </el-button>
     </el-form-item>
   </el-form>

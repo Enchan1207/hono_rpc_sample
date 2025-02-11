@@ -1,6 +1,8 @@
 import { ref } from 'vue'
 import type { Task } from '@/entities/task'
-import { getTask, updateTask } from '@/repositories/taskRepository'
+import {
+  deleteTask, getTask, updateTask,
+} from '@/repositories/taskRepository'
 
 export const useTaskData = (id: Task['id']) => {
   const isLoading = ref(true)
@@ -49,6 +51,17 @@ export const useTaskData = (id: Task['id']) => {
     isLoading.value = false
   }
 
+  const remove = async () => {
+    isLoading.value = true
+    const result = await deleteTask(id)
+    if (result === undefined) {
+      error.value = new Error('No such item')
+      isLoading.value = false
+      return
+    }
+    isLoading.value = false
+  }
+
   fetchData(id)
 
   return {
@@ -56,5 +69,6 @@ export const useTaskData = (id: Task['id']) => {
     isLoading,
     error,
     update,
+    remove,
   }
 }
