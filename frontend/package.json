@@ -10,6 +10,7 @@
     "deploy": "wrangler pages deploy"
   },
   "dependencies": {
+    "@vueuse/core": "^12.5.0",
     "dayjs": "^1.11.13",
     "element-plus": "^2.9.4",
     "vue": "^3.5.0",

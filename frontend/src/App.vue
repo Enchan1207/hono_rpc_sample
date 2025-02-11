@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Expand, Fold } from '@element-plus/icons-vue'
+import { breakpointsElement, useBreakpoints } from '@vueuse/core'
 import Sidebar from '@/components/SideBar.vue'
 
-const isSidebarVisible = ref(true)
+const breakpoints = useBreakpoints(breakpointsElement)
+const isSmartphone = breakpoints.isSmaller('sm')
+
+const isSidebarVisible = ref(!isSmartphone)
 </script>
 
 <template>
@@ -20,11 +24,26 @@ const isSidebarVisible = ref(true)
       </el-row>
     </el-header>
     <el-container>
-      <transition name="sidebar-slide">
-        <el-aside v-show="isSidebarVisible">
-          <Sidebar />
-        </el-aside>
-      </transition>
+      <template v-if="!isSmartphone">
+        <transition name="sidebar-slide">
+          <el-aside v-show="isSidebarVisible">
+            <Sidebar />
+          </el-aside>
+        </transition>
+      </template>
+      <template v-else>
+        <el-drawer
+          v-model="isSidebarVisible"
+          title="Tasks"
+          direction="ltr"
+          size="70%"
+          body-class="drawer-body"
+        >
+          <Sidebar
+            @select="isSidebarVisible = false"
+          />
+        </el-drawer>
+      </template>
 
       <el-main>
         <RouterView />
@@ -67,6 +86,10 @@ html, body {
 
 .el-aside {
   border-right: 1px solid var(--el-menu-border-color);
+}
+
+.drawer-body {
+  padding: 0;
 }
 
 .sidebar-slide-enter-active,

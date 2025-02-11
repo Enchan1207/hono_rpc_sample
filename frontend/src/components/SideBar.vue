@@ -3,6 +3,13 @@ import { Edit } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+
+const emits = defineEmits(['select'])
+
+const onClickNew = () => {
+  emits('select')
+  router.push('/tasks/new')
+}
 </script>
 
 <template>
@@ -12,12 +19,15 @@ const router = useRouter()
       :icon="Edit"
       size="large"
       round
-      @click="router.push('/tasks/new')"
+      @click="onClickNew"
     >
       追加
     </el-button>
   </div>
-  <el-menu :router="true">
+  <el-menu
+    :router="true"
+    @select="emits('select')"
+  >
     <el-menu-item index="/tasks">
       <el-icon><el-icon-home-filled /></el-icon>
       <span>ホーム</span>
