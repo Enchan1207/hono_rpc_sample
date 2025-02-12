@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {
-  Edit, Sunny, Moon,
-} from '@element-plus/icons-vue'
+  BIconHouseFill, BIconPencilSquare, BIconSunFill, BIconMoonFill,
+} from 'bootstrap-icons-vue'
 import {
   breakpointsElement, useBreakpoints, useDark, useToggle,
 } from '@vueuse/core'
@@ -31,7 +31,7 @@ const onClickNew = () => {
     >
       <el-button
         type="primary"
-        :icon="Edit"
+        :icon="BIconPencilSquare"
         size="large"
         round
         @click="onClickNew"
@@ -45,7 +45,7 @@ const onClickNew = () => {
       @select="emits('select')"
     >
       <el-menu-item index="/tasks">
-        <el-icon><el-icon-home-filled /></el-icon>
+        <el-icon><b-icon-house-fill /></el-icon>
         <span>ホーム</span>
       </el-menu-item>
     </el-menu>
@@ -56,8 +56,8 @@ const onClickNew = () => {
       </el-text>
       <el-switch
         :model-value="isDark"
-        :active-action-icon="Moon"
-        :inactive-action-icon="Sunny"
+        :active-icon="BIconMoonFill"
+        :inactive-icon="BIconSunFill"
         class="color-mode-switch"
         @change="toggleDark()"
       />

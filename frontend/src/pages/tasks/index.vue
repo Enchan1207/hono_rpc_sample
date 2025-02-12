@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import {
-  SortDown, SortUp, Edit,
-} from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import {
   breakpointsElement, useBreakpoints, useTitle,
 } from '@vueuse/core'
+import {
+  BIconPencilSquare, BIconSortDown, BIconSortUp,
+} from 'bootstrap-icons-vue'
 import TaskList from '@/components/tasks/TaskList.vue'
 import { useTaskList } from '@/composables/useTaskList'
 import { router } from '@/routes'
@@ -60,7 +60,7 @@ const onClickOrder = () => {
     v-if="isSmartphone"
     type="primary"
     class="add-btn"
-    :icon="Edit"
+    :icon="BIconPencilSquare"
     @click="router.push('/tasks/new')"
   />
 
@@ -90,7 +90,7 @@ const onClickOrder = () => {
 
       <el-button
         :disabled="isLoading"
-        :icon="order==='asc' ? SortUp : SortDown"
+        :icon="order==='asc' ? BIconSortUp : BIconSortDown"
         @click="onClickOrder"
       >
         {{ orderLabel[order] }}

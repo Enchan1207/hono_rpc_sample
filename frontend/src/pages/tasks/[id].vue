@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { ArrowLeft } from '@element-plus/icons-vue'
 import { useTitle } from '@vueuse/core'
 import { watch } from 'vue'
 import { ElMessage } from 'element-plus'
+import { BIconChevronLeft } from 'bootstrap-icons-vue'
 import { useTaskData } from '@/composables/useTaskData'
 import TaskDetail from '@/components/tasks/TaskDetail.vue'
 
@@ -35,7 +35,7 @@ const onClickRemove = async () => {
       <el-button
         type="info"
         link
-        :icon="ArrowLeft"
+        :icon="BIconChevronLeft"
         @click="router.push('/tasks')"
       >
         一覧に戻る

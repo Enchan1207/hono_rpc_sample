@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { Expand, Fold } from '@element-plus/icons-vue'
 import { breakpointsElement, useBreakpoints } from '@vueuse/core'
+import { BIconList } from 'bootstrap-icons-vue'
 import Sidebar from '@/components/SideBar.vue'
 
 const breakpoints = useBreakpoints(breakpointsElement)
@@ -21,7 +21,7 @@ const isSidebarVisible = ref(!isSmartphone.value)
       <el-row>
         <span class="sidebar-button-wrapper">
           <el-button
-            :icon="isSidebarVisible ? Fold : Expand"
+            :icon="BIconList"
             @click="isSidebarVisible = !isSidebarVisible"
           />
         </span>
