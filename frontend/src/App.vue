@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { breakpointsElement, useBreakpoints } from '@vueuse/core'
+import {
+  breakpointsElement, useBreakpoints, useDark,
+} from '@vueuse/core'
 import { BIconList } from 'bootstrap-icons-vue'
 import Sidebar from '@/components/SideBar.vue'
+
+useDark()
 
 const breakpoints = useBreakpoints(breakpointsElement)
 const isSmartphone = breakpoints.smaller('sm')
