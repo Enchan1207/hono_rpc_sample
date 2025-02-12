@@ -11,7 +11,7 @@ import { useTaskList } from '@/composables/useTaskList'
 import { router } from '@/routes'
 
 const breakpoints = useBreakpoints(breakpointsElement)
-const isSmartphone = breakpoints.isSmaller('sm')
+const isSmartphone = breakpoints.smaller('sm')
 
 useTitle('タスク一覧')
 
@@ -71,7 +71,10 @@ const onClickOrder = () => {
       </el-col>
     </el-row>
 
-    <el-row justify="end">
+    <el-row
+      justify="end"
+      class="task-list-sort-container"
+    >
       <el-select
         v-model="key"
         class="sort-key-selector"
@@ -129,6 +132,9 @@ h2{
   z-index: 10;
   padding: 10px;
   background-color: var(--el-bg-color);
+}
+
+.task-list-sort-container {
   gap: 5px 10px;
 }
 

@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import {
-  Expand, Fold, Sunny, Moon,
-} from '@element-plus/icons-vue'
-import {
-  breakpointsElement, useBreakpoints, useDark, useToggle,
-} from '@vueuse/core'
+import { ref, watch } from 'vue'
+import { Expand, Fold } from '@element-plus/icons-vue'
+import { breakpointsElement, useBreakpoints } from '@vueuse/core'
 import Sidebar from '@/components/SideBar.vue'
 
 const breakpoints = useBreakpoints(breakpointsElement)
-const isSmartphone = breakpoints.isSmaller('sm')
+const isSmartphone = breakpoints.smaller('sm')
+watch(isSmartphone, (newValue, prevValue) => {
+  // スマホビューではサイドバーはドロワーになるため、いったん閉じる
+  const isTransitionToSmartphone = prevValue === false && newValue === true
+  isSidebarVisible.value = !isTransitionToSmartphone
+})
 
-const isDark = useDark()
-const toggleDark = useToggle(isDark)
-
-const isSidebarVisible = ref(!isSmartphone)
+const isSidebarVisible = ref(!isSmartphone.value)
 </script>
 
 <template>
@@ -28,15 +26,6 @@ const isSidebarVisible = ref(!isSmartphone)
           />
         </span>
         <h1>Tasks</h1>
-        <span>
-          <el-switch
-            :model-value="isDark"
-            :active-action-icon="Moon"
-            :inactive-action-icon="Sunny"
-            class="color-mode-switch"
-            @change="toggleDark()"
-          />
-        </span>
       </el-row>
     </el-header>
     <el-container>
@@ -52,7 +41,7 @@ const isSidebarVisible = ref(!isSmartphone)
           v-model="isSidebarVisible"
           title="Tasks"
           direction="ltr"
-          size="70%"
+          size="var(--el-aside-width)"
           body-class="drawer-body"
         >
           <Sidebar
