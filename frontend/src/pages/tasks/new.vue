@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
-import { ArrowLeft } from '@element-plus/icons-vue'
+import { BIconChevronLeft } from 'bootstrap-icons-vue'
 import { useTitle } from '@vueuse/core'
 import { addTask } from '@/repositories/taskRepository'
 import type { Task } from '@/entities/task'
@@ -31,7 +31,7 @@ const onSubmit = async (task: Omit<Task, 'id'>) => {
       <el-button
         type="info"
         link
-        :icon="ArrowLeft"
+        :icon="BIconChevronLeft"
         @click="router.push('/tasks')"
       >
         一覧に戻る

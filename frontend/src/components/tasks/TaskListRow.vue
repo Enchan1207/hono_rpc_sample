@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DeleteFilled } from '@element-plus/icons-vue'
+import { BIconTrashFill } from 'bootstrap-icons-vue'
 import PriorityTag from './PriorityTag.vue'
 import DueTag from './DueTag.vue'
 import type { TaskListItem } from '@/entities/task'
@@ -32,7 +32,7 @@ const emits = defineEmits(['remove'])
       <el-button
         class="remove-button"
         type="danger"
-        :icon="DeleteFilled"
+        :icon="BIconTrashFill"
         circle
         size="small"
         @click.stop="emits('remove')"

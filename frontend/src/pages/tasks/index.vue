@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import {
-  SortDown, SortUp, Edit,
-} from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import {
   breakpointsElement, useBreakpoints, useTitle,
 } from '@vueuse/core'
+import {
+  BIconPencilSquare, BIconSortDown, BIconSortUp,
+} from 'bootstrap-icons-vue'
 import TaskList from '@/components/tasks/TaskList.vue'
 import { useTaskList } from '@/composables/useTaskList'
 import { router } from '@/routes'
 
 const breakpoints = useBreakpoints(breakpointsElement)
-const isSmartphone = breakpoints.isSmaller('sm')
+const isSmartphone = breakpoints.smaller('sm')
 
 useTitle('タスク一覧')
 
@@ -60,7 +60,7 @@ const onClickOrder = () => {
     v-if="isSmartphone"
     type="primary"
     class="add-btn"
-    :icon="Edit"
+    :icon="BIconPencilSquare"
     @click="router.push('/tasks/new')"
   />
 
@@ -71,7 +71,10 @@ const onClickOrder = () => {
       </el-col>
     </el-row>
 
-    <el-row justify="end">
+    <el-row
+      justify="end"
+      class="task-list-sort-container"
+    >
       <el-select
         v-model="key"
         class="sort-key-selector"
@@ -87,7 +90,7 @@ const onClickOrder = () => {
 
       <el-button
         :disabled="isLoading"
-        :icon="order==='asc' ? SortUp : SortDown"
+        :icon="order==='asc' ? BIconSortUp : BIconSortDown"
         @click="onClickOrder"
       >
         {{ orderLabel[order] }}
@@ -129,6 +132,9 @@ h2{
   z-index: 10;
   padding: 10px;
   background-color: var(--el-bg-color);
+}
+
+.task-list-sort-container {
   gap: 5px 10px;
 }
 
