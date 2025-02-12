@@ -36,7 +36,7 @@ const emits = defineEmits<{
     <li
       v-if="isLoading"
       v-loading="isLoading"
-      style="height: 60px"
+      class="task-loading-indicator"
     />
     <li
       v-if="!isLoading && !hasNext"
@@ -66,5 +66,12 @@ li.last-element-info {
   padding: 5px 0;
   text-align: center;
   user-select: none;
+}
+
+.task-loading-indicator {
+  height: 60px;
+}
+.task-loading-indicator .el-loading-mask {
+  background-color: transparent;
 }
 </style>
