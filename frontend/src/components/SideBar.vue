@@ -85,6 +85,7 @@ const onClickNew = () => {
   align-items: center;
   padding: 10px 20px;
   height: 40px;
+  user-select: none;
 }
 
 .sidebar-container .appearance-switch-container {
