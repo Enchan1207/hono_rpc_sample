@@ -7,7 +7,7 @@ import type { TaskRepository } from '@/domain/repositories/taskRepository'
 export interface TaskUsecase {
   createTask(taskData: TaskData): Promise<Task>
   getTask(id: Task['id']): Promise<Task | undefined>
-  updateTask(id: Task['id'], taskData: Partial<TaskData>): Promise<Task>
+  updateTask(id: Task['id'], taskData: Partial<TaskData>): Promise<Task | undefined>
   deleteTask(id: Task['id']): Promise<Task | undefined>
   listTasks(
     sortBy: keyof Pick<Task, 'id' | 'due' | 'priority'>,
@@ -31,8 +31,7 @@ const updateTask = (repository: TaskRepository): TaskUsecase['updateTask'] =>
   async (id: Task['id'], taskData: Partial<TaskData>) => {
     const stored = await repository.getTask(id)
     if (stored === undefined) {
-      // FIXME: Resultの出番か?
-      throw new Error('!?')
+      return undefined
     }
     const updated: Task = {
       ...stored,
