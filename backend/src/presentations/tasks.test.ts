@@ -95,6 +95,14 @@ describe('単一項目の操作', () => {
         ...input,
       })
     })
+
+    test('存在しない項目は更新できないこと', async () => {
+      const response = await client[':id'].$put({
+        json: {},
+        param: { id: 'INVALID' },
+      })
+      expect(response.ok).toBeFalsy()
+    })
   })
 
   describe('DELETE /task/:id', () => {
