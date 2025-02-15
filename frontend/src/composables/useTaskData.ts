@@ -7,28 +7,23 @@ import {
 export const useTaskData = (id: Task['id']) => {
   const isLoading = ref(true)
 
-  // TODO: ここってResultだったりしないか
   const task = ref<Task>()
   const error = ref<Error>()
 
   const fetchData = async (id: Task['id']) => {
     isLoading.value = true
-    error.value = undefined
-
-    const fetchedTask = await getTask(id)
-    if (fetchedTask === undefined) {
-      error.value = new Error(`no such task with id ${id}`)
+    const fetchResult = await getTask(id)
+    fetchResult.match((fetchedTask) => {
+      error.value = undefined
+      task.value = fetchedTask
+    }, (fetchError) => {
+      error.value = fetchError
       task.value = undefined
-      isLoading.value = false
-      return
-    }
-    task.value = fetchedTask
+    })
     isLoading.value = false
   }
 
   const update = async (input: Omit<Task, 'id'>) => {
-    error.value = undefined
-
     const exist = task.value
     if (exist === undefined) {
       error.value = new Error('update() invoked before fetch completed')
@@ -36,18 +31,17 @@ export const useTaskData = (id: Task['id']) => {
     }
 
     isLoading.value = true
-
-    const updatedTask = await updateTask({
+    const updateResult = await updateTask({
       exist,
       input,
     })
-    if (updatedTask === undefined) {
-      error.value = new Error(`no such task with id ${id}`)
+    updateResult.match((updatedTask) => {
+      error.value = undefined
+      task.value = updatedTask
+    }, (updateError) => {
+      error.value = updateError
       task.value = undefined
-      isLoading.value = false
-      return
-    }
-    task.value = updatedTask
+    })
     isLoading.value = false
   }
 

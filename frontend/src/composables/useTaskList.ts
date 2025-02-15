@@ -23,8 +23,6 @@ export const useTaskList = (props: {
 
   const next = async () => {
     isLoading.value = true
-    error.value = undefined
-
     const fetchResult = await listTask({
       key: toValue(props.key),
       order: toValue(props.order),
@@ -33,6 +31,7 @@ export const useTaskList = (props: {
     })
 
     fetchResult.match((fetchedTasks) => {
+      error.value = undefined
       tasks.value.push(...fetchedTasks)
       offset.value += fetchedTasks.length
       hasNext.value = fetchedTasks.length > 0
@@ -54,6 +53,7 @@ export const useTaskList = (props: {
     isLoading.value = true
     const deletionResult = await deleteTask(id)
     deletionResult.match((deletedTask) => {
+      error.value = undefined
       // ローカルのtasksを全部洗い直すのはやばいので、filterで消す
       tasks.value = tasks.value.filter(task => task.id !== deletedTask.id)
     }, (deleteError) => {
