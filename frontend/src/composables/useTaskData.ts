@@ -11,7 +11,6 @@ export const useTaskData = (id: Task['id']) => {
 
   const task = ref<Task>()
 
-  /** @deprecated これ経由で取得するのはやりづらい！ */
   const error = ref<Error>()
 
   const fetchData = async (id: Task['id']) => {
@@ -54,7 +53,6 @@ export const useTaskData = (id: Task['id']) => {
   return {
     task,
     isLoading,
-    /** @deprecated */
     error,
     update,
     remove,
