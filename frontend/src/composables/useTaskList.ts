@@ -25,15 +25,20 @@ export const useTaskList = (props: {
     isLoading.value = true
     error.value = undefined
 
-    const fetchedTasks = await listTask({
+    const fetchResult = await listTask({
       key: toValue(props.key),
       order: toValue(props.order),
       limit: limit.value,
       offset: offset.value,
     })
-    tasks.value.push(...fetchedTasks)
-    offset.value += fetchedTasks.length
-    hasNext.value = fetchedTasks.length > 0
+
+    fetchResult.match((fetchedTasks) => {
+      tasks.value.push(...fetchedTasks)
+      offset.value += fetchedTasks.length
+      hasNext.value = fetchedTasks.length > 0
+    }, (fetchError) => {
+      error.value = fetchError
+    })
     isLoading.value = false
   }
 
@@ -47,15 +52,13 @@ export const useTaskList = (props: {
 
   const remove = async (id: TaskListItem['id']) => {
     isLoading.value = true
-    const result = await deleteTask(id)
-    if (result === undefined) {
-      error.value = new Error('No such item')
-      isLoading.value = false
-      return
-    }
-
-    // ローカルのtasksを全部洗い直すのはやばいので、filterで消す
-    tasks.value = tasks.value.filter(task => task.id !== result.id)
+    const deletionResult = await deleteTask(id)
+    deletionResult.match((deletedTask) => {
+      // ローカルのtasksを全部洗い直すのはやばいので、filterで消す
+      tasks.value = tasks.value.filter(task => task.id !== deletedTask.id)
+    }, (deleteError) => {
+      error.value = deleteError
+    })
     isLoading.value = false
   }
 

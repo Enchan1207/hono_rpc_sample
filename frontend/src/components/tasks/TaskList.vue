@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { BIconArrowClockwise } from 'bootstrap-icons-vue'
 import TaskListRow from './TaskListRow.vue'
 import type { TaskListItem } from '@/entities/task'
 
@@ -6,22 +7,23 @@ const props = defineProps<{
   tasks: TaskListItem[]
   hasNext: boolean
   isLoading: boolean
+  error: Error | undefined
 }>()
 const emits = defineEmits<{
-  (
-    operation: 'remove',
-    id: TaskListItem['id']
-  ): void
-  (
-    operation: 'next',
-  ): void
+  (operation: 'remove', id: TaskListItem['id']): void
+  (operation: 'next' | 'reload'): void
 }>()
+
+const isScrollDisabled = props.isLoading
+  || !props.hasNext
+  || props.error !== undefined
+
 </script>
 
 <template>
   <ul
     v-infinite-scroll="()=>emits('next')"
-    :infinite-scroll-disabled="isLoading || !hasNext"
+    :infinite-scroll-disabled="isScrollDisabled"
     class="task-list"
   >
     <li
@@ -33,11 +35,13 @@ const emits = defineEmits<{
         @remove="emits('remove', task.id)"
       />
     </li>
+
     <li
       v-if="isLoading"
       v-loading="isLoading"
       style="height: 60px"
     />
+
     <li
       v-if="!isLoading && !hasNext"
       class="last-element-info"
@@ -47,6 +51,19 @@ const emits = defineEmits<{
       >
         最後のアイテムです
       </el-text>
+    </li>
+
+    <li
+      v-if="error"
+      class="error-info"
+    >
+      <div>読み込みに失敗しました: {{ error.message }}</div>
+      <el-button
+        :icon="BIconArrowClockwise"
+        @click="emits('reload')"
+      >
+        再試行
+      </el-button>
     </li>
   </ul>
 </template>
@@ -66,5 +83,13 @@ li.last-element-info {
   padding: 5px 0;
   text-align: center;
   user-select: none;
+}
+
+li.error-info {
+  text-align: center;
+}
+
+li.error-info>*:not(:last-child){
+  margin-bottom: 10px;
 }
 </style>

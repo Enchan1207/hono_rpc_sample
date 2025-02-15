@@ -40,6 +40,7 @@ const {
   isLoading,
   next,
   hasNext,
+  error,
   remove,
 } = useTaskList({
   key,
@@ -108,10 +109,12 @@ const onClickOrder = () => {
     >
       <TaskList
         :tasks="tasks"
+        :error="error"
         :has-next="hasNext"
         :is-loading="isLoading"
         @remove="remove"
         @next="next"
+        @reload="next"
       />
     </el-col>
   </el-row>
