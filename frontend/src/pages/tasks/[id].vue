@@ -2,10 +2,10 @@
 import { useRoute, useRouter } from 'vue-router'
 import { useTitle } from '@vueuse/core'
 import { watch } from 'vue'
-import { ElMessage } from 'element-plus'
 import { BIconChevronLeft } from 'bootstrap-icons-vue'
 import { useTaskData } from '@/composables/useTaskData'
 import TaskDetail from '@/components/tasks/TaskDetail.vue'
+import type { Task } from '@/entities/task'
 
 const route = useRoute<'/tasks/[id]'>()
 const router = useRouter()
@@ -20,13 +20,30 @@ watch(task, () => {
   title.value = task.value?.title
 })
 
-const onClickRemove = async () => {
-  await remove()
-  const taskTitle = task.value?.title ?? '(不明)'
-  ElMessage(`タスクアイテム 「${taskTitle}」を削除しました。`)
-  router.push('/tasks')
+const onClickUpdate = async (id: Omit<Task, 'id'>) => {
+  const result = await update(id)
+  result.match(() => {
+    ElMessage('更新しました。')
+  }, (error) => {
+    ElMessage({
+      type: 'error',
+      message: `更新に失敗しました: ${error.message}`,
+    })
+  })
 }
 
+const onClickRemove = async () => {
+  const result = await remove()
+  result.match((removed) => {
+    ElMessage(`タスクアイテム 「${removed.title}」を削除しました。`)
+    router.push('/tasks')
+  }, (error) => {
+    ElMessage({
+      type: 'error',
+      message: `削除に失敗しました: ${error.message}`,
+    })
+  })
+}
 </script>
 
 <template>
@@ -64,7 +81,7 @@ const onClickRemove = async () => {
       <template v-if="task">
         <TaskDetail
           :task="task"
-          @commit="update"
+          @commit="onClickUpdate"
           @remove="onClickRemove"
         />
       </template>
