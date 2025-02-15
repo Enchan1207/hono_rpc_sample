@@ -6,6 +6,7 @@ import { BIconChevronLeft } from 'bootstrap-icons-vue'
 import { useTaskData } from '@/composables/useTaskData'
 import TaskDetail from '@/components/tasks/TaskDetail.vue'
 import type { Task } from '@/entities/task'
+import { useTaskOperation } from '@/composables/useTaskOperation'
 
 const route = useRoute<'/tasks/[id]'>()
 const router = useRouter()
@@ -13,35 +14,48 @@ const router = useRouter()
 const title = useTitle('タスク詳細')
 
 const {
-  task, isLoading, error, update, remove,
+  task, isLoading, error,
 } = useTaskData(route.params.id)
+
+const {
+  update, remove, isOperating,
+} = useTaskOperation()
 
 watch(task, () => {
   title.value = task.value?.title
 })
 
-const onClickUpdate = async (id: Omit<Task, 'id'>) => {
-  const result = await update(id)
+const onClickUpdate = async (input: Omit<Task, 'id'>) => {
+  const exist = task.value
+  if (exist === undefined) {
+    ElMessage.warning('アイテムを読み込んでいます。')
+    return
+  }
+
+  const result = await update({
+    exist,
+    input,
+  })
   result.match(() => {
     ElMessage('更新しました。')
   }, (error) => {
-    ElMessage({
-      type: 'error',
-      message: `更新に失敗しました: ${error.message}`,
-    })
+    ElMessage.error(`更新に失敗しました: ${error.message}`)
   })
 }
 
 const onClickRemove = async () => {
-  const result = await remove()
+  const exist = task.value
+  if (exist === undefined) {
+    ElMessage.warning('アイテムを読み込んでいます。')
+    return
+  }
+
+  const result = await remove(exist.id)
   result.match((removed) => {
     ElMessage(`タスクアイテム 「${removed.title}」を削除しました。`)
     router.push('/tasks')
   }, (error) => {
-    ElMessage({
-      type: 'error',
-      message: `削除に失敗しました: ${error.message}`,
-    })
+    ElMessage.error(`削除に失敗しました: ${error.message}`)
   })
 }
 </script>

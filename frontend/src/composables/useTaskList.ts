@@ -3,7 +3,7 @@ import {
 } from 'vue'
 import type { Ref } from 'vue'
 import type { TaskListItem } from '@/entities/task'
-import { deleteTask, listTask } from '@/repositories/taskRepository'
+import { listTask } from '@/repositories/taskRepository'
 
 type ListTaskParams = Parameters<typeof listTask>[0]
 
@@ -49,19 +49,6 @@ export const useTaskList = (props: {
     await next()
   }
 
-  const remove = async (id: TaskListItem['id']) => {
-    isLoading.value = true
-    const deletionResult = await deleteTask(id)
-    deletionResult.match((deletedTask) => {
-      error.value = undefined
-      // ローカルのtasksを全部洗い直すのはやばいので、filterで消す
-      tasks.value = tasks.value.filter(task => task.id !== deletedTask.id)
-    }, (deleteError) => {
-      error.value = deleteError
-    })
-    isLoading.value = false
-  }
-
   watch([props.key, props.order, props.itemPerPage], async (_, prevValue) => {
     // prevValueがある = 初回でないと判断、ロード中ならpreventする
     if (prevValue.length > 0 && isLoading.value) {
@@ -78,6 +65,5 @@ export const useTaskList = (props: {
     next,
     reload,
     hasNext,
-    remove,
   }
 }
