@@ -18,7 +18,7 @@ const {
 } = useTaskData(route.params.id)
 
 const {
-  update, remove, isOperating,
+  update, remove, isOperating: _,
 } = useTaskOperation()
 
 watch(task, () => {
