@@ -59,7 +59,7 @@ Promise<Result<Task, NoSuchItemError | NetworkError>> => {
   try {
     const response = await client.task[':id'].$get({ param: { id } })
     if (!response.ok) {
-      return err(new NoSuchItemError('', id))
+      return err(new NoSuchItemError(id))
     }
 
     const taskData = await response.json()
@@ -93,7 +93,7 @@ export const updateTask = async (props: {
       },
     })
     if (!response.ok) {
-      return err(new NoSuchItemError('', props.exist.id))
+      return err(new NoSuchItemError(props.exist.id))
     }
 
     const updatedTask = await response.json()
@@ -113,7 +113,7 @@ Promise<Result<Task, NoSuchItemError | NetworkError>> => {
   try {
     const response = await client.task[':id'].$delete({ param: { id } })
     if (!response.ok) {
-      return err(new NoSuchItemError('', id))
+      return err(new NoSuchItemError(id))
     }
 
     const deletedTaskData = await response.json()

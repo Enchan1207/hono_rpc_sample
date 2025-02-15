@@ -58,7 +58,7 @@ const onClickRemove = async () => {
       </template>
 
       <template v-if="error">
-        <div>some error occured: {{ error.message }}</div>
+        <div>読み込みに失敗しました: {{ error.message }}</div>
       </template>
 
       <template v-if="task">

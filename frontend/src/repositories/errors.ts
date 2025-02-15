@@ -15,8 +15,8 @@ export class TaskRepositoryError extends RepositoryError {}
 export class NoSuchItemError extends TaskRepositoryError {
   id: Task['id']
 
-  constructor(message: string, id: Task['id']) {
-    super(message)
+  constructor(id: Task['id']) {
+    super(`No such item with id ${id}`)
     this.id = id
   }
 }
