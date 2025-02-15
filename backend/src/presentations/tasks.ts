@@ -96,6 +96,12 @@ const app = new Hono<{ Bindings: Env }>()
       const taskData = c.req.valid('json')
 
       const updateResult = await c.var.usecase.updateTask(id, taskData)
+      if (updateResult === undefined) {
+        return c.json({
+          error: `no such task with id ${id}`,
+          ok: false,
+        }, 404)
+      }
       return c.json(updateResult, 200)
     },
   )

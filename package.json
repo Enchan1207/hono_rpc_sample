@@ -24,6 +24,7 @@
     "wrangler": "^3.106.0"
   },
   "dependencies": {
-    "hono": "^4.6.20"
+    "hono": "^4.6.20",
+    "neverthrow": "^8.1.1"
   }
 }

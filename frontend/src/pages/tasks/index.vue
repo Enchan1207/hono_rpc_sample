@@ -9,6 +9,8 @@ import {
 import TaskList from '@/components/tasks/TaskList.vue'
 import { useTaskList } from '@/composables/useTaskList'
 import { router } from '@/routes'
+import type { TaskListItem } from '@/entities/task'
+import { useTaskOperation } from '@/composables/useTaskOperation'
 
 const breakpoints = useBreakpoints(breakpointsElement)
 const isSmartphone = breakpoints.smaller('sm')
@@ -40,14 +42,31 @@ const {
   isLoading,
   next,
   hasNext,
-  remove,
+  error,
 } = useTaskList({
   key,
   order,
   itemPerPage,
 })
 
+const { remove, isOperating } = useTaskOperation()
+
 // MARK: - Event handlers
+
+const onClickRemove = async (id: TaskListItem['id']) => {
+  if (isOperating.value) {
+    ElMessage.warning('他のアイテムを削除中です。')
+    return
+  }
+  const result = await remove(id)
+  result.match((removed) => {
+    // ローカルのtasksを全部洗い直すのはやばいので、filterで消す
+    tasks.value = tasks.value.filter(task => task.id !== removed.id)
+    ElMessage(`タスクアイテム 「${removed.title}」を削除しました。`)
+  }, (error) => {
+    ElMessage.error(`削除に失敗しました: ${error.message}`)
+  })
+}
 
 const onClickOrder = () => {
   const currentOrder = order.value
@@ -108,10 +127,12 @@ const onClickOrder = () => {
     >
       <TaskList
         :tasks="tasks"
+        :error="error"
         :has-next="hasNext"
         :is-loading="isLoading"
-        @remove="remove"
+        @remove="onClickRemove"
         @next="next"
+        @reload="next"
       />
     </el-col>
   </el-row>

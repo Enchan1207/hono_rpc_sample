@@ -2,10 +2,11 @@
 import { useRoute, useRouter } from 'vue-router'
 import { useTitle } from '@vueuse/core'
 import { watch } from 'vue'
-import { ElMessage } from 'element-plus'
 import { BIconChevronLeft } from 'bootstrap-icons-vue'
 import { useTaskData } from '@/composables/useTaskData'
 import TaskDetail from '@/components/tasks/TaskDetail.vue'
+import type { Task } from '@/entities/task'
+import { useTaskOperation } from '@/composables/useTaskOperation'
 
 const route = useRoute<'/tasks/[id]'>()
 const router = useRouter()
@@ -13,20 +14,50 @@ const router = useRouter()
 const title = useTitle('タスク詳細')
 
 const {
-  task, isLoading, error, update, remove,
+  task, isLoading, error,
 } = useTaskData(route.params.id)
+
+const {
+  update, remove, isOperating: _,
+} = useTaskOperation()
 
 watch(task, () => {
   title.value = task.value?.title
 })
 
-const onClickRemove = async () => {
-  await remove()
-  const taskTitle = task.value?.title ?? '(不明)'
-  ElMessage(`タスクアイテム 「${taskTitle}」を削除しました。`)
-  router.push('/tasks')
+const onClickUpdate = async (input: Omit<Task, 'id'>) => {
+  const exist = task.value
+  if (exist === undefined) {
+    ElMessage.warning('アイテムを読み込んでいます。')
+    return
+  }
+
+  const result = await update({
+    exist,
+    input,
+  })
+  result.match(() => {
+    ElMessage('更新しました。')
+  }, (error) => {
+    ElMessage.error(`更新に失敗しました: ${error.message}`)
+  })
 }
 
+const onClickRemove = async () => {
+  const exist = task.value
+  if (exist === undefined) {
+    ElMessage.warning('アイテムを読み込んでいます。')
+    return
+  }
+
+  const result = await remove(exist.id)
+  result.match((removed) => {
+    ElMessage(`タスクアイテム 「${removed.title}」を削除しました。`)
+    router.push('/tasks')
+  }, (error) => {
+    ElMessage.error(`削除に失敗しました: ${error.message}`)
+  })
+}
 </script>
 
 <template>
@@ -58,13 +89,13 @@ const onClickRemove = async () => {
       </template>
 
       <template v-if="error">
-        <div>some error occured: {{ error.message }}</div>
+        <div>読み込みに失敗しました: {{ error.message }}</div>
       </template>
 
       <template v-if="task">
         <TaskDetail
           :task="task"
-          @commit="update"
+          @commit="onClickUpdate"
           @remove="onClickRemove"
         />
       </template>
