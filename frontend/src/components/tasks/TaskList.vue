@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { BIconArrowClockwise } from 'bootstrap-icons-vue'
+import { computed } from 'vue'
 import TaskListRow from './TaskListRow.vue'
 import type { TaskListItem } from '@/entities/task'
 
@@ -14,9 +15,9 @@ const emits = defineEmits<{
   (operation: 'next' | 'reload'): void
 }>()
 
-const isScrollDisabled = props.isLoading
-  || !props.hasNext
-  || props.error !== undefined
+const isScrollDisabled = computed(() => {
+  return props.isLoading || !props.hasNext || props.error !== undefined
+})
 
 </script>
 
