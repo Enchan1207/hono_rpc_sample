@@ -40,7 +40,7 @@ const isScrollDisabled = computed(() => {
     <li
       v-if="isLoading"
       v-loading="isLoading"
-      style="height: 60px"
+      class="task-loading-indicator"
     />
 
     <li
@@ -92,5 +92,13 @@ li.error-info {
 
 li.error-info>*:not(:last-child){
   margin-bottom: 10px;
+}
+
+.task-loading-indicator {
+  height: 60px;
+}
+
+.task-loading-indicator .el-loading-mask {
+  background-color: transparent;
 }
 </style>
