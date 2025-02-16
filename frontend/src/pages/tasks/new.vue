@@ -1,27 +1,64 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
+import type { Ref } from 'vue'
 import { BIconChevronLeft } from 'bootstrap-icons-vue'
 import { useTitle } from '@vueuse/core'
-import { addTask } from '@/repositories/taskRepository'
+import type { FormInstance } from 'element-plus'
+import type { Result } from 'neverthrow'
+import { err, ok } from 'neverthrow'
 import type { Task } from '@/entities/task'
-import TaskDetail from '@/components/tasks/TaskDetail.vue'
-import dayjs from '@/logic/dayjs'
+import TaskEditFormItems from '@/components/tasks/TaskEditFormItems.vue'
+import { addTask } from '@/repositories/taskRepository'
 
 const router = useRouter()
 
 useTitle('タスク登録')
 
-const task = ref<Omit<Task, 'id'>>({
+type FormType = Omit<Task, 'id' | 'due'> & { due: Task['due'] | undefined }
+
+const formModel = reactive<FormType>({
   title: '',
   priority: 'middle',
-  due: dayjs(),
+  due: undefined,
   description: '',
 })
+const formRef = ref<FormInstance>()
 
-const onSubmit = async (task: Omit<Task, 'id'>) => {
-  await addTask(task)
-  router.back()
+const isFormSubmitting = ref(false)
+
+const validateForm = async <T>(
+  formInstance: Ref<FormInstance | undefined>,
+  data: T,
+): Promise<Result<T, Error>> => {
+  if (formInstance.value === undefined) {
+    return err(new Error('Form instance is not yet ready'))
+  }
+  try {
+    await formInstance.value.validate()
+    return ok(data)
+  }
+  catch (e: unknown) {
+    const error = e instanceof Error ? e : new Error('form validation error')
+    return err(error)
+  }
+}
+
+const onSubmit = async () => {
+  const validated = (await validateForm(formRef, formModel)).unwrapOr(undefined)
+  if (validated === undefined) {
+    return
+  }
+
+  isFormSubmitting.value = true
+  const result = await addTask(validated as Omit<Task, 'id'>)
+  result.match(({ title }) => {
+    ElMessage(`タスク「${title}」を登録しました。`)
+    router.push('/tasks')
+  }, (error) => {
+    ElMessage.error(`登録に失敗しました: ${error.message}`)
+  })
+  isFormSubmitting.value = false
 }
 </script>
 
@@ -49,10 +86,29 @@ const onSubmit = async (task: Omit<Task, 'id'>) => {
     >
       <h2>タスクの登録</h2>
 
-      <TaskDetail
-        :task="task"
-        @commit="onSubmit"
-      />
+      <el-form
+        ref="formRef"
+        label-position="left"
+        label-width="80"
+        :model="formModel"
+      >
+        <TaskEditFormItems
+          v-model:title="formModel.title"
+          v-model:due="formModel.due"
+          v-model:priority="formModel.priority"
+          v-model:description="formModel.description"
+        />
+
+        <el-form-item>
+          <el-button
+            type="primary"
+            :loading="isFormSubmitting"
+            @click="onSubmit"
+          >
+            登録
+          </el-button>
+        </el-form-item>
+      </el-form>
     </el-col>
   </el-row>
 </template>
