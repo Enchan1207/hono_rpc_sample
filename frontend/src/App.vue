@@ -62,35 +62,6 @@ const isSidebarVisible = ref(!isSmartphone.value)
 </template>
 
 <style>
-:root {
-  --el-main-padding: 20px;
-  --el-aside-width: 220px;
-  --el-header-height: 60px;
-  --el-font-family: "Helvetica Neue",
-    Arial,
-    "Hiragino Kaku Gothic ProN",
-    "Hiragino Sans",
-    Meiryo,
-    sans-serif;
-  font-family: var(--el-font-family);
-}
-
-@media (max-width: 768px) {
-  :root {
-    --el-main-padding: 10px;
-    --el-header-height: 50px;
-  }
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  background-color: var(--el-bg-color);
-}
-
 .el-header {
   --el-header-height: unset;
   border-bottom: 1px solid var(--el-menu-border-color);

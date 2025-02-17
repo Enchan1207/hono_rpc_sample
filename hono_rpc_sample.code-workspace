@@ -34,6 +34,9 @@
     "npm.packageManager": "npm",
     "files.associations": {
       "*.toml": "ini"
+    },
+    "[scss]": {
+      "editor.defaultFormatter": "vscode.css-language-features"
     }
   },
   "extensions": {

@@ -12,8 +12,8 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        // カスタムテーマを追加で読み込み
-        additionalData: `@use "@/styles/theme/light.scss" as *;`,
+        additionalData: `@use "@/styles/theme/index.scss" as *;`,
+        api: 'modern-compiler',
       },
     },
   },
