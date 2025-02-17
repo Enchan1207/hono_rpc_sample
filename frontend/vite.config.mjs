@@ -19,7 +19,7 @@ export default defineConfig({
   },
   plugins: [
     checker({ vueTsc: true }),
-    vueRouter(),
+    vueRouter({ dts: 'src/typed-router.d.ts' }),
     vue(),
     Components({
       resolvers: [
@@ -29,6 +29,7 @@ export default defineConfig({
           version: '2.1.5',
         }),
       ],
+      dts: 'src/components.d.ts',
     }),
   ],
 })
