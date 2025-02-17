@@ -4,6 +4,7 @@ import {
   breakpointsElement, useBreakpoints, useDark,
 } from '@vueuse/core'
 import { BIconList } from 'bootstrap-icons-vue'
+import { useRouter } from 'vue-router'
 import Sidebar from '@/components/SideBar.vue'
 
 useDark()
@@ -17,6 +18,11 @@ watch(isSmartphone, (newValue, prevValue) => {
 })
 
 const isSidebarVisible = ref(!isSmartphone.value)
+
+const router = useRouter()
+router.onError((error) => {
+  console.error(`when? ${error}`)
+})
 </script>
 
 <template>

@@ -1,27 +1,36 @@
+<script lang="ts">
+import { defineBasicLoader } from 'unplugin-vue-router/data-loaders/basic'
+import { getTask } from '@/repositories/taskRepository'
+
+export const useTaskData_ = defineBasicLoader('/tasks/[id]', async (route) => {
+  const result = await getTask(route.params.id)
+  if (result.isErr()) {
+    throw result.error
+  }
+  return result.value
+})
+</script>
+
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
 import { useTitle } from '@vueuse/core'
-import {
-  reactive, ref, watch,
-} from 'vue'
+import { reactive, ref } from 'vue'
 import type { Ref } from 'vue'
 import { BIconChevronLeft } from 'bootstrap-icons-vue'
 import { ElMessage } from 'element-plus'
 import type { FormInstance } from 'element-plus'
-import { useTaskData } from '@/composables/useTaskData'
 import type { Task } from '@/entities/task'
 import { useTaskOperation } from '@/composables/useTaskOperation'
 import TaskEditFormItems from '@/components/tasks/TaskEditFormItems.vue'
 import { validateForm } from '@/logic/form'
 
-const route = useRoute<'/tasks/[id]'>()
-const router = useRouter()
-
-const title = useTitle('タスク詳細')
-
 const {
-  task, isLoading, error,
-} = useTaskData(route.params.id)
+  data: task,
+  isLoading,
+  error,
+  reload: _,
+} = useTaskData_()
+
+useTitle(task.value.title)
 
 const {
   update, remove, isOperating,
@@ -30,26 +39,14 @@ const {
 type FormType = Omit<Task, 'id' | 'due'> & { due: Task['due'] | undefined }
 
 const formModel = reactive<FormType>({
-  title: '',
-  priority: 'middle',
-  due: undefined,
-  description: '',
+  title: task.value.title,
+  priority: task.value.priority,
+  due: task.value.due,
+  description: task.value.description,
 })
 const formRef = ref<FormInstance>()
 
 const currentFormOperation: Ref<'update' | 'remove' | undefined> = ref()
-
-watch(task, (task) => {
-  if (task === undefined) {
-    return
-  }
-  title.value = task.title
-
-  formModel.title = task.title
-  formModel.priority = task.priority
-  formModel.due = task.due
-  formModel.description = task.description
-})
 
 const onClickUpdate = async () => {
   const exist = task.value

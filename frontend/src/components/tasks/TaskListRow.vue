@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { BIconTrashFill } from 'bootstrap-icons-vue'
+import { useRouter } from 'vue-router'
 import PriorityTag from './PriorityTag.vue'
 import DueTag from './DueTag.vue'
 import type { TaskListItem } from '@/entities/task'
 
 defineProps<{ item: TaskListItem }>()
 const emits = defineEmits(['remove'])
+
+const router = useRouter()
+router.onError((error) => {
+  console.error(`when? ${error}`)
+})
+
 </script>
 
 <template>
