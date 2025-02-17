@@ -1,5 +1,5 @@
+// @ts-check
 import vue from '@vitejs/plugin-vue'
-import AutoImport from 'unplugin-auto-import/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import vueRouter from 'unplugin-vue-router/vite'
@@ -12,16 +12,15 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        // カスタムテーマを追加で読み込み
-        additionalData: `@use "@/styles/theme/light.scss" as *;`,
+        additionalData: `@use "@/styles/theme/index.scss" as *;`,
+        api: 'modern-compiler',
       },
     },
   },
   plugins: [
     checker({ vueTsc: true }),
-    vueRouter(),
+    vueRouter({ dts: 'src/typed-router.d.ts' }),
     vue(),
-    AutoImport({ resolvers: [ElementPlusResolver()] }),
     Components({
       resolvers: [
         ElementPlusResolver({
@@ -30,6 +29,7 @@ export default defineConfig({
           version: '2.1.5',
         }),
       ],
+      dts: 'src/components.d.ts',
     }),
   ],
 })

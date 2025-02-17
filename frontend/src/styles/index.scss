@@ -1,1 +1,31 @@
+// ダークテーマをインポート
 @use 'element-plus/theme-chalk/src/dark/css-vars.scss' as *;
+
+:root {
+  --el-main-padding: 20px;
+  --el-aside-width: 220px;
+  --el-header-height: 60px;
+  --el-font-family: "Helvetica Neue",
+    Arial,
+    "Hiragino Kaku Gothic ProN",
+    "Hiragino Sans",
+    Meiryo,
+    sans-serif;
+  font-family: var(--el-font-family);
+}
+
+body {
+  font-family: var(--el-font-family);
+
+  margin: 0;
+  padding: 0;
+
+  background-color: var(--el-bg-color);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --el-main-padding: 10px;
+    --el-header-height: 50px;
+  }
+}
