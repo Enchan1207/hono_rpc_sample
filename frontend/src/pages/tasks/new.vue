@@ -1,27 +1,50 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { BIconChevronLeft } from 'bootstrap-icons-vue'
 import { useTitle } from '@vueuse/core'
-import { addTask } from '@/repositories/taskRepository'
+import type { FormInstance } from 'element-plus'
 import type { Task } from '@/entities/task'
-import TaskDetail from '@/components/tasks/TaskDetail.vue'
-import dayjs from '@/logic/dayjs'
+import TaskEditFormItems from '@/components/tasks/TaskEditFormItems.vue'
+import { addTask } from '@/repositories/taskRepository'
+import { validateForm } from '@/logic/form'
 
 const router = useRouter()
 
 useTitle('タスク登録')
 
-const task = ref<Omit<Task, 'id'>>({
+type FormType = Omit<Task, 'id' | 'due'> & { due: Task['due'] | undefined }
+
+const formModel = reactive<FormType>({
   title: '',
   priority: 'middle',
-  due: dayjs(),
+  due: undefined,
   description: '',
 })
+const formRef = ref<FormInstance>()
 
-const onSubmit = async (task: Omit<Task, 'id'>) => {
-  await addTask(task)
-  router.back()
+const isFormSubmitting = ref(false)
+
+const onSubmit = async () => {
+  if (formRef.value === undefined) {
+    return
+  }
+
+  const validationResult = await validateForm(formRef.value, formModel)
+  if (validationResult.isErr()) {
+    return
+  }
+  const validated = validationResult.value
+
+  isFormSubmitting.value = true
+  const result = await addTask(validated as Omit<Task, 'id'>)
+  result.match(({ title }) => {
+    ElMessage(`タスク「${title}」を登録しました。`)
+    router.back()
+  }, (error) => {
+    ElMessage.error(`登録に失敗しました: ${error.message}`)
+  })
+  isFormSubmitting.value = false
 }
 </script>
 
@@ -49,10 +72,30 @@ const onSubmit = async (task: Omit<Task, 'id'>) => {
     >
       <h2>タスクの登録</h2>
 
-      <TaskDetail
-        :task="task"
-        @commit="onSubmit"
-      />
+      <el-form
+        ref="formRef"
+        label-position="left"
+        label-width="80"
+        :model="formModel"
+      >
+        <TaskEditFormItems
+          v-model:title="formModel.title"
+          v-model:due="formModel.due"
+          v-model:priority="formModel.priority"
+          v-model:description="formModel.description"
+          :loading="isFormSubmitting"
+        />
+
+        <el-form-item>
+          <el-button
+            type="primary"
+            :loading="isFormSubmitting"
+            @click="onSubmit"
+          >
+            登録
+          </el-button>
+        </el-form-item>
+      </el-form>
     </el-col>
   </el-row>
 </template>

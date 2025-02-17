@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import { useTitle } from '@vueuse/core'
-import { watch } from 'vue'
+import {
+  reactive, ref, watch,
+} from 'vue'
+import type { Ref } from 'vue'
 import { BIconChevronLeft } from 'bootstrap-icons-vue'
+import type { FormInstance } from 'element-plus'
 import { useTaskData } from '@/composables/useTaskData'
-import TaskDetail from '@/components/tasks/TaskDetail.vue'
 import type { Task } from '@/entities/task'
 import { useTaskOperation } from '@/composables/useTaskOperation'
+import TaskEditFormItems from '@/components/tasks/TaskEditFormItems.vue'
+import { validateForm } from '@/logic/form'
 
 const route = useRoute<'/tasks/[id]'>()
 const router = useRouter()
@@ -18,29 +23,61 @@ const {
 } = useTaskData(route.params.id)
 
 const {
-  update, remove, isOperating: _,
+  update, remove, isOperating,
 } = useTaskOperation()
 
-watch(task, () => {
-  title.value = task.value?.title
+type FormType = Omit<Task, 'id' | 'due'> & { due: Task['due'] | undefined }
+
+const formModel = reactive<FormType>({
+  title: '',
+  priority: 'middle',
+  due: undefined,
+  description: '',
+})
+const formRef = ref<FormInstance>()
+
+const currentFormOperation: Ref<'update' | 'remove' | undefined> = ref()
+
+watch(task, (task) => {
+  if (task === undefined) {
+    return
+  }
+  title.value = task.title
+
+  formModel.title = task.title
+  formModel.priority = task.priority
+  formModel.due = task.due
+  formModel.description = task.description
 })
 
-const onClickUpdate = async (input: Omit<Task, 'id'>) => {
+const onClickUpdate = async () => {
   const exist = task.value
   if (exist === undefined) {
     ElMessage.warning('アイテムを読み込んでいます。')
     return
   }
 
-  const result = await update({
+  if (formRef.value === undefined) {
+    return
+  }
+
+  const validationResult = await validateForm(formRef.value, formModel)
+  if (validationResult.isErr()) {
+    return
+  }
+  const validated = validationResult.value
+
+  currentFormOperation.value = 'update'
+  const updateResult = await update({
     exist,
-    input,
+    input: validated as Omit<Task, 'id'>,
   })
-  result.match(() => {
+  updateResult.match(() => {
     ElMessage('更新しました。')
   }, (error) => {
     ElMessage.error(`更新に失敗しました: ${error.message}`)
   })
+  currentFormOperation.value = undefined
 }
 
 const onClickRemove = async () => {
@@ -50,13 +87,15 @@ const onClickRemove = async () => {
     return
   }
 
+  currentFormOperation.value = 'remove'
   const result = await remove(exist.id)
   result.match((removed) => {
     ElMessage(`タスクアイテム 「${removed.title}」を削除しました。`)
-    router.push('/tasks')
+    router.back()
   }, (error) => {
     ElMessage.error(`削除に失敗しました: ${error.message}`)
   })
+  currentFormOperation.value = undefined
 }
 </script>
 
@@ -93,11 +132,45 @@ const onClickRemove = async () => {
       </template>
 
       <template v-if="task">
-        <TaskDetail
-          :task="task"
-          @commit="onClickUpdate"
-          @remove="onClickRemove"
-        />
+        <el-form
+          ref="formRef"
+          label-position="left"
+          label-width="80"
+          :model="formModel"
+        >
+          <TaskEditFormItems
+            v-model:title="formModel.title"
+            v-model:due="formModel.due"
+            v-model:priority="formModel.priority"
+            v-model:description="formModel.description"
+            :loading="currentFormOperation !== undefined"
+          />
+          <el-form-item>
+            <el-button
+              type="primary"
+              :loading="currentFormOperation === 'update'"
+              :disabled="isOperating"
+              @click="onClickUpdate"
+            >
+              更新
+            </el-button>
+            <el-button
+              type="danger"
+              :loading="currentFormOperation === 'remove'"
+              :disabled="isOperating"
+              @click="onClickRemove"
+            >
+              削除
+            </el-button>
+            <el-button
+              type="info"
+              :disabled="isOperating"
+              @click="formRef?.resetFields()"
+            >
+              変更前に戻す
+            </el-button>
+          </el-form-item>
+        </el-form>
       </template>
     </el-col>
   </el-row>
