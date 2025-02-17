@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import PriorityTag from './PriorityTag.vue'
 import type { TaskPriority } from '@/entities/task'
 import dayjs from '@/logic/dayjs'
 
@@ -59,11 +60,13 @@ const priorityOptions: Record<TaskPriority, string> = {
     >
       <el-select v-model="priority">
         <el-option
-          v-for="[sortKey, label] in Object.entries(priorityOptions)"
-          :key="sortKey"
+          v-for="[priorityKey, label] in Object.entries(priorityOptions)"
+          :key="priorityKey"
           :label="label"
-          :value="sortKey"
-        />
+          :value="priorityKey"
+        >
+          <PriorityTag :priority="(priorityKey as TaskPriority)" />
+        </el-option>
       </el-select>
     </el-form-item>
 
