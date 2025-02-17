@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import {
   breakpointsElement, useBreakpoints, useTitle,
 } from '@vueuse/core'
 import {
   BIconPencilSquare, BIconSortDown, BIconSortUp,
 } from 'bootstrap-icons-vue'
+import { ElMessage } from 'element-plus'
+import { ref } from 'vue'
 import TaskList from '@/components/tasks/TaskList.vue'
 import { useTaskList } from '@/composables/useTaskList'
-import { router } from '@/routes'
-import type { TaskListItem } from '@/entities/task'
 import { useTaskOperation } from '@/composables/useTaskOperation'
+import type { TaskListItem } from '@/entities/task'
+import { router } from '@/routes'
 
 const breakpoints = useBreakpoints(breakpointsElement)
 const isSmartphone = breakpoints.smaller('sm')
