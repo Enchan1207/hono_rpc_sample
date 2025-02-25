@@ -9,8 +9,8 @@ defineProps<{ item: TaskListItem }>()
 const emits = defineEmits(['remove'])
 
 const router = useRouter()
-router.onError((error) => {
-  console.error(`when? ${error}`)
+router.onError((error, to) => {
+  console.warn(error, to)
 })
 
 </script>

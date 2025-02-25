@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineBasicLoader } from 'unplugin-vue-router/data-loaders/basic'
 import { getTask } from '@/repositories/taskRepository'
+import { useRouter } from 'vue-router'
 
 export const useTaskData_ = defineBasicLoader('/tasks/[id]', async (route) => {
   const result = await getTask(route.params.id)
@@ -22,6 +23,8 @@ import type { Task } from '@/entities/task'
 import { useTaskOperation } from '@/composables/useTaskOperation'
 import TaskEditFormItems from '@/components/tasks/TaskEditFormItems.vue'
 import { validateForm } from '@/logic/form'
+
+const router = useRouter()
 
 const {
   data: task,

@@ -5,6 +5,7 @@ import {
 } from '@vueuse/core'
 import { BIconList } from 'bootstrap-icons-vue'
 import { useRouter } from 'vue-router'
+import { NetworkError, NoSuchItemError } from './repositories/errors'
 import Sidebar from '@/components/SideBar.vue'
 
 useDark()
@@ -21,7 +22,10 @@ const isSidebarVisible = ref(!isSmartphone.value)
 
 const router = useRouter()
 router.onError((error) => {
-  console.error(`when? ${error}`)
+  console.log('app.vue')
+  console.error(error instanceof NoSuchItemError)
+  console.error(error instanceof NetworkError)
+  console.error(error)
 })
 </script>
 

@@ -7,6 +7,7 @@ import {
 } from 'bootstrap-icons-vue'
 import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
+import { NetworkError, NoSuchItemError } from '@/repositories/errors'
 import TaskList from '@/components/tasks/TaskList.vue'
 import { useTaskList } from '@/composables/useTaskList'
 import { useTaskOperation } from '@/composables/useTaskOperation'
@@ -17,6 +18,14 @@ const breakpoints = useBreakpoints(breakpointsElement)
 const isSmartphone = breakpoints.smaller('sm')
 
 useTitle('タスク一覧')
+
+// const router = useRouter()
+router.onError((error) => {
+  console.log('index.vue')
+  console.error(error instanceof NoSuchItemError)
+  console.error(error instanceof NetworkError)
+  console.error(error)
+})
 
 // 並べ替え項目
 type SortKeys = 'id' | 'due' | 'priority'
