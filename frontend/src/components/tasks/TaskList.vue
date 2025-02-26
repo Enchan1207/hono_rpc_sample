@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { BIconArrowClockwise } from 'bootstrap-icons-vue'
 import { computed } from 'vue'
-import TaskListRow from './TaskListRow.vue'
+
 import type { TaskListItem } from '@/entities/task'
+
+import TaskListRow from './TaskListRow.vue'
 
 const props = defineProps<{
   tasks: TaskListItem[]

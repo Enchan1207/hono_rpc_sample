@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
 import { useTitle } from '@vueuse/core'
+import { BIconChevronLeft } from 'bootstrap-icons-vue'
+import type { FormInstance } from 'element-plus'
+import { ElMessage } from 'element-plus'
+import type { Ref } from 'vue'
 import {
   reactive, ref, watch,
 } from 'vue'
-import type { Ref } from 'vue'
-import { BIconChevronLeft } from 'bootstrap-icons-vue'
-import { ElMessage } from 'element-plus'
-import type { FormInstance } from 'element-plus'
-import { useTaskData } from '@/composables/useTaskData'
-import type { Task } from '@/entities/task'
-import { useTaskOperation } from '@/composables/useTaskOperation'
+import { useRoute, useRouter } from 'vue-router'
+
 import TaskEditFormItems from '@/components/tasks/TaskEditFormItems.vue'
+import { useTaskData } from '@/composables/useTaskData'
+import { useTaskOperation } from '@/composables/useTaskOperation'
+import type { Task } from '@/entities/task'
 import { validateForm } from '@/logic/form'
 
 const route = useRoute<'/tasks/[id]'>()

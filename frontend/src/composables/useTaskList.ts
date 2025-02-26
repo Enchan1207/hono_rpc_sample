@@ -1,7 +1,8 @@
+import type { Ref } from 'vue'
 import {
   ref, toValue, watch,
 } from 'vue'
-import type { Ref } from 'vue'
+
 import type { TaskListItem } from '@/entities/task'
 import { listTask } from '@/repositories/taskRepository'
 

@@ -1,8 +1,8 @@
 import type { FormInstance } from 'element-plus'
 import type { Result } from 'neverthrow'
 import { err, ok } from 'neverthrow'
-import { toValue } from 'vue'
 import type { Ref } from 'vue'
+import { toValue } from 'vue'
 
 /** フォームをバリデーションして結果を返す */
 export const validateForm = async <T>(

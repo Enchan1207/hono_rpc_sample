@@ -1,11 +1,12 @@
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
-import { z } from 'zod'
 import { createMiddleware } from 'hono/factory'
+import { z } from 'zod'
+
 import { TaskPriorities } from '@/domain/entities/task'
 import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepository'
-import { useTaskUsecase } from '@/usecases/taskUsecase'
 import type { TaskUsecase } from '@/usecases/taskUsecase'
+import { useTaskUsecase } from '@/usecases/taskUsecase'
 
 const taskUsecaseMiddleware = createMiddleware<{
   Bindings: Env

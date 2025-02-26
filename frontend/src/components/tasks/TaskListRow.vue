@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { BIconTrashFill } from 'bootstrap-icons-vue'
-import PriorityTag from './PriorityTag.vue'
-import DueTag from './DueTag.vue'
+
 import type { TaskListItem } from '@/entities/task'
+
+import DueTag from './DueTag.vue'
+import PriorityTag from './PriorityTag.vue'
 
 defineProps<{ item: TaskListItem }>()
 const emits = defineEmits(['remove'])

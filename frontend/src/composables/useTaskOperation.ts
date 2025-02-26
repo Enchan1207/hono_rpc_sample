@@ -1,8 +1,9 @@
-import { err } from 'neverthrow'
 import type { Result } from 'neverthrow'
+import { err } from 'neverthrow'
 import { ref } from 'vue'
+
 import type { Task } from '@/entities/task'
-import { updateTask, deleteTask } from '@/repositories/taskRepository'
+import { deleteTask, updateTask } from '@/repositories/taskRepository'
 
 export const useTaskOperation = () => {
   const isOperating = ref(false)
