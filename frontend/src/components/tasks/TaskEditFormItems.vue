@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import PriorityTag from './PriorityTag.vue'
+
 import type { TaskPriority } from '@/entities/task'
 import dayjs from '@/logic/dayjs'
+
+import PriorityTag from './PriorityTag.vue'
 
 const props = defineProps<{ loading: boolean }>()
 

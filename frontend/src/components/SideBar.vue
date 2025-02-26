@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import {
-  BIconHouseFill, BIconPencilSquare, BIconSunFill, BIconMoonFill,
-} from 'bootstrap-icons-vue'
-import {
   breakpointsElement, useBreakpoints, useDark, useToggle,
 } from '@vueuse/core'
+import {
+  BIconHouseFill, BIconMoonFill,
+  BIconPencilSquare, BIconSunFill,
+} from 'bootstrap-icons-vue'
 import { useRouter } from 'vue-router'
 
 const breakpoints = useBreakpoints(breakpointsElement)

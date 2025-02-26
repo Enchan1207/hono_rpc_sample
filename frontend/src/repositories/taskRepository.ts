@@ -1,9 +1,11 @@
-import { err, ok } from 'neverthrow'
 import type { Result } from 'neverthrow'
-import { client } from './client'
-import { NoSuchItemError, NetworkError } from './errors'
-import dayjs from '@/logic/dayjs'
+import { err, ok } from 'neverthrow'
+
 import type { Task, TaskListItem } from '@/entities/task'
+import dayjs from '@/logic/dayjs'
+
+import { client } from './client'
+import { NetworkError, NoSuchItemError } from './errors'
 
 export const listTask = async (query: {
   key?: 'id' | 'due' | 'priority'

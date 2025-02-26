@@ -1,7 +1,7 @@
-import { createTaskEntity } from '@/domain/entities/task'
 import type {
   Task, TaskData, TaskSummary,
 } from '@/domain/entities/task'
+import { createTaskEntity } from '@/domain/entities/task'
 import type { TaskRepository } from '@/domain/repositories/taskRepository'
 
 export interface TaskUsecase {

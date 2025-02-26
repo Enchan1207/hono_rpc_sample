@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TagProps } from 'element-plus'
+
 import type { TaskPriority } from '@/entities/task'
 
 defineProps<{ priority: TaskPriority }>()
