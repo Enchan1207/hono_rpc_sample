@@ -4,6 +4,7 @@ import eslint from '@eslint/js'
 import stylistic from '@stylistic/eslint-plugin'
 import stylisticTs from '@stylistic/eslint-plugin-ts'
 import * as importPlugin from 'eslint-plugin-import'
+import simpleImportSortPlugin from 'eslint-plugin-simple-import-sort'
 import unusedImportsPlugin from 'eslint-plugin-unused-imports'
 import vuePlugin from 'eslint-plugin-vue'
 import globals from 'globals'
@@ -80,12 +81,16 @@ export default tseslint.config(
     name: 'import rules',
     plugins: {
       'import': importPlugin,
+      'simple-import-sort': simpleImportSortPlugin,
       'unused-import': unusedImportsPlugin,
     },
     rules: {
-      'import/order': 'warn',
-      'import/no-duplicates': 'warn',
+      'import/first': 'error',
+      'import/newline-after-import': 'error',
+      'import/no-duplicates': 'error',
       'import/consistent-type-specifier-style': 'error',
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
       'unused-import/no-unused-imports': 'error',
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-import/no-unused-vars': [
