@@ -7,12 +7,14 @@ import dayjs from '@/logic/dayjs'
 import { client } from './client'
 import { NetworkError, NoSuchItemError } from './errors'
 
-export const listTask = async (query: {
-  key?: 'id' | 'due' | 'priority'
-  order?: 'desc' | 'asc'
-  limit?: number
-  offset?: number
-}): Promise<Result<TaskListItem[], NetworkError>> => {
+export const listTask = async (
+  token: string,
+  query: {
+    key?: 'id' | 'due' | 'priority'
+    order?: 'desc' | 'asc'
+    limit?: number
+    offset?: number
+  }): Promise<Result<TaskListItem[], NetworkError>> => {
   try {
     const response = await client.task.$get({
       query: {
@@ -20,7 +22,7 @@ export const listTask = async (query: {
         limit: query.limit?.toString(),
         offset: query.offset?.toString(),
       },
-    })
+    }, { headers: { Authorization: `Bearer ${token}` } })
 
     const taskDatas = await response.json()
     const tasks: TaskListItem[] = taskDatas.map(task => ({
@@ -35,14 +37,14 @@ export const listTask = async (query: {
   }
 }
 
-export const addTask = async (task: Omit<Task, 'id'>): Promise<Result<Task, NetworkError>> => {
+export const addTask = async (token: string, task: Omit<Task, 'id'>): Promise<Result<Task, NetworkError>> => {
   try {
     const response = await client.task.$post({
       json: {
         ...task,
         due: task.due.utc().valueOf(),
       },
-    })
+    }, { headers: { Authorization: `Bearer ${token}` } })
 
     const newTaskData = await response.json()
     return ok({
@@ -56,10 +58,11 @@ export const addTask = async (task: Omit<Task, 'id'>): Promise<Result<Task, Netw
   }
 }
 
-export const getTask = async (id: TaskListItem['id']):
+export const getTask = async (token: string, id: TaskListItem['id']):
 Promise<Result<Task, NoSuchItemError | NetworkError>> => {
   try {
-    const response = await client.task[':id'].$get({ param: { id } })
+    const response = await client.task[':id'].$get({ param: { id } },
+      { headers: { Authorization: `Bearer ${token}` } })
     if (!response.ok) {
       return err(new NoSuchItemError(id))
     }
@@ -76,7 +79,7 @@ Promise<Result<Task, NoSuchItemError | NetworkError>> => {
   }
 }
 
-export const updateTask = async (props: {
+export const updateTask = async (token: string, props: {
   exist: Task
   input: Partial<Omit<Task, 'id'>>
 }): Promise<Result<Task, NoSuchItemError | NetworkError>> => {
@@ -93,7 +96,7 @@ export const updateTask = async (props: {
         due: updatedData.due.utc().valueOf(),
         priority: updatedData.priority,
       },
-    })
+    }, { headers: { Authorization: `Bearer ${token}` } })
     if (!response.ok) {
       return err(new NoSuchItemError(props.exist.id))
     }
@@ -110,10 +113,11 @@ export const updateTask = async (props: {
   }
 }
 
-export const deleteTask = async (id: Task['id']):
+export const deleteTask = async (token: string, id: Task['id']):
 Promise<Result<Task, NoSuchItemError | NetworkError>> => {
   try {
-    const response = await client.task[':id'].$delete({ param: { id } })
+    const response = await client.task[':id'].$delete({ param: { id } },
+      { headers: { Authorization: `Bearer ${token}` } })
     if (!response.ok) {
       return err(new NoSuchItemError(id))
     }
