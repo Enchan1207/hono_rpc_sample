@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAuth0 } from '@auth0/auth0-vue'
 import { useTitle } from '@vueuse/core'
 import { BIconChevronLeft } from 'bootstrap-icons-vue'
 import type { FormInstance } from 'element-plus'
@@ -20,13 +21,15 @@ const router = useRouter()
 
 const title = useTitle('タスク詳細')
 
+const { getAccessTokenSilently } = useAuth0()
+
 const {
   task, isLoading, error,
-} = useTaskData(route.params.id)
+} = useTaskData(route.params.id, getAccessTokenSilently)
 
 const {
   update, remove, isOperating,
-} = useTaskOperation()
+} = useTaskOperation(getAccessTokenSilently)
 
 type FormType = Omit<Task, 'id' | 'due'> & { due: Task['due'] | undefined }
 

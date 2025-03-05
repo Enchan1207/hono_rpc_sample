@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAuth0 } from '@auth0/auth0-vue'
 import { useTitle } from '@vueuse/core'
 import { BIconChevronLeft } from 'bootstrap-icons-vue'
 import type { FormInstance } from 'element-plus'
@@ -12,6 +13,8 @@ import { validateForm } from '@/logic/form'
 import { addTask } from '@/repositories/taskRepository'
 
 const router = useRouter()
+
+const { getAccessTokenSilently } = useAuth0()
 
 useTitle('タスク登録')
 
@@ -39,7 +42,8 @@ const onSubmit = async () => {
   const validated = validationResult.value
 
   isFormSubmitting.value = true
-  const result = await addTask(validated as Omit<Task, 'id'>)
+  const token = await getAccessTokenSilently()
+  const result = await addTask(token, validated as Omit<Task, 'id'>)
   result.match(({ title }) => {
     ElMessage(`タスク「${title}」を登録しました。`)
     router.back()
