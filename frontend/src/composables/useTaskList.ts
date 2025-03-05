@@ -3,15 +3,17 @@ import {
   ref, toValue, watch,
 } from 'vue'
 
+import type { AccessTokenProvider } from '@/auth'
 import type { TaskListItem } from '@/entities/task'
 import { listTask } from '@/repositories/taskRepository'
 
-type ListTaskParams = Parameters<typeof listTask>[0]
+type ListTaskParams = Parameters<typeof listTask>[1]
 
 export const useTaskList = (props: {
   key: Ref<ListTaskParams['key']>
   order: Ref<ListTaskParams['order']>
   itemPerPage: Ref<number>
+  tokenProvider: AccessTokenProvider
 }) => {
   const isLoading = ref(true)
 
@@ -24,7 +26,8 @@ export const useTaskList = (props: {
 
   const next = async () => {
     isLoading.value = true
-    const fetchResult = await listTask({
+    const token = await props.tokenProvider()
+    const fetchResult = await listTask(token, {
       key: toValue(props.key),
       order: toValue(props.order),
       limit: limit.value,

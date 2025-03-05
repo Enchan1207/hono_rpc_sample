@@ -2,10 +2,11 @@ import type { Result } from 'neverthrow'
 import { err } from 'neverthrow'
 import { ref } from 'vue'
 
+import type { AccessTokenProvider } from '@/auth'
 import type { Task } from '@/entities/task'
 import { deleteTask, updateTask } from '@/repositories/taskRepository'
 
-export const useTaskOperation = () => {
+export const useTaskOperation = (tokenProvider: AccessTokenProvider) => {
   const isOperating = ref(false)
 
   const update = async ({ exist, input }: {
@@ -16,7 +17,8 @@ export const useTaskOperation = () => {
       return err(new Error('Now processing'))
     }
     isOperating.value = true
-    const result = await updateTask({
+    const token = await tokenProvider()
+    const result = await updateTask(token, {
       exist,
       input,
     })
@@ -30,7 +32,8 @@ export const useTaskOperation = () => {
     }
 
     isOperating.value = true
-    const result = await deleteTask(id)
+    const token = await tokenProvider()
+    const result = await deleteTask(token, id)
     isOperating.value = false
     return result
   }
