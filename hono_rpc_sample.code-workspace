@@ -33,7 +33,8 @@
     },
     "npm.packageManager": "npm",
     "files.associations": {
-      "*.toml": "ini"
+      "*.toml": "ini",
+      ".dev.vars*": "ini",
     },
     "[scss]": {
       "editor.defaultFormatter": "vscode.css-language-features"
