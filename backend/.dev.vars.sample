@@ -1,1 +1,2 @@
 AUTH_DOMAIN=user.region.auth0.com
+AUTH_AUDIENCE=http://api.example.com
