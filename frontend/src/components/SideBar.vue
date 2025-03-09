@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAuth0 } from '@auth0/auth0-vue'
 import {
   breakpointsElement, useBreakpoints, useDark, useToggle,
 } from '@vueuse/core'
@@ -16,6 +17,8 @@ const emits = defineEmits(['select'])
 
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
+
+const { isAuthenticated } = useAuth0()
 
 const onClickNew = () => {
   emits('select')
@@ -49,7 +52,10 @@ const onClickNew = () => {
         <span>ホーム</span>
       </el-menu-item>
 
-      <el-menu-item index="/tasks">
+      <el-menu-item
+        v-if="isAuthenticated"
+        index="/tasks"
+      >
         <el-icon><b-icon-list-task /></el-icon>
         <span>タスク一覧</span>
       </el-menu-item>
