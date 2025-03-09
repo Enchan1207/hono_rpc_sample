@@ -3,8 +3,7 @@ import {
   breakpointsElement, useBreakpoints, useDark, useToggle,
 } from '@vueuse/core'
 import {
-  BIconHouseFill, BIconMoonFill,
-  BIconPencilSquare, BIconSunFill,
+  BIconHouseFill, BIconListTask, BIconMoonFill, BIconPencilSquare, BIconSunFill,
 } from 'bootstrap-icons-vue'
 import { useRouter } from 'vue-router'
 
@@ -45,9 +44,14 @@ const onClickNew = () => {
       :router="true"
       @select="emits('select')"
     >
-      <el-menu-item index="/tasks">
+      <el-menu-item index="/">
         <el-icon><b-icon-house-fill /></el-icon>
         <span>ホーム</span>
+      </el-menu-item>
+
+      <el-menu-item index="/tasks">
+        <el-icon><b-icon-list-task /></el-icon>
+        <span>タスク一覧</span>
       </el-menu-item>
     </el-menu>
 
