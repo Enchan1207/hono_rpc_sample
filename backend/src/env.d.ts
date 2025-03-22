@@ -1,5 +1,3 @@
-import type { SignatureKey } from 'hono/utils/jwt/jws'
-
 interface Env {
   D1: D1Database
   CORS_ALLOW_ORIGINS: string | string[]
@@ -8,6 +6,8 @@ interface Env {
 }
 
 declare module 'cloudflare:test' {
+  import type { SignatureKey } from 'hono/utils/jwt/jws'
+
   interface ProvidedEnv extends Env {
     TEST_MIGRATIONS: D1Migration[]
 

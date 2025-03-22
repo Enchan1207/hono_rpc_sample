@@ -13,7 +13,7 @@
     "moduleResolution": "bundler",
     "baseUrl": "./",
     "esModuleInterop": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "composite": true,
     "isolatedModules": true,
