@@ -1,17 +1,11 @@
 import { Hono } from 'hono'
-import { cors } from 'hono/cors'
-import { createMiddleware } from 'hono/factory'
 
 import tasks from '@/presentations/tasks'
 
+import { corsMiddleware } from './middlewares/cors'
+
 const app = new Hono()
-  .use('/task/*', createMiddleware<{ Bindings: Env }>(async (c, next) => {
-    const corsMiddleware = cors({
-      origin: c.env.CORS_ALLOW_ORIGINS,
-      credentials: true,
-    })
-    return corsMiddleware(c, next)
-  }))
+  .use(corsMiddleware)
   .route('/task', tasks)
 
 export default app

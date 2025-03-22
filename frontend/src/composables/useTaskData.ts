@@ -1,9 +1,10 @@
 import { ref } from 'vue'
 
+import type { AccessTokenProvider } from '@/auth'
 import type { Task } from '@/entities/task'
 import { getTask } from '@/repositories/taskRepository'
 
-export const useTaskData = (id: Task['id']) => {
+export const useTaskData = (id: Task['id'], tokenProvider: AccessTokenProvider) => {
   const isLoading = ref(true)
 
   const task = ref<Task>()
@@ -12,7 +13,8 @@ export const useTaskData = (id: Task['id']) => {
 
   const fetchData = async (id: Task['id']) => {
     isLoading.value = true
-    const fetchResult = await getTask(id)
+    const token = await tokenProvider()
+    const fetchResult = await getTask(token, id)
     fetchResult.match((fetchedTask) => {
       error.value = undefined
       task.value = fetchedTask

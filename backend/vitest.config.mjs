@@ -7,8 +7,10 @@ const migrations = await readD1Migrations(`${__dirname}/${migrationRelPath}`)
 export default defineWorkersConfig({
   resolve: { alias: { '@': `${__dirname}/src` } },
   test: {
+    globals: true,
     setupFiles: [
       `${migrationRelPath}/apply_d1.ts`,
+      'src/vitest.setup.ts',
     ],
     poolOptions: {
       workers: {

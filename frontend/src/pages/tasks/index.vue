@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAuth0 } from '@auth0/auth0-vue'
 import {
   breakpointsElement, useBreakpoints, useTitle,
 } from '@vueuse/core'
@@ -39,6 +40,8 @@ const order = ref <Orders>('desc')
 /** @deprecated 無限スクロール実装するならUIとして項目用意する必要ないはず */
 const itemPerPage = ref(20)
 
+const { getAccessTokenSilently } = useAuth0()
+
 const {
   tasks,
   isLoading,
@@ -49,9 +52,10 @@ const {
   key,
   order,
   itemPerPage,
+  tokenProvider: getAccessTokenSilently,
 })
 
-const { remove, isOperating } = useTaskOperation()
+const { remove, isOperating } = useTaskOperation(getAccessTokenSilently)
 
 // MARK: - Event handlers
 

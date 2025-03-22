@@ -22,10 +22,10 @@
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.19.0",
     "vitest": "^2.1.8",
-    "wrangler": "^3.106.0"
+    "wrangler": "^4.3.0"
   },
   "dependencies": {
-    "hono": "^4.6.20",
+    "hono": "^4.7.4",
     "neverthrow": "^8.1.1"
   }
 }
