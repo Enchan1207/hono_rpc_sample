@@ -1,4 +1,4 @@
-import { env } from 'cloudflare:test'
+import { env, fetchMock } from 'cloudflare:test'
 import { sign } from 'hono/jwt'
 import { testClient } from 'hono/testing'
 import { ulid } from 'ulid'
@@ -20,6 +20,10 @@ describe('単一項目の操作', () => {
       iss: `https://${env.AUTH_DOMAIN}/`,
       aud: [env.AUTH_AUDIENCE],
     }, env.TEST_PRIVATE_KEY, 'RS256')
+  })
+
+  afterEach(() => {
+    fetchMock.assertNoPendingInterceptors()
   })
 
   describe('POST /task', () => {
@@ -169,6 +173,10 @@ describe('項目のリストアップ', () => {
   let insertedTasks: Task[]
 
   let token: string
+
+  afterEach(() => {
+    fetchMock.assertNoPendingInterceptors()
+  })
 
   beforeAll(async () => {
     token = await sign({

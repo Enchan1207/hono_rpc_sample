@@ -14,7 +14,3 @@ beforeAll(() => {
 
   env.TEST_PRIVATE_KEY = keys.private_key
 })
-
-afterEach(() => {
-  fetchMock.assertNoPendingInterceptors()
-})
