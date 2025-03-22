@@ -17,10 +17,15 @@ export default defineWorkersConfig({
         main: 'src/presentations/index.ts',
         miniflare: {
           d1Databases: ['D1'],
-          // NOTE: テスト用のマイグレーションを定義
-          bindings: { TEST_MIGRATIONS: migrations },
+          bindings: {
+            // NOTE: テスト用のマイグレーションを定義
+            TEST_MIGRATIONS: migrations,
+          },
         },
-        wrangler: { configPath: './wrangler.toml' },
+        wrangler: {
+          configPath: './wrangler.toml',
+          environment: 'development',
+        },
       },
     },
   },

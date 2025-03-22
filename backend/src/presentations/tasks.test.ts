@@ -18,6 +18,7 @@ describe('単一項目の操作', () => {
     token = await sign({
       exp: Math.floor(Date.now() / 1000) + 60 * 60,
       iss: `https://${env.AUTH_DOMAIN}/`,
+      sub: 'test_user',
       aud: [env.AUTH_AUDIENCE],
     }, env.TEST_PRIVATE_KEY, 'RS256')
   })
@@ -182,6 +183,7 @@ describe('項目のリストアップ', () => {
     token = await sign({
       exp: Math.floor(Date.now() / 1000) + 60 * 60,
       iss: `https://${env.AUTH_DOMAIN}/`,
+      sub: 'test_user',
       aud: [env.AUTH_AUDIENCE],
     }, env.TEST_PRIVATE_KEY, 'RS256')
 

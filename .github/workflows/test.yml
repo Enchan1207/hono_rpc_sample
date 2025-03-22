@@ -22,8 +22,5 @@ jobs:
       - name: install
         run: npm i
 
-      - name: configure environment
-        run: cp backend/.dev.vars.sample backend/.dev.vars
-
       - name: test
         run: npm run -w backend test
