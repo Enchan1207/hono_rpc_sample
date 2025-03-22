@@ -9,6 +9,7 @@ export default defineWorkersConfig({
   test: {
     setupFiles: [
       `${migrationRelPath}/apply_d1.ts`,
+      'src/vitest.setup.ts',
     ],
     poolOptions: {
       workers: {

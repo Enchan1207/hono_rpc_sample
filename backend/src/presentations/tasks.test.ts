@@ -1,36 +1,12 @@
-import { env, fetchMock } from 'cloudflare:test'
+import { env } from 'cloudflare:test'
 import { sign } from 'hono/jwt'
 import { testClient } from 'hono/testing'
 import { ulid } from 'ulid'
-import {
-  afterEach,
-  assert,
-  beforeAll,
-  beforeEach,
-  describe, expect, test,
-} from 'vitest'
 
 import type { Task, TaskPriority } from '@/domain/entities/task'
 import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepository'
 import { compare } from '@/logic/compare'
 import tasks from '@/presentations/tasks'
-
-import * as keys from './keys.json'
-
-// NOTE: cf. https://developers.cloudflare.com/workers/testing/vitest-integration/test-apis/#cloudflaretest-module-definition
-beforeAll(() => {
-  fetchMock.activate()
-  fetchMock.disableNetConnect()
-
-  fetchMock.get(`https://${env.AUTH_DOMAIN}`).intercept({
-    method: 'GET',
-    path: '/.well-known/jwks.json',
-  }).reply(200, { keys: keys.public_keys })
-})
-
-afterEach(() => {
-  fetchMock.assertNoPendingInterceptors()
-})
 
 describe('単一項目の操作', () => {
   const client = testClient(tasks, env)
@@ -49,7 +25,7 @@ describe('単一項目の操作', () => {
         exp: Math.floor(Date.now() / 1000) + 60 * 60,
         iss: `https://${env.AUTH_DOMAIN}/`,
         aud: [env.AUTH_AUDIENCE],
-      }, keys.private_key, 'RS256')
+      }, env.TEST_PRIVATE_KEY, 'RS256')
       const response = await client.index.$post({ json: taskData }, {
         headers: {
           //

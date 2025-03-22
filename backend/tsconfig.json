@@ -13,9 +13,7 @@
     "moduleResolution": "bundler",
     "baseUrl": "./",
     "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "forceConsistentCasingInFileNames": true,
     "composite": true,
     "isolatedModules": true,
@@ -25,10 +23,14 @@
     },
     "types": [
       "@cloudflare/workers-types/experimental",
-      "@cloudflare/vitest-pool-workers"
+      "@cloudflare/vitest-pool-workers",
+      "vitest/globals"
     ]
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.json"
+  ],
   "exclude": ["dist", "node_modules"],
   "compileOnSave": false
 }
