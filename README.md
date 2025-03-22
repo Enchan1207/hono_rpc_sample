@@ -6,6 +6,7 @@ HonoとCloudflareでいい感じのWebAppを作ってみるサンプル
 
 Tech stack:
 
+- authentication/authorization: Auth0
 - frontend
   - implementation
     - Vue 3
@@ -23,40 +24,16 @@ Tech stack:
 
 ## Usage
 
-### The easiest way: VSCode tasks
+### Boot dev server
 
 1. open command pallete
 2. select `Tasks: Run Task`
     1. choose `frontend server`
     2. open another shell and choose `backend server`
 
-### Manual setup
+### Deployment configuration
 
-If you want to use non-default (frontend:5173, backend:8787) port, you can boot server manually.
-
-For example:
-
-- frontend: 60001
-- backend: 60002
-
-1. configure backend
-    1. create `backend/.dev.vars` (it'll be git-ignored):
-       ```ini
-       CORS_ALLOW_ORIGINS = "http://localhost:60001"
-       ```
-    1. boot server:
-       ```sh
-       npm run -w backend dev -- --port 60002
-       ```
-1. configure frontend
-    1. create `frontend/.env.development.local` (it'll be git-ignored):
-       ```ini
-       VITE_BACKEND_URL="http://localhost:60002"
-       ```
-    1. boot server:
-       ```sh
-       npm run -w frontend dev -- --port 60001
-       ```
+see #46
 
 ## License
 
