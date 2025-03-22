@@ -12,6 +12,16 @@ describe('単一項目の操作', () => {
   const client = testClient(tasks, env)
   const repo = useTaskRepositoryD1(env.D1)
 
+  let token: string
+
+  beforeAll(async () => {
+    token = await sign({
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+      iss: `https://${env.AUTH_DOMAIN}/`,
+      aud: [env.AUTH_AUDIENCE],
+    }, env.TEST_PRIVATE_KEY, 'RS256')
+  })
+
   describe('POST /task', () => {
     const taskData: Omit<Task, 'id'> = {
       title: 'test',
@@ -21,11 +31,6 @@ describe('単一項目の操作', () => {
     }
 
     test('DBにレコードが登録されること', async () => {
-      const token = await sign({
-        exp: Math.floor(Date.now() / 1000) + 60 * 60,
-        iss: `https://${env.AUTH_DOMAIN}/`,
-        aud: [env.AUTH_AUDIENCE],
-      }, env.TEST_PRIVATE_KEY, 'RS256')
       const response = await client.index.$post({ json: taskData }, {
         headers: {
           //
@@ -58,13 +63,23 @@ describe('単一項目の操作', () => {
     })
 
     test('項目を取得できること', async () => {
-      const result = await client[':id'].$get({ param: { id: validTaskId } })
+      const result = await client[':id'].$get({ param: { id: validTaskId } }, {
+        headers: {
+          //
+          Authorization: `Bearer ${token}`,
+        },
+      })
       const stored = await result.json()
       expect(stored).toStrictEqual(taskData)
     })
 
     test('存在しない項目は取得できないこと', async () => {
-      const result = await client[':id'].$get({ param: { id: invalidTaskId } })
+      const result = await client[':id'].$get({ param: { id: invalidTaskId } }, {
+        headers: {
+          //
+          Authorization: `Bearer ${token}`,
+        },
+      })
       expect(result.ok).toBeFalsy()
     })
   })
@@ -93,6 +108,11 @@ describe('単一項目の操作', () => {
       await client[':id'].$put({
         json: input,
         param: { id: taskId },
+      }, {
+        headers: {
+          //
+          Authorization: `Bearer ${token}`,
+        },
       })
 
       const updated = await repo.getTask(taskId)
@@ -106,6 +126,11 @@ describe('単一項目の操作', () => {
       const response = await client[':id'].$put({
         json: {},
         param: { id: 'INVALID' },
+      }, {
+        headers: {
+          //
+          Authorization: `Bearer ${token}`,
+        },
       })
       expect(response.ok).toBeFalsy()
     })
@@ -126,7 +151,12 @@ describe('単一項目の操作', () => {
     })
 
     test('項目が削除されること', async () => {
-      await client[':id'].$delete({ param: { id: taskId } })
+      await client[':id'].$delete({ param: { id: taskId } }, {
+        headers: {
+          //
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
       const removed = await repo.getTask(taskId)
       expect(removed).toBeUndefined()
@@ -138,7 +168,15 @@ describe('項目のリストアップ', () => {
   const client = testClient(tasks, env)
   let insertedTasks: Task[]
 
+  let token: string
+
   beforeAll(async () => {
+    token = await sign({
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+      iss: `https://${env.AUTH_DOMAIN}/`,
+      aud: [env.AUTH_AUDIENCE],
+    }, env.TEST_PRIVATE_KEY, 'RS256')
+
     // ダミータスクを生成して流し込む
     const dummyTaskData: Omit<Task, 'id'>[] = Array.from({ length: 5 }).map(
       (_, i) => {
@@ -154,7 +192,12 @@ describe('項目のリストアップ', () => {
       },
     )
     const requests = dummyTaskData
-      .map(task => client.index.$post({ json: task }))
+      .map(task => client.index.$post({ json: task }, {
+        headers: {
+          //
+          Authorization: `Bearer ${token}`,
+        },
+      }))
     const responses = await Promise.all(requests)
     insertedTasks = await Promise.all(responses.map(r => r.json()))
   })
@@ -165,6 +208,11 @@ describe('項目のリストアップ', () => {
       query: {
         key: 'id',
         order: 'asc',
+      },
+    }, {
+      headers: {
+        //
+        Authorization: `Bearer ${token}`,
       },
     })
     assert(request.ok)
@@ -181,6 +229,11 @@ describe('項目のリストアップ', () => {
       query: {
         key: 'priority',
         order: 'desc',
+      },
+    }, {
+      headers: {
+        //
+        Authorization: `Bearer ${token}`,
       },
     })
     assert(request.ok)
