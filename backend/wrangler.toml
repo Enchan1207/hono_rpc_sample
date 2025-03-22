@@ -11,6 +11,8 @@ enabled = true
 # local
 [env.development.vars]
 CORS_ALLOW_ORIGINS = "http://localhost:5173"
+AUTH_DOMAIN = "enchan.jp.auth0.com"
+AUTH_AUDIENCE = "http://localhost:8787"
 
 [[env.development.d1_databases]]
 binding = "D1"
@@ -23,6 +25,8 @@ CORS_ALLOW_ORIGINS = [
   "https://hono-rpc-sample.enchan.me",
   "https://master.hono-rpc-sample-frontend.pages.dev"
 ]
+AUTH_DOMAIN = "enchan.jp.auth0.com"
+AUTH_AUDIENCE = "https://api.hono-rpc-sample.enchan.me"
 
 [[env.production.routes]]
 pattern = "api.hono-rpc-sample.enchan.me"
