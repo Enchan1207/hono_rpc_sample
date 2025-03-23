@@ -33,7 +33,7 @@ Tech stack:
 
 ### Deployment configuration
 
-see #46
+see issue [#46](https://github.com/Enchan1207/hono_rpc_sample/issues/46)
 
 ## License
 
