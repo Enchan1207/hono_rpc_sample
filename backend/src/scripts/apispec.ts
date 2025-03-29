@@ -21,6 +21,16 @@ const main = async () => {
           description: 'Production server',
         },
       ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
+      },
+      security: [{ bearerAuth: [] }],
     },
   })
 

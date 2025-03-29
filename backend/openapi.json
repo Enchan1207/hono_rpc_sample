@@ -15,6 +15,21 @@
       "description": "Production server"
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {}
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "paths": {
     "/task": {
       "get": {
@@ -175,8 +190,5 @@
         ]
       }
     }
-  },
-  "components": {
-    "schemas": {}
   }
 }
