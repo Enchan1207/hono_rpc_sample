@@ -13,10 +13,6 @@ const main = async () => {
       },
       servers: [
         {
-          url: 'http://localhost:8787',
-          description: 'Local server',
-        },
-        {
           url: 'https://api.hono-rpc-sample.enchan.me',
           description: 'Production server',
         },
