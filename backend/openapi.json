@@ -1,0 +1,182 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "api.hono-rpc-sample.enchan.me",
+    "description": "API for hono-rpc-sample",
+    "version": "0.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8787",
+      "description": "Local server"
+    },
+    {
+      "url": "https://api.hono-rpc-sample.enchan.me",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/task": {
+      "get": {
+        "responses": {},
+        "operationId": "getTask",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "key",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id",
+                "due",
+                "priority"
+              ],
+              "default": "due"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "string",
+              "default": "20"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "post": {
+        "responses": {},
+        "operationId": "postTask",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "due": {
+                    "type": "number"
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": [
+                      "high",
+                      "middle",
+                      "low"
+                    ]
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "due",
+                  "priority",
+                  "description"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/task/{id}": {
+      "get": {
+        "responses": {},
+        "operationId": "getTaskById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ]
+      },
+      "put": {
+        "responses": {},
+        "operationId": "putTaskById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "due": {
+                    "type": "number"
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": [
+                      "high",
+                      "middle",
+                      "low"
+                    ]
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "responses": {},
+        "operationId": "deleteTaskById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {}
+  }
+}
