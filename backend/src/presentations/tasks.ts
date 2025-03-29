@@ -1,6 +1,6 @@
-import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { createMiddleware } from 'hono/factory'
+import { validator as zValidator } from 'hono-openapi/zod'
 import { z } from 'zod'
 
 import { TaskPriorities } from '@/domain/entities/task'
