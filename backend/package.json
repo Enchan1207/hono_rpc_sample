@@ -9,7 +9,8 @@
     "predeploy": "npm run build",
     "deploy": "wrangler --env=production deploy",
     "db:init": "wrangler --env=development d1 execute hono-rpc-sample-backend-db --local --file='src/infrastructure/migrations/0000-init.sql'",
-    "db:init:remote": "wrangler --env=production d1 execute hono-rpc-sample-backend-db --remote --file='src/infrastructure/migrations/0000-init.sql'"
+    "db:init:remote": "wrangler --env=production d1 execute hono-rpc-sample-backend-db --remote --file='src/infrastructure/migrations/0000-init.sql'",
+    "gen:apispec": "tsx src/scripts/apispec.ts"
   },
   "dependencies": {
     "hono-openapi": "^0.4.6",
