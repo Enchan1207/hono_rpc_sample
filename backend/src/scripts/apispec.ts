@@ -32,6 +32,9 @@ const main = async () => {
       },
       security: [{ bearerAuth: [] }],
     },
+  }, {
+    version: '3.0.3',
+    components: {},
   })
 
   const schemeString = JSON.stringify(schema, undefined, 2)
