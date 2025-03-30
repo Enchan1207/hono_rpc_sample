@@ -16,6 +16,7 @@ AUTH_AUDIENCE = "http://localhost:8787"
 
 [[env.development.d1_databases]]
 binding = "D1"
+migrations_dir = "./src/infrastructure/migrations"
 database_name = "hono-rpc-sample-backend-db-dev"
 database_id = "00000000-0000-0000-0000-000000000000"
 
@@ -31,6 +32,7 @@ custom_domain = true
 
 [[env.staging.d1_databases]]
 binding = "D1"
+migrations_dir = "./src/infrastructure/migrations"
 database_name = "hono-rpc-sample-backend-db-stg"
 database_id = "d5a98b37-9972-4458-8ea1-d8d8407dbc45"
 
@@ -46,5 +48,6 @@ custom_domain = true
 
 [[env.production.d1_databases]]
 binding = "D1"
+migrations_dir = "./src/infrastructure/migrations"
 database_name = "hono-rpc-sample-backend-db-prod"
 database_id = "ccd7a9d9-f393-4ffb-b481-b80951e24667"
