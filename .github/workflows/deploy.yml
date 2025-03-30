@@ -36,7 +36,7 @@ jobs:
           apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
           environment: ${{ env.DEPLOY_ENV }}
           workingDirectory: backend
-          command: d1 migrations apply --remote hono-rpc-sample-backend-db-${{ env.DEPLOY_ENV_SHORT }}
+          command: d1 migrations list --remote hono-rpc-sample-backend-db-${{ env.DEPLOY_ENV_SHORT }}
 
       - name: deploy frontend
         env:
