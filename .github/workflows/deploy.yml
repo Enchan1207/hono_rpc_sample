@@ -9,7 +9,10 @@ on:
 jobs:
   deploy:
     env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
       DEPLOY_ENV: ${{ github.ref == 'refs/heads/master' && 'staging' || github.ref == 'refs/heads/release' && 'production' || '' }}
+      DEPLOY_ENV_SHORT: ${{ github.ref == 'refs/heads/master' && 'stg' || github.ref == 'refs/heads/release' && 'prod' || '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,15 +24,20 @@ jobs:
       - name: install
         run: npm i
 
+      - name: test
+        run: npm run -w backend test
+
       - name: deploy backend
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run: npm run -w backend deploy -- --env=${{ env.DEPLOY_ENV }}
+
+      - name: apply D1 migration
+        run: |
+          npx wrangler \
+            --env=${{ env.DEPLOY_ENV }} \
+            d1 migrations apply \
+            hono-rpc-sample-backend-db-${{ env.DEPLOY_ENV_SHORT }}
 
       - name: deploy frontend
         env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           MODE: ${{ env.DEPLOY_ENV }}
         run: npm run -w frontend deploy
