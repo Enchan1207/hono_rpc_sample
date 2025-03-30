@@ -32,7 +32,7 @@ jobs:
 
       - name: apply D1 migration
         run: |
-          npx wrangler \
+          npx -w backend wrangler \
             --env=${{ env.DEPLOY_ENV }} \
             d1 migrations apply \
             hono-rpc-sample-backend-db-${{ env.DEPLOY_ENV_SHORT }}
