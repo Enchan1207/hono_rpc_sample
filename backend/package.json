@@ -8,8 +8,8 @@
     "test": "vitest",
     "predeploy": "npm run build",
     "deploy": "wrangler deploy",
-    "db:migrations:create": "wrangler --env=development d1 migrations create hono-rpc-sample-backend-db-dev",
-    "db:migrations:apply": "wrangler --env=development d1 migrations apply hono-rpc-sample-backend-db-dev",
+    "db:migrations:create": "wrangler --env=development d1 migrations create hono-rpc-sample-backend-db-development",
+    "db:migrations:apply": "wrangler --env=${DEPLOY_ENV:-development} d1 migrations apply hono-rpc-sample-backend-db-${DEPLOY_ENV:-development}",
     "gen:apispec": "tsx src/scripts/apispec.ts"
   },
   "dependencies": {
