@@ -35,6 +35,22 @@ Tech stack:
 
 see issue [#46](https://github.com/Enchan1207/hono_rpc_sample/issues/46)
 
+**NOTE** about D1 migration:
+
+currently, D1 migration on GitHub Actions not working.
+If there are any database modifitcation, exec following to apply:
+
+```sh
+# development (local)
+npm run db:migrations:apply
+
+# staging
+DEPLOY_ENV=staging npm run db:migrations:apply -- --remote
+
+# production
+DEPLOY_ENV=production npm run db:migrations:apply -- --remote
+```
+
 ## License
 
 This repository is published under [MIT License](LICENSE).
