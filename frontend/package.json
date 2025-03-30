@@ -4,8 +4,8 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "prebuild": "npm run -w backend build",
-    "build": "npx vue-tsc && vite build",
-    "dev": "vite dev",
+    "build": "npx vue-tsc && vite build --mode ${MODE:-production}",
+    "dev": "vite dev --mode development",
     "predeploy": "npm run build",
     "deploy": "wrangler pages deploy"
   },
