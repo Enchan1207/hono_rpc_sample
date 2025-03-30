@@ -2,14 +2,14 @@ name: deploy
 on:
   workflow_dispatch:
   push:
-    branches: release
-  pull_request:
-    branches: master
-    types: closed
+    branches: 
+      - master
+      - release
 
 jobs:
   deploy:
-    if: github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    env:
+      DEPLOY_ENV: ${{ github.ref == 'refs/heads/master' && 'staging' || github.ref == 'refs/heads/release' && 'production' || '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        run: npm run -w backend deploy
+        run: npm run -w backend deploy -- --env=${{ env.DEPLOY_ENV }}
 
       - name: deploy frontend
         env:
