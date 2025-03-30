@@ -35,6 +35,7 @@ jobs:
           npx -w backend wrangler \
             --env=${{ env.DEPLOY_ENV }} \
             d1 migrations apply \
+            --remote \
             hono-rpc-sample-backend-db-${{ env.DEPLOY_ENV_SHORT }}
 
       - name: deploy frontend
