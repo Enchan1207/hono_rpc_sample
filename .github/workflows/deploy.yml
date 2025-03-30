@@ -31,12 +31,11 @@ jobs:
         run: npm run -w backend deploy -- --env=${{ env.DEPLOY_ENV }}
 
       - name: apply D1 migration
-        run: |
-          npx -w backend wrangler \
-            --env=${{ env.DEPLOY_ENV }} \
-            d1 migrations apply \
-            --remote \
-            hono-rpc-sample-backend-db-${{ env.DEPLOY_ENV_SHORT }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          environment: ${{ env.DEPLOY_ENV }}
+          command: d1 migrations apply --remote hono-rpc-sample-backend-db-${{ env.DEPLOY_ENV_SHORT }}
 
       - name: deploy frontend
         env:
