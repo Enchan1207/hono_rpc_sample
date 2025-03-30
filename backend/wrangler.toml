@@ -8,7 +8,7 @@ workers_dev = false
 [observability]
 enabled = true
 
-# local
+# development (ローカル)
 [env.development.vars]
 CORS_ALLOW_ORIGINS = "http://localhost:5173"
 AUTH_DOMAIN = "enchan.jp.auth0.com"
@@ -19,12 +19,25 @@ binding = "D1"
 database_name = "hono-rpc-sample-backend-db"
 database_id = "f1f9bbae-f053-4de7-a05d-0462b76185fe"
 
+# staging
+[env.staging.vars]
+CORS_ALLOW_ORIGINS = "https://master.hono-rpc-sample-frontend.pages.dev"
+AUTH_DOMAIN = "enchan.jp.auth0.com"
+AUTH_AUDIENCE = "https://stg.api.hono-rpc-sample.enchan.me"
+
+[[env.staging.routes]]
+pattern = "stg.api.hono-rpc-sample.enchan.me"
+custom_domain = true
+
+[[env.staging.d1_databases]]
+binding = "D1"
+# TODO: stgとprodとでD1を分ける マイグレーション構成後に実施する
+database_name = "hono-rpc-sample-backend-db"
+database_id = "f1f9bbae-f053-4de7-a05d-0462b76185fe"
+
 # Cloudflare
 [env.production.vars]
-CORS_ALLOW_ORIGINS = [
-  "https://hono-rpc-sample.enchan.me",
-  "https://master.hono-rpc-sample-frontend.pages.dev"
-]
+CORS_ALLOW_ORIGINS = "https://hono-rpc-sample.enchan.me"
 AUTH_DOMAIN = "enchan.jp.auth0.com"
 AUTH_AUDIENCE = "https://api.hono-rpc-sample.enchan.me"
 
