@@ -2,30 +2,26 @@ import { createMiddleware } from 'hono/factory'
 import { jwk } from 'hono/jwk'
 import type { JWTPayload } from 'hono/utils/jwt/types'
 
-export type Payload = JWTPayload & {
+export type Auth0JWTPayload = JWTPayload & {
   /** subject: ユーザ識別子 */
-  sub?: string
+  sub: string
 
   /** audiences: 対象の受信者 */
-  aud?: string[]
+  aud: string[]
 
   /** issuer: 発行元 */
-  iss?: string
+  iss: string
 }
 
 export const jwkMiddleware = createMiddleware<{ Bindings: Env }>(
-  async (c, next) => {
-    const jwkMiddleware = jwk({ jwks_uri: `https://${c.env.AUTH_DOMAIN}/.well-known/jwks.json` })
-    return jwkMiddleware(c, next)
-  })
+  async (c, next) => jwk({ jwks_uri: `https://${c.env.AUTH_DOMAIN}/.well-known/jwks.json` })(c, next))
 
-// TODO: subからユーザ情報的なものと結びつける
 export const jwkValidationMiddleware = createMiddleware<{
   Bindings: Env
-  Variables: { jwtPayload: Payload }
+  Variables: { jwtPayload: Auth0JWTPayload }
 }>(
   async (c, next) => {
-    const payload = c.get('jwtPayload')
+    const payload: Partial<Auth0JWTPayload> = c.get('jwtPayload')
 
     // 期限
     const expire = payload.exp ?? 0

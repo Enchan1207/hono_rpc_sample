@@ -8,7 +8,7 @@ import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepositor
 import type { TaskUsecase } from '@/usecases/taskUsecase'
 import { useTaskUsecase } from '@/usecases/taskUsecase'
 
-import { jwkMiddleware, jwkValidationMiddleware } from './middlewares/auth'
+import { userAuthMiddleware } from './middlewares/auth'
 
 const taskUsecaseMiddleware = createMiddleware<{
   Bindings: Env
@@ -21,8 +21,7 @@ const taskUsecaseMiddleware = createMiddleware<{
 })
 
 const app = new Hono<{ Bindings: Env }>()
-  .use(jwkMiddleware)
-  .use(jwkValidationMiddleware)
+  .use(userAuthMiddleware)
   .use(taskUsecaseMiddleware)
   .get(
     '/',
