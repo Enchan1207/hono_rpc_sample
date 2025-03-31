@@ -5,22 +5,33 @@ import { ulid } from 'ulid'
 
 import type { Task, TaskPriority } from '@/domain/entities/task'
 import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepository'
+import { useUserRepositoryD1 } from '@/infrastructure/repositories/userRepository'
 import { compare } from '@/logic/compare'
 import tasks from '@/presentations/tasks'
 
 describe('単一項目の操作', () => {
   const client = testClient(tasks, env)
-  const repo = useTaskRepositoryD1(env.D1)
+  const taskRepository = useTaskRepositoryD1(env.D1)
+  const userRepository = useUserRepositoryD1(env.D1)
 
   let token: string
 
   beforeAll(async () => {
+    const auth0UserId = 'test_user'
+
     token = await sign({
       exp: Math.floor(Date.now() / 1000) + 60 * 60,
       iss: `https://${env.AUTH_DOMAIN}/`,
-      sub: 'test_user',
+      sub: auth0UserId,
       aud: [env.AUTH_AUDIENCE],
     }, env.TEST_PRIVATE_KEY, 'RS256')
+
+    // テストユーザを登録
+    await userRepository.saveUser({
+      id: 'test_user_id',
+      name: 'test user',
+      auth0_user_id: auth0UserId,
+    })
   })
 
   afterEach(() => {
@@ -44,7 +55,7 @@ describe('単一項目の操作', () => {
       })
       const { id } = await response.json()
 
-      const stored = await repo.getTask(id)
+      const stored = await taskRepository.getTask(id)
       expect(stored).toStrictEqual({
         id,
         ...taskData,
@@ -64,7 +75,7 @@ describe('単一項目の操作', () => {
     }
 
     beforeEach(async () => {
-      await repo.saveTask(taskData)
+      await taskRepository.saveTask(taskData)
     })
 
     test('項目を取得できること', async () => {
@@ -100,7 +111,7 @@ describe('単一項目の操作', () => {
     }
 
     beforeEach(async () => {
-      await repo.saveTask(taskData)
+      await taskRepository.saveTask(taskData)
     })
 
     test('項目が更新されること', async () => {
@@ -120,7 +131,7 @@ describe('単一項目の操作', () => {
         },
       })
 
-      const updated = await repo.getTask(taskId)
+      const updated = await taskRepository.getTask(taskId)
       expect(updated).toStrictEqual({
         id: taskId,
         ...input,
@@ -152,7 +163,7 @@ describe('単一項目の操作', () => {
     }
 
     beforeEach(async () => {
-      await repo.saveTask(taskData)
+      await taskRepository.saveTask(taskData)
     })
 
     test('項目が削除されること', async () => {
@@ -163,7 +174,7 @@ describe('単一項目の操作', () => {
         },
       })
 
-      const removed = await repo.getTask(taskId)
+      const removed = await taskRepository.getTask(taskId)
       expect(removed).toBeUndefined()
     })
   })
@@ -171,6 +182,8 @@ describe('単一項目の操作', () => {
 
 describe('項目のリストアップ', () => {
   const client = testClient(tasks, env)
+  const userRepository = useUserRepositoryD1(env.D1)
+
   let insertedTasks: Task[]
 
   let token: string
@@ -180,12 +193,21 @@ describe('項目のリストアップ', () => {
   })
 
   beforeAll(async () => {
+    const auth0UserId = 'test_user'
+
     token = await sign({
       exp: Math.floor(Date.now() / 1000) + 60 * 60,
       iss: `https://${env.AUTH_DOMAIN}/`,
-      sub: 'test_user',
+      sub: auth0UserId,
       aud: [env.AUTH_AUDIENCE],
     }, env.TEST_PRIVATE_KEY, 'RS256')
+
+    // テストユーザを登録
+    await userRepository.saveUser({
+      id: 'test_user_id',
+      name: 'test user',
+      auth0_user_id: auth0UserId,
+    })
 
     // ダミータスクを生成して流し込む
     const dummyTaskData: Omit<Task, 'id'>[] = Array.from({ length: 5 }).map(
