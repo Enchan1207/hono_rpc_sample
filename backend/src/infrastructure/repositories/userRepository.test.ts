@@ -35,7 +35,17 @@ describe('単一項目のCRUD', () => {
     expect(stored).toBeDefined()
   })
 
-  // TODO: Auth0のsub経由でも取得できるか確認する
+  test('Auth0 IDを指定して項目を取得できること', async () => {
+    const user: User = {
+      id: ulid(),
+      name: 'test-user',
+      auth0_user_id: 'auth0|0123456789',
+    }
+    const { auth0_user_id } = await repo.saveUser(user)
+
+    const stored = await repo.getUserByAuth0Id(auth0_user_id)
+    expect(stored).toBeDefined()
+  })
 
   test('挿入した項目を更新できること', async () => {
     const user: User = {
