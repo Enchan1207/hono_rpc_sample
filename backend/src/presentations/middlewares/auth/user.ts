@@ -50,6 +50,7 @@ export const userMiddleware = createMiddleware<{
   }
   await repo.saveUser(newUser)
   console.log(`new user ${newUser.name}(${newUser.id}) registered.`)
+  c.set('user', newUser)
 
   await next()
 })
