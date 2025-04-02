@@ -4,7 +4,6 @@ import type {
   Task, TaskPriority,
   TaskSummary,
 } from '@/domain/entities/task'
-import type { User } from '@/domain/entities/user'
 import type { TaskRepository } from '@/domain/repositories/taskRepository'
 import type { TaskRecord, TaskSummaryRecord } from '@/infrastructure/entities/task'
 
@@ -36,8 +35,7 @@ const makeTaskSummary = (entity: TaskSummaryRecord): TaskSummary => ({
 })
 
 const getTask = (db: D1Database): TaskRepository['getTask'] =>
-  async (userId: User['id'], id: Task['id']) => {
-    // TODO: ユーザ情報をクエリに反映する
+  async (id: Task['id']) => {
     const stmt = 'SELECT id, title, due, priority, description FROM tasks WHERE id=?'
     const result = await db.prepare(stmt).bind(id).first<TaskRecord>()
     if (!result) {
@@ -47,8 +45,7 @@ const getTask = (db: D1Database): TaskRepository['getTask'] =>
   }
 
 const saveTask = (db: D1Database): TaskRepository['saveTask'] =>
-  async (userId: User['id'], newTask: Task) => {
-    // TODO: ユーザ情報をクエリに反映する
+  async (newTask: Task) => {
     const stmt = `INSERT INTO tasks
       VALUES (?1,?2,?3,?4,?5)
       ON CONFLICT (id) DO UPDATE SET
@@ -70,9 +67,8 @@ const saveTask = (db: D1Database): TaskRepository['saveTask'] =>
   }
 
 const deleteTask = (db: D1Database): TaskRepository['deleteTask'] =>
-  async (userId: User['id'], id: Task['id']) => {
-    // TODO: ユーザ情報をクエリに反映する
-    const storedTask = await getTask(db)(userId, id)
+  async (id: Task['id']) => {
+    const storedTask = await getTask(db)(id)
     if (storedTask === undefined) {
       return undefined
     }
@@ -82,13 +78,11 @@ const deleteTask = (db: D1Database): TaskRepository['deleteTask'] =>
   }
 
 const listTasks = (db: D1Database): TaskRepository['listTasks'] => async (
-  userId: User['id'],
   sortBy: keyof Pick<Task, 'id' | 'due' | 'priority'>,
   order: 'asc' | 'desc',
   limit: number,
   offset?: number,
 ) => {
-  // TODO: ユーザ情報をクエリに反映する
   // build query
   const query = `SELECT id, title, due, priority 
     FROM tasks
