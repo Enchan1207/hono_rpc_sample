@@ -61,6 +61,7 @@ describe('単一項目の操作', () => {
       const stored = await taskRepository.getTask(id)
       expect(stored).toStrictEqual({
         id,
+        userId: testUser.id,
         ...taskData,
       })
     })
@@ -140,6 +141,7 @@ describe('単一項目の操作', () => {
       const updated = await taskRepository.getTask(taskId)
       expect(updated).toStrictEqual({
         id: taskId,
+        userId: testUser.id,
         ...input,
       })
     })
