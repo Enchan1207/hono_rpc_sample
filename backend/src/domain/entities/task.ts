@@ -6,19 +6,18 @@ import type { User } from './user'
 export const TaskPriorities = ['high', 'middle', 'low'] as const
 export type TaskPriority = typeof TaskPriorities[number]
 
-/** タスクがもつ情報 */
-export type TaskData = {
+/** タスク */
+export type Task = {
+  id: string
+  userId: User['id']
   title: string
   due: number
   priority: TaskPriority
   description: string
 }
 
-/** タスク */
-export type Task = TaskData & {
-  id: string
-  userId: User['id']
-}
+/** タスクがもつ情報 */
+export type TaskData = Omit<Task, 'id' | 'userId'>
 
 /** タスクのサマリ(リストの各項目) */
 export type TaskSummary = Omit<Task, 'description'>

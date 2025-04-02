@@ -34,19 +34,17 @@ const makeTaskSummary = (entity: TaskSummaryRecord): TaskSummary => ({
   priority: reversePriorityMap[entity.priority] ?? 'low',
 })
 
-const getTask = (db: D1Database): TaskRepository['getTask'] =>
-  async (id: Task['id']) => {
-    const stmt = 'SELECT id, title, due, priority, description FROM tasks WHERE id=?'
-    const result = await db.prepare(stmt).bind(id).first<TaskRecord>()
-    if (!result) {
-      return undefined
-    }
-    return makeTaskRecord(result)
+const getTask = (db: D1Database): TaskRepository['getTask'] => async (id) => {
+  const stmt = 'SELECT id, title, due, priority, description FROM tasks WHERE id=?'
+  const result = await db.prepare(stmt).bind(id).first<TaskRecord>()
+  if (!result) {
+    return undefined
   }
+  return makeTaskRecord(result)
+}
 
-const saveTask = (db: D1Database): TaskRepository['saveTask'] =>
-  async (newTask: Task) => {
-    const stmt = `INSERT INTO tasks
+const saveTask = (db: D1Database): TaskRepository['saveTask'] => async (newTask) => {
+  const stmt = `INSERT INTO tasks
       VALUES (?1,?2,?3,?4,?5)
       ON CONFLICT (id) DO UPDATE SET
         title = ?2,
@@ -54,35 +52,32 @@ const saveTask = (db: D1Database): TaskRepository['saveTask'] =>
         priority = ?4,
         description = ?5
     `
-    const entity = makeTask(newTask)
+  const entity = makeTask(newTask)
 
-    await db.prepare(stmt).bind(
-      entity.id,
-      entity.title,
-      entity.due,
-      entity.priority,
-      entity.description,
-    ).run()
-    return newTask
+  await db.prepare(stmt).bind(
+    entity.id,
+    entity.title,
+    entity.due,
+    entity.priority,
+    entity.description,
+  ).run()
+  return newTask
+}
+
+const deleteTask = (db: D1Database): TaskRepository['deleteTask'] => async (id) => {
+  const storedTask = await getTask(db)(id)
+  if (storedTask === undefined) {
+    return undefined
   }
+  const stmt = 'DELETE FROM tasks WHERE id=?'
+  await db.prepare(stmt).bind(id).run()
+  return storedTask
+}
 
-const deleteTask = (db: D1Database): TaskRepository['deleteTask'] =>
-  async (id: Task['id']) => {
-    const storedTask = await getTask(db)(id)
-    if (storedTask === undefined) {
-      return undefined
-    }
-    const stmt = 'DELETE FROM tasks WHERE id=?'
-    await db.prepare(stmt).bind(id).run()
-    return storedTask
-  }
-
-const listTasks = (db: D1Database): TaskRepository['listTasks'] => async (
-  sortBy: keyof Pick<Task, 'id' | 'due' | 'priority'>,
-  order: 'asc' | 'desc',
-  limit: number,
-  offset?: number,
-) => {
+const listTasks = (db: D1Database): TaskRepository['listTasks'] => async ({
+  sortBy, order, limit, offset, userId,
+}) => {
+  // TODO: userIdで絞り込む
   // build query
   const query = `SELECT id, title, due, priority 
     FROM tasks
