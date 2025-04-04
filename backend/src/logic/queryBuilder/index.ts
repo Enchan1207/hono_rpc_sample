@@ -4,13 +4,13 @@ type ConditionExpression<T, K extends keyof T> = {
   value: T[K]
 }
 
-type ElementCondition<T> = { [key in keyof T]: ConditionExpression<T, keyof T> }
+type ElementCondition<T> = { [K in keyof T]?: ConditionExpression<T, K> }
 type ElementOrder = 'asc' | 'desc'
 
 export class Query<T> {
   private elementLimit?: number
   private elementOffset?: number
-  private elementConditions: ElementCondition<T> = {} as ElementCondition<T>
+  private elementConditions: Partial<ElementCondition<T>> = {}
   private elementOrder?: {
     key: keyof T
     order: ElementOrder
@@ -34,7 +34,7 @@ export class Query<T> {
     return this
   }
 
-  where(key: keyof T, operator: Operator, value: T[typeof key]) {
+  where<K extends keyof T>(key: K, operator: Operator, value: T[K]) {
     this.elementConditions[key] = {
       operator,
       value,
