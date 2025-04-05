@@ -1,16 +1,17 @@
-type Operator = '==' | '!=' | '<' | '>' | '>=' | '<='
-type ConditionExpression<T, K extends keyof T> = {
-  operator: Operator
-  value: T[K]
-}
+import type { ConditionNode } from './conditionTree'
+import {
+  buildConditionQuery,
+  buildConditionQueryParams,
+  condition, every,
+  some,
+} from './conditionTree'
 
-type ElementCondition<T> = { [K in keyof T]?: ConditionExpression<T, K> }
 type ElementOrder = 'asc' | 'desc'
 
 export class Query<T> {
   private elementLimit?: number
   private elementOffset?: number
-  private elementConditions: Partial<ElementCondition<T>> = {}
+  private elementConditionNode?: ConditionNode<T>
   private elementOrder?: {
     key: keyof T
     order: ElementOrder
@@ -34,21 +35,23 @@ export class Query<T> {
     return this
   }
 
-  where<K extends keyof T>(key: K, operator: Operator, value: T[K]) {
-    this.elementConditions[key] = {
-      operator,
-      value,
-    }
+  where(node: ConditionNode<T>) {
+    this.elementConditionNode = node
     return this
   }
 
   build() {
     // TODO: ビルドしてパラメータ突っ込んで返す
-    console.log(this.elementLimit)
-    console.log(this.elementOffset)
-    console.log(JSON.stringify(this.elementConditions))
-    console.log(this.elementOrder)
-    return ''
+    const node = this.elementConditionNode
+    if (node === undefined) {
+      return
+    }
+
+    const query = buildConditionQuery(node)
+    const params = buildConditionQueryParams(node)
+    console.log(query)
+    console.log(params)
+    return
   }
 };
 
@@ -60,7 +63,12 @@ type Task = {
 new Query<Task>()
   .limit(2)
   .offset(4)
-  .where('title', '==', 'test')
+  .where(every(
+    condition('title', '==', 'test'),
+    some(
+      condition('user_id', '!=', 2),
+      condition('user_id', '!=', 3),
+    ),
+  ))
   .orderBy('title', 'asc')
-  .where('user_id', '!=', 2)
   .build()
