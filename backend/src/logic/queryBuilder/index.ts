@@ -1,18 +1,12 @@
 import type { ConditionNode } from './conditionTree'
-import {
-  buildConditionQuery,
-  buildConditionQueryParams,
-  condition, every,
-  some,
-} from './conditionTree'
 
 type ElementOrder = 'asc' | 'desc'
 
 export class Query<T> {
-  private elementLimit?: number
-  private elementOffset?: number
-  private elementConditionNode?: ConditionNode<T>
-  private elementOrder?: {
+  protected elementLimit?: number
+  protected elementOffset?: number
+  protected elementConditionNode?: ConditionNode<T>
+  protected elementOrder?: {
     key: keyof T
     order: ElementOrder
   }
@@ -39,36 +33,4 @@ export class Query<T> {
     this.elementConditionNode = node
     return this
   }
-
-  build() {
-    // TODO: ビルドしてパラメータ突っ込んで返す
-    const node = this.elementConditionNode
-    if (node === undefined) {
-      return
-    }
-
-    const query = buildConditionQuery(node)
-    const params = buildConditionQueryParams(node)
-    console.log(query)
-    console.log(params)
-    return
-  }
 };
-
-type Task = {
-  title: string
-  user_id: number
-}
-
-new Query<Task>()
-  .limit(2)
-  .offset(4)
-  .where(every(
-    condition('title', '==', 'test'),
-    some(
-      condition('user_id', '!=', 2),
-      condition('user_id', '!=', 3),
-    ),
-  ))
-  .orderBy('title', 'asc')
-  .build()
