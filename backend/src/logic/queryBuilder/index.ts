@@ -1,14 +1,24 @@
+import type { z } from 'zod'
+
 import type { ConditionNode } from './conditionTree'
 
 type ElementOrder = 'asc' | 'desc'
 
-export class Query<T> {
+type Model<T extends z.AnyZodObject> = T['shape']
+
+export class Query<T extends z.AnyZodObject> {
+  protected modelSchema: T
+
   protected elementLimit?: number
   protected elementOffset?: number
   protected elementConditionNode?: ConditionNode<T>
   protected elementOrder?: {
-    key: keyof T
+    key: keyof Model<T>
     order: ElementOrder
+  }
+
+  constructor(schema: T) {
+    this.modelSchema = schema
   }
 
   limit(limit: number) {
@@ -21,7 +31,7 @@ export class Query<T> {
     return this
   }
 
-  orderBy(key: keyof T, order: ElementOrder = 'asc') {
+  orderBy(key: keyof Model<T>, order: ElementOrder = 'asc') {
     this.elementOrder = {
       key,
       order,

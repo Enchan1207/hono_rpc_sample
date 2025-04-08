@@ -1,31 +1,35 @@
-type ConditionNodeBase<T> = { items: ConditionNode<T>[] }
+import type { z } from 'zod'
 
-type ConditionNodeSome<T> = ConditionNodeBase<T> & { type: 'some' }
-type ConditionNodeEvery<T> = ConditionNodeBase<T> & { type: 'every' }
+type ConditionNodeBase<T extends z.AnyZodObject> = { items: ConditionNode<T>[] }
 
-type ConditionCompositionNode<T> = ConditionNodeSome<T> | ConditionNodeEvery<T>
+type ConditionNodeSome<T extends z.AnyZodObject> = ConditionNodeBase<T> & { type: 'some' }
+type ConditionNodeEvery<T extends z.AnyZodObject> = ConditionNodeBase<T> & { type: 'every' }
+
+type ConditionCompositionNode<T extends z.AnyZodObject> =
+  | ConditionNodeSome<T>
+  | ConditionNodeEvery<T>
 
 type Operator = '==' | '!=' | '<' | '>' | '>=' | '<='
 
-type ConditionLeaf<T, K extends keyof T> = {
+type ConditionLeaf<T extends z.AnyZodObject, K extends keyof T['shape']> = {
   key: K
   operator: Operator
-  value: T[K]
+  value: z.infer<T['shape'][K]>
 }
 
-export type ConditionNode<T> =
-  | ConditionLeaf<T, keyof T>
+export type ConditionNode<T extends z.AnyZodObject> =
+  | ConditionLeaf<T, keyof T['shape']>
   | ConditionCompositionNode<T>
 
-const isLeaf = <T>(node: ConditionNode<T>):
-node is ConditionLeaf<T, keyof T> =>
+const isLeaf = <T extends z.AnyZodObject>(node: ConditionNode<T>):
+node is ConditionLeaf<T, keyof T['shape']> =>
   (node as { type: unknown }).type === undefined
 
 /** 条件リーフを組み立てる */
-export const condition = <T, K extends keyof T>(
-  key: K,
-  operator: Operator,
-  value: T[K],
+export const condition = <T extends z.AnyZodObject, K extends keyof T['shape']>(
+  key: ConditionLeaf<T, K>['key'],
+  operator: ConditionLeaf<T, K>['operator'],
+  value: ConditionLeaf<T, K>['value'],
 ): ConditionLeaf<T, K> => ({
   key,
   operator,
@@ -33,14 +37,14 @@ export const condition = <T, K extends keyof T>(
 })
 
 /** 複数のノードのうちいずれかを満たす条件ノードを構成する */
-export const some = <T>(...items: ConditionNode<T>[]):
+export const some = <T extends z.AnyZodObject>(...items: ConditionNode<T>[]):
 ConditionNodeSome<T> => ({
   type: 'some',
   items,
 })
 
 /** 複数のノードのうち全てを満たす条件ノードを構成する */
-export const every = <T>(...items: ConditionNode<T>[]):
+export const every = <T extends z.AnyZodObject>(...items: ConditionNode<T>[]):
 ConditionNodeEvery<T> => ({
   type: 'every',
   items,
@@ -51,9 +55,9 @@ ConditionNodeEvery<T> => ({
  * @param node 条件ノード
  * @returns パラメータの配列
  */
-export const buildConditionQueryParams = <T>(
+export const buildConditionQueryParams = <T extends z.AnyZodObject>(
   node: ConditionNode<T>,
-): ConditionLeaf<T, keyof T>['value'][] => {
+): ConditionLeaf<T, keyof T['shape']>['value'][] => {
   if (isLeaf(node)) {
     return [node.value]
   }
@@ -67,7 +71,8 @@ export const buildConditionQueryParams = <T>(
  * @param node 条件ノード
  * @returns 組み立てられたクエリ
  */
-export const buildConditionQuery = <T>(node: ConditionNode<T>) => {
+export const buildConditionQuery = <T extends z.AnyZodObject>
+(node: ConditionNode<T>) => {
   const { query } = buildQuery(node, 1)
   return query
 }
@@ -78,7 +83,7 @@ export const buildConditionQuery = <T>(node: ConditionNode<T>) => {
  * @param index プレースホルダインデックス
  * @returns 組み立てられたクエリと次のインデックス
  */
-const buildQuery = <T>(
+const buildQuery = <T extends z.AnyZodObject>(
   node: ConditionNode<T>,
   index: number,
 ): {
