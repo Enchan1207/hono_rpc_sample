@@ -1,5 +1,3 @@
-type Operator = '==' | '!=' | '<' | '>' | '>=' | '<='
-
 type ConditionNodeBase<T> = { items: ConditionNode<T>[] }
 
 type ConditionNodeSome<T> = ConditionNodeBase<T> & { type: 'some' }
@@ -7,18 +5,20 @@ type ConditionNodeEvery<T> = ConditionNodeBase<T> & { type: 'every' }
 
 type ConditionCompositionNode<T> = ConditionNodeSome<T> | ConditionNodeEvery<T>
 
-export type ConditionNode<T> =
-  | ConditionItem<T, keyof T>
-  | ConditionCompositionNode<T>
+type Operator = '==' | '!=' | '<' | '>' | '>=' | '<='
 
-type ConditionItem<T, K extends keyof T> = {
+type ConditionLeaf<T, K extends keyof T> = {
   key: K
   operator: Operator
   value: T[K]
 }
 
+export type ConditionNode<T> =
+  | ConditionLeaf<T, keyof T>
+  | ConditionCompositionNode<T>
+
 const isLeaf = <T>(node: ConditionNode<T>):
-node is ConditionItem<T, keyof T> =>
+node is ConditionLeaf<T, keyof T> =>
   (node as { type: unknown }).type === undefined
 
 /** 条件リーフを組み立てる */
@@ -26,7 +26,7 @@ export const condition = <T, K extends keyof T>(
   key: K,
   operator: Operator,
   value: T[K],
-): ConditionItem<T, K> => ({
+): ConditionLeaf<T, K> => ({
   key,
   operator,
   value,
@@ -53,7 +53,7 @@ ConditionNodeEvery<T> => ({
  */
 export const buildConditionQueryParams = <T>(
   node: ConditionNode<T>,
-): ConditionItem<T, keyof T>['value'][] => {
+): ConditionLeaf<T, keyof T>['value'][] => {
   if (isLeaf(node)) {
     return [node.value]
   }
