@@ -42,12 +42,12 @@ export class D1Query<T extends z.AnyZodObject> extends Query<T> {
       }
     }
 
-    const { query, index: nextIndex } = buildExpression(conditionNode, index)
+    const expression = buildExpression(conditionNode, index)
     const params = buildConditionQueryParams(conditionNode)
 
     return {
-      query,
-      index: nextIndex,
+      query: `WHERE ${expression.query}`,
+      index: expression.index,
       params,
     }
   }
@@ -130,7 +130,7 @@ export class D1Query<T extends z.AnyZodObject> extends Query<T> {
       withOrder.query,
       withLimit.query,
       withOffset.query,
-    ].join('')
+    ].join(' ')
 
     return d1Database.prepare(baseQuery).bind(params)
   }
