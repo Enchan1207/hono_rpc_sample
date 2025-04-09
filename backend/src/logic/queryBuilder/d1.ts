@@ -13,7 +13,7 @@ type QueryBuildResult<T extends z.AnyZodObject> = {
 }
 
 export class D1Query<T extends z.AnyZodObject> extends Query<T> {
-  private buildBaseQuery(index: number = 1, tableName: string):
+  private buildBaseQuery(index: number = 1):
   QueryBuildResult<T> {
     const modelShape = this.modelSchema.shape as Record<string, unknown>
     const columns: (keyof T['shape'])[] = Object.keys(modelShape)
@@ -22,7 +22,7 @@ export class D1Query<T extends z.AnyZodObject> extends Query<T> {
       'SELECT',
       columns.join(','),
       'FROM',
-      tableName,
+      this.tableName,
     ].join(' ')
 
     return {
@@ -94,16 +94,43 @@ export class D1Query<T extends z.AnyZodObject> extends Query<T> {
       }
     }
 
+    const key = orderBy.key.toString()
+    const order = orderBy.order.toUpperCase()
+
     return {
-      query: `ORDER BY ${orderBy.key} ${orderBy.order.toUpperCase()}`,
+      query: `ORDER BY ${key} ${order}`,
       index,
       params: [],
     }
   }
 
-  build(d1Database: D1Database, tableName: string): D1PreparedStatement {
-    // TODO: 要素(ORDERBYとかWHEREとか)ごとのクエリ組み立て(値は埋め込みでなくバインド)
-    // TODO: WHERE句以外でもバインドしたい需要を踏まえると、indexはこのレイヤまで取り回すべきか?
+  build(d1Database: D1Database): D1PreparedStatement {
+    // なんかきれいじゃないなあ……
+
+    const params: ConditionParameters<T>[] = []
+
+    const base = this.buildBaseQuery(1)
+    params.push(...base.params)
+
+    const withCondition = this.buildConditionQuery(base.index)
+    params.push(...withCondition.params)
+
+    const withOrder = this.buildOrderByQuery(withCondition.index)
+    params.push(...withOrder.params)
+
+    const withLimit = this.buildLimitQuery(withOrder.index)
+    params.push(...withLimit.params)
+
+    const withOffset = this.buildOffsetQuery(withLimit.index)
+    params.push(...withOffset.params)
+
+    const baseQuery = [
+      base.query,
+      withCondition.query,
+      withOrder.query,
+      withLimit.query,
+      withOffset.query,
+    ].join('')
 
     return d1Database.prepare(baseQuery).bind(params)
   }

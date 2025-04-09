@@ -7,6 +7,7 @@ type ElementOrder = 'asc' | 'desc'
 type Model<T extends z.AnyZodObject> = T['shape']
 
 export class Query<T extends z.AnyZodObject> {
+  protected tableName: string
   protected modelSchema: T
 
   protected elementLimit?: number
@@ -17,7 +18,8 @@ export class Query<T extends z.AnyZodObject> {
     order: ElementOrder
   }
 
-  constructor(schema: T) {
+  constructor(tableName: string, schema: T) {
+    this.tableName = tableName
     this.modelSchema = schema
   }
 
