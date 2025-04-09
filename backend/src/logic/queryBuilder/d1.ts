@@ -1,8 +1,8 @@
 import type { z } from 'zod'
 
-import { Query } from '.'
 import type { ConditionLeaf, ConditionNode } from './conditionTree'
 import { isLeaf } from './conditionTree'
+import { Query } from './query'
 
 type ConditionParameters<T extends z.AnyZodObject> = ConditionLeaf<T, keyof T['shape']>['value'][]
 
@@ -124,7 +124,7 @@ export class D1Query<T extends z.AnyZodObject> extends Query<T> {
     const withOffset = this.buildOffsetQuery(withLimit.index)
     params.push(...withOffset.params)
 
-    const baseQuery = [
+    const query = [
       base.query,
       withCondition.query,
       withOrder.query,
@@ -132,7 +132,7 @@ export class D1Query<T extends z.AnyZodObject> extends Query<T> {
       withOffset.query,
     ].join(' ')
 
-    return d1Database.prepare(baseQuery).bind(params)
+    return d1Database.prepare(query).bind(params)
   }
 }
 
