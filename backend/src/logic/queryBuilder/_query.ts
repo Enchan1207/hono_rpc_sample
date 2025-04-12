@@ -11,7 +11,8 @@ type Model = z.AnyZodObject
 
 type Columns<M extends Model> = keyof M['shape']
 
-type QueryState<M extends Model> = {
+type QueryStateBase<M extends Model> = {
+  buildState: 'draft' | 'ready'
   model: M
   tableName: string
   range?: {
@@ -25,11 +26,17 @@ type QueryState<M extends Model> = {
   condition?: ConditionNode<M>
 }
 
+type DraftQueryState<M extends Model> = QueryStateBase<M> & { buildState: 'draft' }
+type ReadyQueryState<M extends Model> = QueryStateBase<M> & { buildState: 'ready' }
+type QueryState<M extends Model> = DraftQueryState<M> | ReadyQueryState<M>
+
 interface Query<M extends Model> {
   limit(limit: number, offset?: number): this
   orderBy(key: Columns<M>, order?: ElementOrder): this
   where(condition: ConditionNode<M>): this
 }
+
+interface BuidableQuery<M extends Model> extends Query<M> { build(): string }
 
 const buildQuery = <M extends Model>(state: QueryState<M>): Query<M> => ({
   limit: function (limit: number, offset?: number): Query<M> {
