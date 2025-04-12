@@ -6,13 +6,11 @@ import type { ConditionNode } from './conditionTree'
 
 type ElementOrder = 'asc' | 'desc'
 
-// 型エイリアス
-type Model = z.AnyZodObject
+export type Model = z.AnyZodObject
 
 type Columns<M extends Model> = keyof M['shape']
 
-type QueryStateBase<M extends Model> = {
-  buildState: 'draft' | 'ready'
+export type QueryState<M extends Model> = {
   model: M
   tableName: string
   range?: {
@@ -26,46 +24,67 @@ type QueryStateBase<M extends Model> = {
   condition?: ConditionNode<M>
 }
 
-type DraftQueryState<M extends Model> = QueryStateBase<M> & { buildState: 'draft' }
-type ReadyQueryState<M extends Model> = QueryStateBase<M> & { buildState: 'ready' }
-type QueryState<M extends Model> = DraftQueryState<M> | ReadyQueryState<M>
-
 interface Query<M extends Model> {
   limit(limit: number, offset?: number): this
   orderBy(key: Columns<M>, order?: ElementOrder): this
   where(condition: ConditionNode<M>): this
 }
 
-interface BuidableQuery<M extends Model> extends Query<M> { build(): string }
+export interface Operation<U> {
+  //
+  select<M extends Model>(model: M, tableName: string): Buildable<Query<M>, U>
+}
 
-const buildQuery = <M extends Model>(state: QueryState<M>): Query<M> => ({
-  limit: function (limit: number, offset?: number): Query<M> {
-    const newState: QueryState<M> = {
-      ...state,
-      range: {
-        limit,
-        offset,
-      },
-    }
-    return buildQuery(newState)
-  },
+type Buildable<T, U> = T & { build(): U }
 
-  orderBy: function (key: Columns<M>, order?: ElementOrder): Query<M> {
-    const newState: QueryState<M> = {
-      ...state,
-      order: {
-        key,
-        order: order ?? 'asc',
-      },
-    }
-    return buildQuery(newState)
-  },
+type Builder<M extends Model, S extends QueryState<M>, U> = (state: S) => U
 
-  where: function (condition: ConditionNode<M>): Query<M> {
-    const newState: QueryState<M> = {
-      ...state,
-      condition,
-    }
-    return buildQuery(newState)
-  },
-})
+/**
+ * ビルダーを渡して選択クエリビルダを構成する
+ * @param builder ビルダー
+ * @returns 構成されたクエリビルダ
+ */
+export const createSelectionQueryBuilder = <
+  M extends Model,
+  S extends QueryState<M>,
+  U
+>
+(builder: Builder<M, S, U>): ((state: S) => Buildable<Query<M>, U>) => {
+  const _build = (state: S): Buildable<Query<M>, U> => ({
+    limit(limit: number, offset?: number): Buildable<Query<M>, U> {
+      const newState: S = {
+        ...state,
+        range: {
+          limit,
+          offset,
+        },
+      }
+      return _build(newState)
+    },
+
+    orderBy(key: Columns<M>, order?: ElementOrder): Buildable<Query<M>, U> {
+      const newState: S = {
+        ...state,
+        order: {
+          key,
+          order: order ?? 'asc',
+        },
+      }
+      return _build(newState)
+    },
+
+    where(condition: ConditionNode<M>): Buildable<Query<M>, U> {
+      const newState: S = {
+        ...state,
+        condition,
+      }
+      return _build(newState)
+    },
+
+    build() {
+      return builder(state)
+    },
+  })
+
+  return _build
+}
