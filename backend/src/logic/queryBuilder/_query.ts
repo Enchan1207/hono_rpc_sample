@@ -6,31 +6,34 @@ import type { ConditionNode } from './conditionTree'
 
 type ElementOrder = 'asc' | 'desc'
 
-type ModelKeys<T extends z.AnyZodObject> = keyof T['shape']
+// 型エイリアス
+type Model = z.AnyZodObject
 
-type QueryState<T extends z.AnyZodObject> = {
+type Columns<M extends Model> = keyof M['shape']
+
+type QueryState<M extends Model> = {
+  model: M
   tableName: string
   range?: {
     limit: number
     offset?: number
   }
   order?: {
-    key: ModelKeys<T>
+    key: Columns<M>
     order: ElementOrder
   }
-  condition?: ConditionNode<T>
+  condition?: ConditionNode<M>
 }
 
-interface Query<T extends z.AnyZodObject> {
+interface Query<M extends Model> {
   limit(limit: number, offset?: number): this
-  orderBy(key: ModelKeys<T>, order?: ElementOrder): this
-  where(condition: ConditionNode<T>): this
+  orderBy(key: Columns<M>, order?: ElementOrder): this
+  where(condition: ConditionNode<M>): this
 }
 
-const buildQuery = <T extends z.AnyZodObject>(state: QueryState<T>):
-Query<T> => ({
-  limit: function (limit: number, offset?: number): Query<T> {
-    const newState: QueryState<T> = {
+const buildQuery = <M extends Model>(state: QueryState<M>): Query<M> => ({
+  limit: function (limit: number, offset?: number): Query<M> {
+    const newState: QueryState<M> = {
       ...state,
       range: {
         limit,
@@ -40,8 +43,8 @@ Query<T> => ({
     return buildQuery(newState)
   },
 
-  orderBy: function (key: ModelKeys<T>, order?: ElementOrder): Query<T> {
-    const newState: QueryState<T> = {
+  orderBy: function (key: Columns<M>, order?: ElementOrder): Query<M> {
+    const newState: QueryState<M> = {
       ...state,
       order: {
         key,
@@ -51,8 +54,8 @@ Query<T> => ({
     return buildQuery(newState)
   },
 
-  where: function (condition: ConditionNode<T>): Query<T> {
-    const newState: QueryState<T> = {
+  where: function (condition: ConditionNode<M>): Query<M> {
+    const newState: QueryState<M> = {
       ...state,
       condition,
     }
