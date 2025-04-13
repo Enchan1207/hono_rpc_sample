@@ -102,7 +102,9 @@ const listTasks = (db: D1Database): TaskRepository['listTasks'] => async ({
     .orderBy(sortBy, order)
     .limit(limit, offset)
 
-  const stmt = userId ? baseStmt.where(condition('user_id', '==', userId)) : baseStmt
+  const orderStmt = sortBy === 'id' ? baseStmt : baseStmt.orderBy('id')
+
+  const stmt = userId ? orderStmt.where(condition('user_id', '==', userId)) : orderStmt
 
   return stmt.build().all<TaskSummaryRecord>().then(({ results }) => results.map(entity => makeTaskSummary(entity)))
 }
