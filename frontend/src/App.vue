@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useAuth0 } from '@auth0/auth0-vue'
 import {
   breakpointsElement, useBreakpoints, useDark,
 } from '@vueuse/core'
@@ -7,12 +6,9 @@ import { BIconList } from 'bootstrap-icons-vue'
 import { ref, watch } from 'vue'
 
 import Sidebar from '@/components/SideBar.vue'
+import UserButton from '@/components/UserButton.vue'
 
 useDark()
-
-const {
-  loginWithRedirect, isAuthenticated, logout,
-} = useAuth0()
 
 const breakpoints = useBreakpoints(breakpointsElement)
 const isSmartphone = breakpoints.smaller('sm')
@@ -23,10 +19,6 @@ watch(isSmartphone, (newValue, prevValue) => {
 })
 
 const isSidebarVisible = ref(!isSmartphone.value)
-
-const onClickLogout = async () => {
-  await logout({ logoutParams: { returnTo: window.location.origin } })
-}
 </script>
 
 <template>
@@ -40,18 +32,7 @@ const onClickLogout = async () => {
           />
         </span>
         <h1>Tasks</h1>
-        <el-button
-          v-if="!isAuthenticated"
-          @click="loginWithRedirect()"
-        >
-          Login
-        </el-button>
-        <el-button
-          v-else
-          @click="onClickLogout"
-        >
-          Logout
-        </el-button>
+        <UserButton />
       </el-row>
     </el-header>
     <el-container>
