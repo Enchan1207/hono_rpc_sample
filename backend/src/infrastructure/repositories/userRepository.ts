@@ -1,24 +1,24 @@
 import type { User } from '@/domain/entities/user'
 import type { UserRepository } from '@/domain/repositories/userRepository'
+import { condition } from '@/logic/queryBuilder/conditionTree'
+import { d1 } from '@/logic/queryBuilder/d1'
 
-import type { UserRecord } from '../entities/user'
+import { UserRecord } from '../entities/user'
 
 const getUserById = (db: D1Database): UserRepository['getUserById'] => async (id: string) => {
-  const stmt = 'SELECT id, name, auth0_user_id FROM users WHERE id=?'
-  const result = await db.prepare(stmt).bind(id).first<UserRecord>()
-  if (!result) {
-    return undefined
-  }
-  return result
+  const stmt = d1(db)
+    .select(UserRecord, 'users')
+    .where(condition('id', '==', id))
+    .build()
+  return stmt.first<UserRecord>().then(item => item === null ? undefined : item)
 }
 
 const getUserByAuth0Id = (db: D1Database): UserRepository['getUserByAuth0Id'] => async (id: string) => {
-  const stmt = 'SELECT id, name, auth0_user_id FROM users WHERE auth0_user_id=?'
-  const result = await db.prepare(stmt).bind(id).first<UserRecord>()
-  if (!result) {
-    return undefined
-  }
-  return result
+  const stmt = d1(db)
+    .select(UserRecord, 'users')
+    .where(condition('auth0_user_id', '==', id))
+    .build()
+  return stmt.first<UserRecord>().then(item => item === null ? undefined : item)
 }
 
 const saveUser = (db: D1Database): UserRepository['saveUser'] => async (newUser: User) => {

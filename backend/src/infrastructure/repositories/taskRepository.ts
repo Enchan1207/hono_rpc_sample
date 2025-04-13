@@ -5,7 +5,9 @@ import type {
   TaskSummary,
 } from '@/domain/entities/task'
 import type { TaskRepository } from '@/domain/repositories/taskRepository'
-import type { TaskRecord, TaskSummaryRecord } from '@/infrastructure/entities/task'
+import { TaskRecord, TaskSummaryRecord } from '@/infrastructure/entities/task'
+import { condition } from '@/logic/queryBuilder/conditionTree'
+import { d1 } from '@/logic/queryBuilder/d1'
 
 const priorityMap: Record<TaskPriority, number> = {
   high: 100,
@@ -19,7 +21,7 @@ const reversePriorityMap: Record<number, TaskPriority> = {
   0: 'low',
 }
 
-const makeTaskRecord = ({
+const makeTask = ({
   id, user_id: userId, title, due, description, priority,
 }: TaskRecord): Task => ({
   id,
@@ -30,7 +32,7 @@ const makeTaskRecord = ({
   description,
 })
 
-const makeTask = ({
+const makeTaskRecord = ({
   id, userId: user_id, title, due, description, priority,
 }: Task): TaskRecord => ({
   id,
@@ -52,12 +54,11 @@ const makeTaskSummary = ({
 })
 
 const getTask = (db: D1Database): TaskRepository['getTask'] => async (id) => {
-  const stmt = 'SELECT id, user_id, title, due, priority, description FROM tasks WHERE id=?'
-  const result = await db.prepare(stmt).bind(id).first<TaskRecord>()
-  if (!result) {
-    return undefined
-  }
-  return makeTaskRecord(result)
+  const stmt = d1(db)
+    .select(TaskRecord, 'tasks')
+    .where(condition('id', '==', id))
+    .build()
+  return stmt.first<TaskRecord>().then(item => item === null ? undefined : makeTask(item))
 }
 
 const saveTask = (db: D1Database): TaskRepository['saveTask'] => async (newTask) => {
@@ -69,7 +70,7 @@ const saveTask = (db: D1Database): TaskRepository['saveTask'] => async (newTask)
         priority = ?5,
         description = ?6
     `
-  const entity = makeTask(newTask)
+  const entity = makeTaskRecord(newTask)
 
   await db.prepare(stmt).bind(
     entity.id,
@@ -96,22 +97,14 @@ const deleteTask = (db: D1Database): TaskRepository['deleteTask'] => async (id) 
 const listTasks = (db: D1Database): TaskRepository['listTasks'] => async ({
   sortBy, order, limit, offset, userId,
 }) => {
-  // TODO: userIdで絞り込む
-  // build query
-  const query = `SELECT id, title, due, priority 
-    FROM tasks
-    ORDER BY ${sortBy} ${order === 'asc' ? 'ASC' : 'DESC'}
-    ${sortBy !== 'id' ? ', id ASC' : ''}
-    LIMIT ?
-    ${offset !== undefined ? 'OFFSET ?' : ''}
-  `
+  const baseStmt = d1(db)
+    .select(TaskSummaryRecord, 'tasks')
+    .orderBy(sortBy, order)
+    .limit(limit, offset)
 
-  const stmt = db.prepare(query)
-  const bound = offset !== undefined
-    ? stmt.bind(limit, offset)
-    : stmt.bind(limit)
-  const result = await bound.run<TaskSummaryRecord>()
-  return result.results.map(entity => makeTaskSummary(entity))
+  const stmt = userId ? baseStmt.where(condition('user_id', '==', userId)) : baseStmt
+
+  return stmt.build().all<TaskSummaryRecord>().then(({ results }) => results.map(entity => makeTaskSummary(entity)))
 }
 
 export const useTaskRepositoryD1 = (db: D1Database): TaskRepository => {
