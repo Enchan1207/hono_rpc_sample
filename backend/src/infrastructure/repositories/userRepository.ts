@@ -1,9 +1,11 @@
 import type { User } from '@/domain/entities/user'
 import type { UserRepository } from '@/domain/repositories/userRepository'
 
+import type { UserRecord } from '../entities/user'
+
 const getUserById = (db: D1Database): UserRepository['getUserById'] => async (id: string) => {
   const stmt = 'SELECT id, name, auth0_user_id FROM users WHERE id=?'
-  const result = await db.prepare(stmt).bind(id).first<User>()
+  const result = await db.prepare(stmt).bind(id).first<UserRecord>()
   if (!result) {
     return undefined
   }
@@ -12,7 +14,7 @@ const getUserById = (db: D1Database): UserRepository['getUserById'] => async (id
 
 const getUserByAuth0Id = (db: D1Database): UserRepository['getUserByAuth0Id'] => async (id: string) => {
   const stmt = 'SELECT id, name, auth0_user_id FROM users WHERE auth0_user_id=?'
-  const result = await db.prepare(stmt).bind(id).first<User>()
+  const result = await db.prepare(stmt).bind(id).first<UserRecord>()
   if (!result) {
     return undefined
   }
