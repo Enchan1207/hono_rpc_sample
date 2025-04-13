@@ -119,6 +119,7 @@ export default tseslint.config(
           code: 80,
           ignoreUrls: true,
           ignoreStrings: true,
+          ignorePattern: '=>',
         },
       ],
       '@stylistic/comma-dangle': [

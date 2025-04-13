@@ -3,7 +3,10 @@ import { sign } from 'hono/jwt'
 import { testClient } from 'hono/testing'
 import { ulid } from 'ulid'
 
-import type { Task, TaskPriority } from '@/domain/entities/task'
+import type {
+  Task, TaskData, TaskPriority,
+} from '@/domain/entities/task'
+import type { User } from '@/domain/entities/user'
 import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepository'
 import { useUserRepositoryD1 } from '@/infrastructure/repositories/userRepository'
 import { compare } from '@/logic/compare'
@@ -14,24 +17,24 @@ describe('単一項目の操作', () => {
   const taskRepository = useTaskRepositoryD1(env.D1)
   const userRepository = useUserRepositoryD1(env.D1)
 
+  const testUser: User = {
+    id: 'test_user_id',
+    name: 'test user',
+    auth0_user_id: 'auth0_test_user',
+  }
+
   let token: string
 
   beforeAll(async () => {
-    const auth0UserId = 'test_user'
-
     token = await sign({
       exp: Math.floor(Date.now() / 1000) + 60 * 60,
       iss: `https://${env.AUTH_DOMAIN}/`,
-      sub: auth0UserId,
+      sub: testUser.auth0_user_id,
       aud: [env.AUTH_AUDIENCE],
     }, env.TEST_PRIVATE_KEY, 'RS256')
 
     // テストユーザを登録
-    await userRepository.saveUser({
-      id: 'test_user_id',
-      name: 'test user',
-      auth0_user_id: auth0UserId,
-    })
+    await userRepository.saveUser(testUser)
   })
 
   afterEach(() => {
@@ -39,7 +42,7 @@ describe('単一項目の操作', () => {
   })
 
   describe('POST /task', () => {
-    const taskData: Omit<Task, 'id'> = {
+    const taskData: TaskData = {
       title: 'test',
       due: new Date('2025-01-01T00:00:00.000Z').getTime(),
       priority: 'high',
@@ -58,6 +61,7 @@ describe('単一項目の操作', () => {
       const stored = await taskRepository.getTask(id)
       expect(stored).toStrictEqual({
         id,
+        userId: testUser.id,
         ...taskData,
       })
     })
@@ -66,8 +70,10 @@ describe('単一項目の操作', () => {
   describe('GET /task/:id', () => {
     const validTaskId = ulid()
     const invalidTaskId = ulid()
-    const taskData: Task = {
+
+    const dummyTask: Task = {
       id: validTaskId,
+      userId: testUser.id,
       title: 'test',
       due: new Date('2025-01-01T00:00:00.000Z').getTime(),
       priority: 'high',
@@ -75,7 +81,7 @@ describe('単一項目の操作', () => {
     }
 
     beforeEach(async () => {
-      await taskRepository.saveTask(taskData)
+      await taskRepository.saveTask(dummyTask)
     })
 
     test('項目を取得できること', async () => {
@@ -86,7 +92,7 @@ describe('単一項目の操作', () => {
         },
       })
       const stored = await result.json()
-      expect(stored).toStrictEqual(taskData)
+      expect(stored).toStrictEqual(dummyTask)
     })
 
     test('存在しない項目は取得できないこと', async () => {
@@ -104,6 +110,7 @@ describe('単一項目の操作', () => {
     const taskId = ulid()
     const taskData: Task = {
       id: taskId,
+      userId: testUser.id,
       title: 'test',
       due: new Date('2025-01-01T00:00:00.000Z').getTime(),
       priority: 'high',
@@ -115,7 +122,7 @@ describe('単一項目の操作', () => {
     })
 
     test('項目が更新されること', async () => {
-      const input: Omit<Task, 'id'> = {
+      const input: TaskData = {
         title: 'modified',
         due: new Date('2025-01-02T00:00:00.000Z').getTime(),
         priority: 'low',
@@ -134,6 +141,7 @@ describe('単一項目の操作', () => {
       const updated = await taskRepository.getTask(taskId)
       expect(updated).toStrictEqual({
         id: taskId,
+        userId: testUser.id,
         ...input,
       })
     })
@@ -156,6 +164,7 @@ describe('単一項目の操作', () => {
     const taskId = ulid()
     const taskData: Task = {
       id: taskId,
+      userId: testUser.id,
       title: 'test',
       due: new Date('2025-01-01T00:00:00.000Z').getTime(),
       priority: 'high',
@@ -210,7 +219,7 @@ describe('項目のリストアップ', () => {
     })
 
     // ダミータスクを生成して流し込む
-    const dummyTaskData: Omit<Task, 'id'>[] = Array.from({ length: 5 }).map(
+    const dummyTaskData: TaskData[] = Array.from({ length: 5 }).map(
       (_, i) => {
         const hourString = i.toString().padStart(2, '0')
         const dummyDue = new Date(`2025-01-01T00:${hourString}:00Z`)
