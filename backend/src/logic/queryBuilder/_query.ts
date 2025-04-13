@@ -48,8 +48,7 @@ export const createSelectionQueryBuilder = <
   M extends Model,
   S extends QueryState<M>,
   P
->(statementBuilder: (state: S) => P):
-(state: S) => Buildable<Query<M>, P> => {
+>(statementBuilder: (state: S) => P): ((state: S) => Buildable<Query<M>, P>) => {
   const _build = (state: S): Buildable<Query<M>, P> => ({
     limit(limit, offset): Buildable<Query<M>, P> {
       const newState: S = {
