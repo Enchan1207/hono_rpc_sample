@@ -1,6 +1,6 @@
-import type { Model } from '@/logic/queryBuilder/_query'
 import type { ConditionNode } from '@/logic/queryBuilder/conditionTree'
 import { isLeaf } from '@/logic/queryBuilder/conditionTree'
+import type { Model } from '@/logic/queryBuilder/query'
 
 import type { Command } from './types'
 

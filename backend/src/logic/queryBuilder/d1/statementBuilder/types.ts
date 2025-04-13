@@ -1,5 +1,5 @@
-import type { Model, QueryState } from '@/logic/queryBuilder/_query'
 import type { ConditionLeaf } from '@/logic/queryBuilder/conditionTree'
+import type { Model, QueryState } from '@/logic/queryBuilder/query'
 
 export type CommandParameters<M extends Model> =
   | ConditionLeaf<M, keyof M['shape']>['value'][]

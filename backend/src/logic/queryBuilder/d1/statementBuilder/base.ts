@@ -1,4 +1,4 @@
-import type { Model } from '@/logic/queryBuilder/_query'
+import type { Model } from '@/logic/queryBuilder/query'
 
 import type { Command } from './types'
 

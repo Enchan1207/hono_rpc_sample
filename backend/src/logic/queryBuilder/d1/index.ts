@@ -1,7 +1,7 @@
 import type {
   Model, Operation, QueryState,
-} from '@/logic/queryBuilder/_query'
-import { createSelectionQueryBuilder } from '@/logic/queryBuilder/_query'
+} from '@/logic/queryBuilder/query'
+import { createSelectionQueryBuilder } from '@/logic/queryBuilder/query'
 
 import { buildStatement } from './statementBuilder'
 

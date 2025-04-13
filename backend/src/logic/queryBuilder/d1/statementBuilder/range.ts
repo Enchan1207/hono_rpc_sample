@@ -1,4 +1,4 @@
-import type { Model } from '../../_query'
+import type { Model } from '../../query'
 import type { Command } from './types'
 
 export const buildRangeQuery = <M extends Model>({ input, state }: Command<M>): Command<M> => {

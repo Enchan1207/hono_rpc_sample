@@ -1,6 +1,6 @@
 import { ok } from 'neverthrow'
 
-import type { Model, QueryState } from '../../_query'
+import type { Model, QueryState } from '../../query'
 import { buildBaseQuery } from './base'
 import { buildConditionQuery } from './condition'
 import { buildOrderQuery } from './order'
