@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAuth0 } from '@auth0/auth0-vue'
+import { breakpointsElement, useBreakpoints } from '@vueuse/core'
 import { BIconPersonFill } from 'bootstrap-icons-vue'
 import { err } from 'neverthrow'
 import { onMounted, ref } from 'vue'
@@ -14,6 +15,9 @@ const {
 } = useAuth0()
 
 const user = ref<User>()
+
+const breakpoints = useBreakpoints(breakpointsElement)
+const isSmartphone = breakpoints.smaller('sm')
 
 // MARK: - Event handlers
 
@@ -39,7 +43,15 @@ const onClickLogout = async () => {
       placement="bottom-end"
     >
       <template #reference>
-        <el-button :icon="BIconPersonFill">
+        <el-button
+          v-if="isSmartphone"
+          :icon="BIconPersonFill"
+        />
+
+        <el-button
+          v-else
+          :icon="BIconPersonFill"
+        >
           {{ user?.name }}
         </el-button>
       </template>
