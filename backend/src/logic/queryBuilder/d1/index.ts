@@ -3,11 +3,11 @@ import type {
 } from '@/logic/queryBuilder/query'
 import { createSelectionQueryBuilder } from '@/logic/queryBuilder/query'
 
-import { buildStatement } from './statementBuilder'
+import { buildD1Statement } from './statementBuilder'
 
 const buildStatementBuilderD1 = (database: D1Database) => {
   const _builder = <M extends Model>(state: QueryState<M>): D1PreparedStatement => {
-    const { query, params } = buildStatement(state)
+    const { query, params } = buildD1Statement(state)
     return database.prepare(query).bind(...params)
   }
 
