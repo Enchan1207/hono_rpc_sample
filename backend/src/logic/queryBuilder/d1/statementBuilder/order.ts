@@ -1,7 +1,7 @@
 import type { Model } from '../../_query'
-import type { ConditionQueryBuilt, OrderQueryBuilt } from './types'
+import type { Command } from './types'
 
-export const buildOrderQuery = <M extends Model>({ input, state }: ConditionQueryBuilt<M>): OrderQueryBuilt<M> => {
+export const buildOrderQuery = <M extends Model>({ input, state }: Command<M>): Command<M> => {
   const orderBy = input.order
   if (orderBy === undefined) {
     return {

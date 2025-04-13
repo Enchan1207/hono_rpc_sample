@@ -1,7 +1,7 @@
 import type { Model } from '../../_query'
-import type { OrderQueryBuilt, RangeQueryBuilt } from './types'
+import type { Command } from './types'
 
-export const buildRangeQuery = <M extends Model>({ input, state }: OrderQueryBuilt<M>): RangeQueryBuilt<M> => {
+export const buildRangeQuery = <M extends Model>({ input, state }: Command<M>): Command<M> => {
   const range = input.range
   if (range === undefined) {
     return {

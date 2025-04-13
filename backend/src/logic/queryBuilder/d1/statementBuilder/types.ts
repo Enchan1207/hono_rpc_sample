@@ -14,8 +14,3 @@ export type Command<M extends Model> = {
     params: CommandParameters<M>[]
   }
 }
-
-export type BaseQueryBuilt<M extends Model> = Omit<Command<M>, 'input'> & { input: Omit<Command<M>['input'], 'model' | 'tableName'> }
-export type ConditionQueryBuilt<M extends Model> = Omit<BaseQueryBuilt<M>, 'input'> & { input: Omit<BaseQueryBuilt<M>['input'], 'condition'> }
-export type OrderQueryBuilt<M extends Model> = Omit<ConditionQueryBuilt<M>, 'input'> & { input: Omit<ConditionQueryBuilt<M>['input'], 'order'> }
-export type RangeQueryBuilt<M extends Model> = Omit<OrderQueryBuilt<M>, 'input'> & { input: Omit<OrderQueryBuilt<M>['input'], 'range'> }

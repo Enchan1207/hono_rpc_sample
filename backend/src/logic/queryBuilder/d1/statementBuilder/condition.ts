@@ -1,12 +1,10 @@
 import type { Model } from '@/logic/queryBuilder/_query'
-import type { ConditionLeaf, ConditionNode } from '@/logic/queryBuilder/conditionTree'
+import type { ConditionNode } from '@/logic/queryBuilder/conditionTree'
 import { isLeaf } from '@/logic/queryBuilder/conditionTree'
 
-import type { BaseQueryBuilt, ConditionQueryBuilt } from './types'
+import type { Command } from './types'
 
-type ConditionParameters<M extends Model> = ConditionLeaf<M, keyof M['shape']>['value'][]
-
-export const buildConditionQuery = <M extends Model>({ input, state }: BaseQueryBuilt<M>): ConditionQueryBuilt<M> => {
+export const buildConditionQuery = <M extends Model>({ input, state }: Command<M>): Command<M> => {
   const condition = input.condition
   if (condition === undefined) {
     return {
@@ -71,9 +69,7 @@ const buildExpression = <M extends Model>(
  * @param node 条件ノード
  * @returns パラメータの配列
  */
-const buildParams = <M extends Model>(
-  node: ConditionNode<M>,
-): ConditionParameters<M>[] => {
+const buildParams = <M extends Model>(node: ConditionNode<M>): Command<M>['state']['params'][] => {
   if (isLeaf(node)) {
     return [node.value]
   }
