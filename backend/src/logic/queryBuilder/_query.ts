@@ -1,10 +1,8 @@
-// queryをfunctionalに再実装する
-
 import type { z } from 'zod'
 
 import type { ConditionNode } from './conditionTree'
 
-type ElementOrder = 'asc' | 'desc'
+type Order = 'asc' | 'desc'
 
 export type Model = z.AnyZodObject
 
@@ -19,39 +17,41 @@ export type QueryState<M extends Model> = {
   }
   order?: {
     key: Columns<M>
-    order: ElementOrder
+    order: Order
   }
   condition?: ConditionNode<M>
 }
 
 interface Query<M extends Model> {
   limit(limit: number, offset?: number): this
-  orderBy(key: Columns<M>, order?: ElementOrder): this
+  orderBy(key: Columns<M>, order?: Order): this
   where(condition: ConditionNode<M>): this
 }
 
-export interface Operation<U> {
-  //
-  select<M extends Model>(model: M, tableName: string): Buildable<Query<M>, U>
+/**
+ * データベースに対して行う操作
+ * @template P 操作結果として得られるステートメントオブジェクトの型
+*/
+export interface Operation<P> {
+  /** モデルとテーブル名を渡してアイテムを選択する */
+  select<M extends Model>(model: M, tableName: string): Buildable<Query<M>, P>
 }
 
 type Buildable<T, U> = T & { build(): U }
 
-type Builder<M extends Model, S extends QueryState<M>, U> = (state: S) => U
-
 /**
  * ビルダーを渡して選択クエリビルダを構成する
- * @param builder ビルダー
+ * @param statementBuilder ステートメントビルダ
  * @returns 構成されたクエリビルダ
  */
 export const createSelectionQueryBuilder = <
   M extends Model,
   S extends QueryState<M>,
-  U
->
-(builder: Builder<M, S, U>): ((state: S) => Buildable<Query<M>, U>) => {
-  const _build = (state: S): Buildable<Query<M>, U> => ({
-    limit(limit: number, offset?: number): Buildable<Query<M>, U> {
+  P
+>(statementBuilder: (state: S) => P):
+(state: S) => Buildable<Query<M>, P> => {
+  const _build = (state: S): Buildable<Query<M>, P> => ({
+    limit(limit, offset): Buildable<Query<M>, P> {
       const newState: S = {
         ...state,
         range: {
@@ -62,7 +62,7 @@ export const createSelectionQueryBuilder = <
       return _build(newState)
     },
 
-    orderBy(key: Columns<M>, order?: ElementOrder): Buildable<Query<M>, U> {
+    orderBy(key, order): Buildable<Query<M>, P> {
       const newState: S = {
         ...state,
         order: {
@@ -73,7 +73,7 @@ export const createSelectionQueryBuilder = <
       return _build(newState)
     },
 
-    where(condition: ConditionNode<M>): Buildable<Query<M>, U> {
+    where(condition): Buildable<Query<M>, P> {
       const newState: S = {
         ...state,
         condition,
@@ -81,9 +81,7 @@ export const createSelectionQueryBuilder = <
       return _build(newState)
     },
 
-    build() {
-      return builder(state)
-    },
+    build: () => statementBuilder(state),
   })
 
   return _build

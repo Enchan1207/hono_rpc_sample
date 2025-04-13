@@ -3,7 +3,7 @@ import type {
 } from './_query'
 import { createSelectionQueryBuilder } from './_query'
 
-const buildQueryBuilderD1 = (database: D1Database) => {
+const buildStatementBuilderD1 = (database: D1Database) => {
   const _builder = <M extends Model>(state: QueryState<M>):
   D1PreparedStatement => {
     database.prepare(state.tableName)
@@ -14,7 +14,8 @@ const buildQueryBuilderD1 = (database: D1Database) => {
 
 export const d1 = (database: D1Database): Operation<D1PreparedStatement> => ({
   select(model, tableName) {
-    return createSelectionQueryBuilder(buildQueryBuilderD1(database))({
+    const builder = buildStatementBuilderD1(database)
+    return createSelectionQueryBuilder(builder)({
       model,
       tableName,
     })
