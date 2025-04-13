@@ -145,21 +145,20 @@ const buildParams = <M extends Model>(node: ConditionNode<M>): Command<M>['state
 
 /** 順序ステートメントを生成する */
 const buildOrderStatement = <M extends Model>({ input, state }: Command<M>): Command<M> => {
-  const orderBy = input.order
-  if (orderBy === undefined) {
+  const orders = input.orders
+  if (orders === undefined) {
     return {
       input,
       state,
     }
   }
 
-  const key = orderBy.key.toString()
-  const order = (orderBy.order ?? 'asc').toUpperCase()
+  const statement = orders.map(({ key, order }) => `${key.toString()} ${(order ?? 'asc').toUpperCase()}`).join(', ')
 
   return {
     input,
     state: {
-      query: state.query + ` ORDER BY ${key} ${order}`,
+      query: state.query + ` ORDER BY ${statement}`,
       index: state.index,
       params: state.params,
     },

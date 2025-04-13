@@ -50,13 +50,31 @@ describe('buildD1Statement', () => {
     const result = buildD1Statement({
       model: dummySchema,
       tableName: 'users',
-      order: {
+      orders: [{
         key: 'id',
         order: 'desc',
-      },
+      }],
     })
 
     expect(result.query).toBe('SELECT id,name FROM users ORDER BY id DESC')
+    expect(result.params).toStrictEqual([])
+  })
+
+  test('複数の順序ステート', () => {
+    const result = buildD1Statement({
+      model: dummySchema,
+      tableName: 'users',
+      orders: [{
+        key: 'id',
+        order: 'desc',
+      },
+      {
+        key: 'name',
+        order: 'asc',
+      }],
+    })
+
+    expect(result.query).toBe('SELECT id,name FROM users ORDER BY id DESC, name ASC')
     expect(result.params).toStrictEqual([])
   })
 
@@ -64,7 +82,7 @@ describe('buildD1Statement', () => {
     const result = buildD1Statement({
       model: dummySchema,
       tableName: 'users',
-      order: { key: 'name' },
+      orders: [{ key: 'name' }],
     })
 
     expect(result.query).toBe('SELECT id,name FROM users ORDER BY name ASC')
@@ -107,10 +125,10 @@ describe('buildD1Statement', () => {
         limit: 10,
         offset: 2,
       },
-      order: {
+      orders: [{
         key: 'name',
         order: 'desc',
-      },
+      }],
       condition: some(
         condition('id', '==', 2),
         every(

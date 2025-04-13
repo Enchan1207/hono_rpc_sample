@@ -15,10 +15,10 @@ export type QueryState<M extends Model> = {
     limit: number
     offset?: number
   }
-  order?: {
+  orders?: {
     key: Columns<M>
     order?: Order
-  }
+  }[]
   condition?: ConditionNode<M>
 }
 
@@ -55,10 +55,10 @@ export const createSelectionQueryBuilder = <
     orderBy(key, order) {
       const newState: S = {
         ...state,
-        order: {
+        orders: [...state.orders ?? [], {
           key,
           order: order ?? 'asc',
-        },
+        }],
       }
       return _build(newState)
     },
