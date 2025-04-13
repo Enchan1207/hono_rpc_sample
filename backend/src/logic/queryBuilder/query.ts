@@ -22,22 +22,13 @@ export type QueryState<M extends Model> = {
   condition?: ConditionNode<M>
 }
 
-interface Query<M extends Model> {
+export interface Query<M extends Model> {
   limit(limit: number, offset?: number): this
   orderBy(key: Columns<M>, order?: Order): this
   where(condition: ConditionNode<M>): this
 }
 
-/**
- * データベースに対して行う操作
- * @template P 操作結果として得られるステートメントオブジェクトの型
-*/
-export interface Operation<P> {
-  /** モデルとテーブル名を渡してアイテムを選択する */
-  select<M extends Model>(model: M, tableName: string): Buildable<Query<M>, P>
-}
-
-type Buildable<T, U> = T & { build(): U }
+export type Buildable<T, U> = T & { build(): U }
 
 /**
  * ビルダーを渡して選択クエリビルダを構成する
@@ -50,7 +41,7 @@ export const createSelectionQueryBuilder = <
   P
 >(statementBuilder: (state: S) => P): ((state: S) => Buildable<Query<M>, P>) => {
   const _build = (state: S): Buildable<Query<M>, P> => ({
-    limit(limit, offset): Buildable<Query<M>, P> {
+    limit(limit, offset) {
       const newState: S = {
         ...state,
         range: {
@@ -61,7 +52,7 @@ export const createSelectionQueryBuilder = <
       return _build(newState)
     },
 
-    orderBy(key, order): Buildable<Query<M>, P> {
+    orderBy(key, order) {
       const newState: S = {
         ...state,
         order: {
@@ -72,7 +63,7 @@ export const createSelectionQueryBuilder = <
       return _build(newState)
     },
 
-    where(condition): Buildable<Query<M>, P> {
+    where(condition) {
       const newState: S = {
         ...state,
         condition,

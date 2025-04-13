@@ -1,8 +1,7 @@
-import type {
-  Model, Operation, QueryState,
-} from '@/logic/queryBuilder/query'
+import type { Model, QueryState } from '@/logic/queryBuilder/query'
 import { createSelectionQueryBuilder } from '@/logic/queryBuilder/query'
 
+import type { Operation } from '..'
 import { buildD1Statement } from './statementBuilder'
 
 const buildStatementBuilderD1 = (database: D1Database) => {
