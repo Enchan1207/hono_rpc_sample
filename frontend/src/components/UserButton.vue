@@ -58,7 +58,7 @@ const onClickLogout = async () => {
       <template #default>
         <el-row style="margin-bottom: 10px;">
           <el-text type="info">
-            mail@example.com
+            {{ user?.email }}
           </el-text>
         </el-row>
         <el-row justify="end">

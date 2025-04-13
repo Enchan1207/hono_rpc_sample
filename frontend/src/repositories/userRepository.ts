@@ -12,7 +12,12 @@ export const getCurrentUser = async (token: string): Promise<Result<User, Networ
       //
       headers: { Authorization: `Bearer ${token}` },
     })
-    return response.json().then(user => ok(user))
+
+    // TODO: #80 バックエンドからメールアドレスを取得できるようになったらオーバーライドを外す
+    return response.json().then(user => ok({
+      ...user,
+      email: 'mail@example.com',
+    }))
   }
   catch (error) {
     const message = error instanceof Error ? error.message : 'unknown error'
