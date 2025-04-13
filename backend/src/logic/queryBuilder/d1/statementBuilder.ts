@@ -27,7 +27,7 @@ export const buildD1Statement = <M extends Model>(state: QueryState<M>): {
     input: state,
     state: {
       query: '',
-      index: 0,
+      index: 1,
       params: [],
     },
   }
@@ -124,7 +124,7 @@ const buildExpression = <M extends Model>(
     const query = ['(', children, ')'].join(' ')
     return {
       query,
-      index,
+      index: currentIndex,
     }
   }
 }
@@ -154,12 +154,12 @@ const buildOrderStatement = <M extends Model>({ input, state }: Command<M>): Com
   }
 
   const key = orderBy.key.toString()
-  const order = orderBy.order.toUpperCase()
+  const order = (orderBy.order ?? 'asc').toUpperCase()
 
   return {
     input,
     state: {
-      query: state.query + `ORDER BY ${key} ${order}`,
+      query: state.query + ` ORDER BY ${key} ${order}`,
       index: state.index,
       params: state.params,
     },

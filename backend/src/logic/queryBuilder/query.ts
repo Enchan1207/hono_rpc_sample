@@ -17,7 +17,7 @@ export type QueryState<M extends Model> = {
   }
   order?: {
     key: Columns<M>
-    order: Order
+    order?: Order
   }
   condition?: ConditionNode<M>
 }
