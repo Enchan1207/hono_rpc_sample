@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 
-import { userAuthMiddleware } from './middlewares/auth'
+import { userAuthMiddleware } from '@/features/users/presentation/middleware'
 
 const app = new Hono<{ Bindings: Env }>()
   .use(userAuthMiddleware)

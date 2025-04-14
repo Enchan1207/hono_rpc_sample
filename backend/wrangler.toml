@@ -1,7 +1,7 @@
 name = "hono-rpc-sample-backend"
 compatibility_date = "2025-01-28"
 compatibility_flags = [ "nodejs_compat" ]
-main = "./src/presentations/index.ts"
+main = "./src/index.ts"
 preview_urls = false
 workers_dev = false
 
@@ -16,7 +16,7 @@ AUTH_AUDIENCE = "http://localhost:8787"
 
 [[env.development.d1_databases]]
 binding = "D1"
-migrations_dir = "./src/infrastructure/migrations"
+migrations_dir = "./src/migrations"
 database_name = "hono-rpc-sample-backend-db-development"
 database_id = "00000000-0000-0000-0000-000000000000"
 
@@ -32,7 +32,7 @@ custom_domain = true
 
 [[env.staging.d1_databases]]
 binding = "D1"
-migrations_dir = "./src/infrastructure/migrations"
+migrations_dir = "./src/migrations"
 database_name = "hono-rpc-sample-backend-db-staging"
 database_id = "1908a976-4d46-431a-a07d-dbfc37931d2c"
 
@@ -48,6 +48,6 @@ custom_domain = true
 
 [[env.production.d1_databases]]
 binding = "D1"
-migrations_dir = "./src/infrastructure/migrations"
+migrations_dir = "./src/migrations"
 database_name = "hono-rpc-sample-backend-db-production"
 database_id = "cf6e2d5b-b494-4af2-888a-72163a261140"

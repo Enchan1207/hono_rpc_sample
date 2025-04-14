@@ -3,12 +3,11 @@ import { createMiddleware } from 'hono/factory'
 import { validator as zValidator } from 'hono-openapi/zod'
 import { z } from 'zod'
 
-import { TaskPriorities } from '@/domain/entities/task'
-import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepository'
-import type { TaskUsecase } from '@/usecases/taskUsecase'
-import { useTaskUsecase } from '@/usecases/taskUsecase'
-
-import { userAuthMiddleware } from './middlewares/auth'
+import { TaskPriorities } from '@/features/tasks/domain/entity'
+import type { TaskUsecase } from '@/features/tasks/domain/usecase'
+import { useTaskUsecase } from '@/features/tasks/domain/usecase'
+import { useTaskRepositoryD1 } from '@/features/tasks/infrastructure/repositoryImpl'
+import { userAuthMiddleware } from '@/features/users/presentation/middleware'
 
 const taskUsecaseMiddleware = createMiddleware<{
   Bindings: Env

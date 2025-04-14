@@ -1,9 +1,10 @@
+import type { User } from '@/features/users/domain/entity'
+
 import type {
   Task, TaskData, TaskSummary,
-} from '@/domain/entities/task'
-import { createTaskEntity } from '@/domain/entities/task'
-import type { User } from '@/domain/entities/user'
-import type { TaskRepository } from '@/domain/repositories/taskRepository'
+} from './entity'
+import { createTaskEntity } from './entity'
+import type { TaskRepository } from './repository'
 
 export interface TaskUsecase {
   createTask(user: User, taskData: TaskData): Promise<Task>

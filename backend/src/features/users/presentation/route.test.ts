@@ -2,9 +2,10 @@ import { env, fetchMock } from 'cloudflare:test'
 import { sign } from 'hono/jwt'
 import { testClient } from 'hono/testing'
 
-import type { User } from '@/domain/entities/user'
-import { useUserRepositoryD1 } from '@/infrastructure/repositories/userRepository'
-import users from '@/presentations/users'
+import type { User } from '@/features/users/domain/entity'
+import users from '@/features/users/presentation/route'
+
+import { useUserRepositoryD1 } from '../infrastructure/repositoryImpl'
 
 describe('ユーザが存在する場合 (登録済みアカウントへのログイン)', () => {
   const client = testClient(users, env)

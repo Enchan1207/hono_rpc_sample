@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises'
 import { generateSpecs } from 'hono-openapi'
 
-import app from '@/presentations'
+import app from '@/index'
 
 const main = async () => {
   const schema = await generateSpecs(app, {

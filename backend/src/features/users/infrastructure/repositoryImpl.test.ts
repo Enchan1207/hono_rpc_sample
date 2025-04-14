@@ -1,10 +1,10 @@
 import { env } from 'cloudflare:test'
 import { ulid } from 'ulid'
 
-import type { User } from '@/domain/entities/user'
-import type { UserRepository } from '@/domain/repositories/userRepository'
+import type { User } from '@/features/users/domain/entity'
+import type { UserRepository } from '@/features/users/domain/repository'
 
-import { useUserRepositoryD1 } from './userRepository'
+import { useUserRepositoryD1 } from './repositoryImpl'
 
 describe('単一項目のCRUD', () => {
   let repo: UserRepository
