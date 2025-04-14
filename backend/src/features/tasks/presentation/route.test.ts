@@ -21,6 +21,7 @@ describe('単一項目の操作', () => {
     id: 'test_user_id',
     name: 'test user',
     auth0_user_id: 'auth0_test_user',
+    email: 'test@example.com',
   }
 
   let token: string
@@ -216,6 +217,7 @@ describe('項目のリストアップ', () => {
       id: 'test_user_id',
       name: 'test user',
       auth0_user_id: auth0UserId,
+      email: 'test@example.com',
     })
 
     // ダミータスクを生成して流し込む

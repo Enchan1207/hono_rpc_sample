@@ -18,6 +18,7 @@ describe('単一項目のCRUD', () => {
       id: ulid(),
       name: 'test-user',
       auth0_user_id: 'auth0|0123456789',
+      email: 'test@example.com',
     }
     const inserted = await repo.saveUser(user)
     expect(user).toStrictEqual(inserted)
@@ -28,6 +29,7 @@ describe('単一項目のCRUD', () => {
       id: ulid(),
       name: 'test-user',
       auth0_user_id: 'auth0|0123456789',
+      email: 'test@example.com',
     }
     const { id } = await repo.saveUser(user)
 
@@ -40,6 +42,7 @@ describe('単一項目のCRUD', () => {
       id: ulid(),
       name: 'test-user',
       auth0_user_id: 'auth0|0123456789',
+      email: 'test@example.com',
     }
     const { auth0_user_id } = await repo.saveUser(user)
 
@@ -52,6 +55,7 @@ describe('単一項目のCRUD', () => {
       id: ulid(),
       name: 'test-user',
       auth0_user_id: 'auth0|0123456789',
+      email: 'test@example.com',
     }
     const stored = await repo.saveUser(user)
 

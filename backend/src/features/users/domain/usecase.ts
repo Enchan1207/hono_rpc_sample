@@ -43,6 +43,7 @@ const createTentativeUser = (repository: UserRepository): UserUsecase['createTen
       id: ulid(),
       name: userInfo.nickname,
       auth0_user_id: userInfo.sub,
+      email: userInfo.email,
     }
     const registered = await repository.saveUser(newUser)
     return registered

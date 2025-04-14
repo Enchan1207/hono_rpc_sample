@@ -23,16 +23,18 @@ const getUserByAuth0Id = (db: D1Database): UserRepository['getUserByAuth0Id'] =>
 
 const saveUser = (db: D1Database): UserRepository['saveUser'] => async (newUser: User) => {
   const stmt = `INSERT INTO users 
-    VALUES (?1,?2,?3)
+    VALUES (?1,?2,?3,?4)
     ON CONFLICT (id) DO UPDATE SET
         name = ?2,
-        auth0_user_id = ?3
+        auth0_user_id = ?3,
+        email = ?4
   `
 
   await db.prepare(stmt).bind(
     newUser.id,
     newUser.name,
     newUser.auth0_user_id,
+    newUser.email,
   ).run()
 
   return newUser
