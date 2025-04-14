@@ -1,10 +1,11 @@
 import { env } from 'cloudflare:test'
 
-import type { Task } from '@/features/tasks/domain/entity'
-import { useTaskUsecase } from '@/features/tasks/domain/usecase'
 import { useTaskRepositoryD1 } from '@/features/tasks/infrastructure/repositoryImpl'
 import type { User } from '@/features/users/domain/entity'
 import { useUserRepositoryD1 } from '@/features/users/infrastructure/repositoryImpl'
+
+import type { Task } from './entity'
+import { useTaskUsecase } from './usecase'
 
 describe('タスクの取得', () => {
   const taskRepository = useTaskRepositoryD1(env.D1)

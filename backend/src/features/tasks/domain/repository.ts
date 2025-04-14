@@ -1,5 +1,6 @@
-import type { Task, TaskSummary } from '@/features/tasks/domain/entity'
 import type { User } from '@/features/users/domain/entity'
+
+import type { Task, TaskSummary } from './entity'
 
 export interface TaskRepository {
   getTask(id: Task['id']): Promise<Task | undefined>
