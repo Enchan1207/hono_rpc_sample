@@ -17,6 +17,7 @@ describe('単一項目のCRUD', () => {
     id: ulid(),
     name: 'dummy',
     auth0_user_id: 'auth0|00000000',
+    email: 'test@example.com',
   }
 
   beforeAll(async () => {
@@ -106,6 +107,7 @@ describe('複数項目のリストとソート', () => {
     id: ulid(),
     name: 'dummy',
     auth0_user_id: 'auth0|00000000',
+    email: 'test@example.com',
   }
 
   beforeAll(async () => {

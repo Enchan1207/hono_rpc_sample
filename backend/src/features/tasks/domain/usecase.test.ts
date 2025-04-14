@@ -17,6 +17,7 @@ describe('タスクの取得', () => {
     id: 'test_user_id',
     name: 'test user',
     auth0_user_id: 'auth0_test_user',
+    email: 'test@example.com',
   }
 
   beforeAll(async () => {

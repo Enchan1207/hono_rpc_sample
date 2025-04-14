@@ -15,6 +15,7 @@ describe('ユーザが存在する場合 (登録済みアカウントへのロ�
     id: 'test_user_id',
     name: 'test user',
     auth0_user_id: 'test_user',
+    email: 'test@example.com',
   }
 
   let token: string

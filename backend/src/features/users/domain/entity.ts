@@ -7,6 +7,9 @@ export type UserData = {
 
   /** Auth0のユーザ識別子 (subクレーム) */
   auth0_user_id: string
+
+  /** メールアドレス */
+  email: string
 }
 
 export type User = UserData & {
