@@ -7,7 +7,7 @@ import { TaskPriorities } from '@/features/tasks/domain/entity'
 import type { TaskUsecase } from '@/features/tasks/domain/usecase'
 import { useTaskUsecase } from '@/features/tasks/domain/usecase'
 import { useTaskRepositoryD1 } from '@/features/tasks/infrastructure/repositoryImpl'
-import { userAuthMiddleware } from '@/logic/middlewares/auth'
+import { userAuthMiddleware } from '@/features/users/presentation/middleware'
 
 const taskUsecaseMiddleware = createMiddleware<{
   Bindings: Env

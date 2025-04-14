@@ -1,12 +1,15 @@
+import type { MiddlewareHandler } from 'hono'
+import { every } from 'hono/combine'
 import { createMiddleware } from 'hono/factory'
 
 import type { User } from '@/features/users/domain/entity'
 import { useUserUsecase } from '@/features/users/domain/usecase'
 import { useUserRepositoryD1 } from '@/features/users/infrastructure/repositoryImpl'
+import type { Auth0JWTPayload } from '@/logic/middlewares/jwk'
+import { jwkMiddleware, jwkValidationMiddleware } from '@/logic/middlewares/jwk'
 
-import type { Auth0JWTPayload } from './jwk'
-
-export const userMiddleware = createMiddleware<{
+/** JWTペイロードからログインユーザをルックアップする */
+const userMiddleware = createMiddleware<{
   Bindings: Env
   Variables: {
     jwtPayload: Auth0JWTPayload
@@ -34,3 +37,13 @@ export const userMiddleware = createMiddleware<{
   c.set('user', newUser)
   await next()
 })
+
+/** ユーザの認証・認可を行う */
+export const userAuthMiddleware: MiddlewareHandler<{
+  Bindings: Env
+  Variables: { user: User }
+}> = every(
+  jwkMiddleware,
+  jwkValidationMiddleware,
+  userMiddleware,
+)
