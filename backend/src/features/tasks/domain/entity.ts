@@ -1,6 +1,6 @@
 import { ulid } from 'ulid'
 
-import type { User } from './user'
+import type { User } from '@/features/users/domain/entity'
 
 /** タスクの優先度 */
 export const TaskPriorities = ['high', 'middle', 'low'] as const

@@ -1,9 +1,9 @@
-import type { User } from '@/domain/entities/user'
-import type { UserRepository } from '@/domain/repositories/userRepository'
+import type { User } from '@/features/users/domain/entity'
+import type { UserRepository } from '@/features/users/domain/repository'
 import { condition } from '@/logic/queryBuilder/conditionTree'
 import { d1 } from '@/logic/queryBuilder/d1'
 
-import { UserRecord } from '../entities/user'
+import { UserRecord } from './entity'
 
 const getUserById = (db: D1Database): UserRepository['getUserById'] => async (id: string) => {
   const stmt = d1(db)

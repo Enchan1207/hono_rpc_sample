@@ -1,4 +1,4 @@
-import type { User } from '../entities/user'
+import type { User } from '@/features/users/domain/entity'
 
 export interface UserRepository {
   getUserById(id: User['id']): Promise<User | undefined>

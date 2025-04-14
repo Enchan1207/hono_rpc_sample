@@ -1,9 +1,8 @@
 import { Hono } from 'hono'
 
-import tasks from '@/presentations/tasks'
-import users from '@/presentations/users'
-
-import { corsMiddleware } from './middlewares/cors'
+import tasks from '@/features/tasks/presentation/route'
+import users from '@/features/users/presentation/route'
+import { corsMiddleware } from '@/logic/middlewares/cors'
 
 const app = new Hono()
   .use(corsMiddleware)

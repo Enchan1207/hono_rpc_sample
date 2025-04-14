@@ -1,6 +1,6 @@
 import { defineWorkersConfig, readD1Migrations } from '@cloudflare/vitest-pool-workers/config'
 
-const migrationRelPath = 'src/infrastructure/migrations'
+const migrationRelPath = 'src/migrations'
 
 const migrations = await readD1Migrations(`${__dirname}/${migrationRelPath}`)
 
@@ -14,7 +14,7 @@ export default defineWorkersConfig({
     ],
     poolOptions: {
       workers: {
-        main: 'src/presentations/index.ts',
+        main: 'src/index.ts',
         miniflare: {
           d1Databases: ['D1'],
           bindings: {

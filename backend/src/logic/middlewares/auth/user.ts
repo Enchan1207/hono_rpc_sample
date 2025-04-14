@@ -1,8 +1,8 @@
 import { createMiddleware } from 'hono/factory'
 
-import type { User } from '@/domain/entities/user'
-import { useUserRepositoryD1 } from '@/infrastructure/repositories/userRepository'
-import { useUserUsecase } from '@/usecases/userUsecase'
+import type { User } from '@/features/users/domain/entity'
+import { useUserUsecase } from '@/features/users/domain/usecase'
+import { useUserRepositoryD1 } from '@/features/users/infrastructure/repositoryImpl'
 
 import type { Auth0JWTPayload } from './jwk'
 

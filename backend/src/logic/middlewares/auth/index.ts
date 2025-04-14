@@ -1,7 +1,7 @@
 import type { MiddlewareHandler } from 'hono'
 import { every } from 'hono/combine'
 
-import type { User } from '@/domain/entities/user'
+import type { User } from '@/features/users/domain/entity'
 
 import { jwkMiddleware, jwkValidationMiddleware } from './jwk'
 import { userMiddleware } from './user'

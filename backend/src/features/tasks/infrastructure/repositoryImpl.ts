@@ -3,9 +3,9 @@ import type { D1Database } from '@cloudflare/workers-types'
 import type {
   Task, TaskPriority,
   TaskSummary,
-} from '@/domain/entities/task'
-import type { TaskRepository } from '@/domain/repositories/taskRepository'
-import { TaskRecord, TaskSummaryRecord } from '@/infrastructure/entities/task'
+} from '@/features/tasks/domain/entity'
+import type { TaskRepository } from '@/features/tasks/domain/repository'
+import { TaskRecord, TaskSummaryRecord } from '@/features/tasks/infrastructure/entity'
 import { condition } from '@/logic/queryBuilder/conditionTree'
 import { d1 } from '@/logic/queryBuilder/d1'
 

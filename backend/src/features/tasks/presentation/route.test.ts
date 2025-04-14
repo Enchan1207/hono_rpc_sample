@@ -5,12 +5,12 @@ import { ulid } from 'ulid'
 
 import type {
   Task, TaskData, TaskPriority,
-} from '@/domain/entities/task'
-import type { User } from '@/domain/entities/user'
-import { useTaskRepositoryD1 } from '@/infrastructure/repositories/taskRepository'
-import { useUserRepositoryD1 } from '@/infrastructure/repositories/userRepository'
+} from '@/features/tasks/domain/entity'
+import { useTaskRepositoryD1 } from '@/features/tasks/infrastructure/repositoryImpl'
+import tasks from '@/features/tasks/presentation/route'
+import type { User } from '@/features/users/domain/entity'
+import { useUserRepositoryD1 } from '@/features/users/infrastructure/repositoryImpl'
 import { compare } from '@/logic/compare'
-import tasks from '@/presentations/tasks'
 
 describe('単一項目の操作', () => {
   const client = testClient(tasks, env)

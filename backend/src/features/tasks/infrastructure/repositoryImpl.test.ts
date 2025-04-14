@@ -1,12 +1,11 @@
 import { env } from 'cloudflare:test'
 import { ulid } from 'ulid'
 
-import type { Task } from '@/domain/entities/task'
-import type { User } from '@/domain/entities/user'
-import type { TaskRepository } from '@/domain/repositories/taskRepository'
-
-import { useTaskRepositoryD1 } from './taskRepository'
-import { useUserRepositoryD1 } from './userRepository'
+import type { Task } from '@/features/tasks/domain/entity'
+import type { TaskRepository } from '@/features/tasks/domain/repository'
+import { useTaskRepositoryD1 } from '@/features/tasks/infrastructure/repositoryImpl'
+import type { User } from '@/features/users/domain/entity'
+import { useUserRepositoryD1 } from '@/features/users/infrastructure/repositoryImpl'
 
 // NOTE: @cloudflare/vitest-pool-workers を使ったテストでは、test単位で実行がロルバされる
 // NOTE: cf.https://github.com/cloudflare/workers-sdk/blob/f9fd9df8f6e11d87bb34ed5005730de1d593989a/fixtures/vitest-pool-workers-examples/d1/test/queries.test.ts#L28

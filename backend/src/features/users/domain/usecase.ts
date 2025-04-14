@@ -1,8 +1,8 @@
 import { ulid } from 'ulid'
 import { z } from 'zod'
 
-import type { User } from '@/domain/entities/user'
-import type { UserRepository } from '@/domain/repositories/userRepository'
+import type { User } from '@/features/users/domain/entity'
+import type { UserRepository } from '@/features/users/domain/repository'
 
 const Auth0UserInfoSchema = z.object({
   sub: z.string(),
