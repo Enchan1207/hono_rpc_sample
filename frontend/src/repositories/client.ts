@@ -1,6 +1,6 @@
 // NOTE: バックエンドは極力importしない
-// eslint-disable-next-line @typescript-eslint/no-restricted-imports
-import type { AppType } from '@routes/index'
+
+import type { AppType } from '@routes'
 import { hc } from 'hono/client'
 
 const env = import.meta.env

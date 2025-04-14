@@ -20,7 +20,7 @@
     "verbatimModuleSyntax": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@routes/*": ["../backend/src/presentations/*"]
+      "@routes": ["../backend/src/index.ts"]
     },
     "types": [
       "unplugin-vue-router/client",
